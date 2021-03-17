@@ -1,6 +1,6 @@
 # Nodejs BackEnd
 
-The api from MultySoftware will be created with Nodejs and Serializer.
+Api from MultySoftware will be created with Nodejs and Serializer.
 
 ## Available Scripts
 
