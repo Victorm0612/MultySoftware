@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App{
+  background: linear-gradient(0deg, rgba(0,0,0,.7) 0%, rgba(19,20,20,.5) 22%, rgba(179,30,30,.5) 100%), url('./Image/background.jpg');
+  position: fixed;
+  min-width: 100%;
+  min-height: 100%;
+  background-size: cover;
+  background-position: center;
+}
