@@ -11,8 +11,6 @@
 
 # production
 /build
-dev.js
-prod.js
 
 # misc
 .DS_Store
@@ -24,3 +22,6 @@ prod.js
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+api/config/dev.js
+api/config/prod.js
