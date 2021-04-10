@@ -2,6 +2,7 @@ import React from 'react'
 import {AppBar, ThemeProvider, makeStyles, Toolbar, Typography, IconButton} from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu';
 import theme from '../themeConfig'
+import logo from '../Image/Logo.png'
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -9,7 +10,11 @@ const useStyles = makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
-    }
+    },
+    logo: {
+        maxWidth: 120,
+        marginRight: '10px'
+    },
 }))
 
 const NavBar = () => {
@@ -18,11 +23,9 @@ const NavBar = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <AppBar position="fixed" color="transparent">
+            <AppBar position="fixed" color="primary">
             <Toolbar>
-                <Typography color="primary" variant="h6" className={classes.menuButton}>
-                ChickenStore
-                </Typography>
+                <img src={logo} alt="logo" className={classes.logo} />
                 <div className={classes.grow}/>
                 <IconButton color="primary" aria-label="menu">
                     <MenuIcon/>
