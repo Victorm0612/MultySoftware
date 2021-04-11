@@ -1,7 +1,8 @@
 import Sequelize from 'sequelize';
 import{ sequelize } from '../database/database';
+import sale from './sale_model';
 
-const user = sequelize.define('Usuario',{
+const user = sequelize.define('Users',{
     id_user: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -25,20 +26,23 @@ const user = sequelize.define('Usuario',{
         type: Sequelize.STRING,
     },
     phone: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
     },
     birthday: {
         type: Sequelize.DATE,
     },
-    type: {
+    user_type: {
         type: Sequelize.INTEGER,
     },
-    state: {
-        type: Sequelize.INTEGER,
+    user_status: {
+        type: Sequelize.BOOLEAN,
     }
 
 }, {
     timestamps: false
 });
+
+user.hasMany(sale, { foreignKey: 'docId', sourceKey: 'document_id'})
+sale.belongsTo(user, { foreignKey: 'docId', sourceKey: 'document_id' })
 
 export default user;
