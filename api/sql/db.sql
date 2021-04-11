@@ -86,7 +86,7 @@ CREATE TABLE Discount(
     dis_description TEXT,
     ini_date DATE,
     final_date DATE,
-    date_status BOOLEAN,
+    discount_status BOOLEAN,
     dis_value DOUBLE PRECISION
 );
 
@@ -139,8 +139,8 @@ CREATE TABLE Promo(
 );
 
 DROP TABLE IF EXISTS PromoItem CASCADE;
-CREATE TABLE ItemPromo(
-    itemPromo_id SERIAL PRIMARY KEY,
+CREATE TABLE PromoItem(
+    promoItem_id SERIAL PRIMARY KEY,
     promo_id INT,
     product_id INT,
     amount INT,

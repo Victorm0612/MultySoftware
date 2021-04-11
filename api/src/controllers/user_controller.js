@@ -33,6 +33,7 @@ export async function getOneUser(req, res){
 };
 
 export async function create(req, res){
+
     const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
     try {
         let newUser = await User.create({
@@ -63,7 +64,6 @@ export async function create(req, res){
 export async function updateUser(req, res){
     const { id } = req.params;
     const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
-
     const userFound = await User.findAll({
         attributes: ['document_type','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
         where:{

@@ -20,7 +20,7 @@ const discount = sequelize.define('Discount', {
     final_date: {
         type: Sequelize.DATE
     },
-    date_status: {
+    discount_status: {
         type: Sequelize.BOOLEAN
     },
     dis_value: {

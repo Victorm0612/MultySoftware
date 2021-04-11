@@ -78,7 +78,7 @@ export async function updateCategory(req,res){
         })
     }
     return res.json({
-        message: 'user updated succesfully'
+        message: 'Category updated succesfully'
     })
 };
 
@@ -91,7 +91,7 @@ export async function deleteCategory(req, res){
             }
         });
         res.json({
-            message: 'User deleted successfully',
+            message: 'Category deleted successfully',
             count: deleteRowCount
         })
         

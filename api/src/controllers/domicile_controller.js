@@ -1,4 +1,3 @@
-import domicile from '../models/domicile_model';
 import Domicile from '../models/domicile_model';
 
 export async function getDomiciles(req, res){
@@ -69,7 +68,7 @@ export async function updateDomicile(req, res){
         }
     });
     if(domicileFound.length > 0){
-        domicileFound.forEch(async domicileFound => {
+        domicileFound.forEach(async domicileFound => {
             await Domicile.update({
                 domicile_name,
                 domicile_address,

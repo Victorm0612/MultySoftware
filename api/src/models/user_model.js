@@ -3,7 +3,7 @@ import{ sequelize } from '../database/database';
 import sale from './sale_model';
 
 const user = sequelize.define('Users',{
-    id_user: {
+    userId: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true 

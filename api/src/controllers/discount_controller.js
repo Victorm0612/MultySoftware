@@ -1,4 +1,3 @@
-import discount from '../models/discount_model';
 import Discount from '../models/discount_model';
 
 export async function getDiscounts(req,res){
@@ -35,14 +34,14 @@ export async function getOneDiscount(req,res){
 };
 
 export async function create(req, res){
-    const { title, dis_description, ini_date, final_date, date_status, dis_value } = req.body;
+    const { title, dis_description, ini_date, final_date, discount_status, dis_value } = req.body;
     try {
         let newDiscount = await Discount.create({
             title,
             dis_description,
             ini_date,
             final_date,
-            date_status,
+            discount_status,
             dis_value
         });
         if(newDiscount){
@@ -61,10 +60,10 @@ export async function create(req, res){
 
 export async function updateDiscount(req,res){
     const { id } = req.params;
-    const { title, dis_description, ini_date, final_date, date_status, dis_value } = req.body;
+    const { title, dis_description, ini_date, final_date, discount_status, dis_value } = req.body;
 
     const discountFound = await Discount.findAll({
-        attributes: ['title','dis_description','ini_date','final_date','date_status','dis_value'],
+        attributes: ['title','dis_description','ini_date','final_date','discount_status','dis_value'],
         where:{
             discount_id: id
         }
@@ -76,7 +75,7 @@ export async function updateDiscount(req,res){
                 dis_description,
                 ini_date,
                 final_date,
-                date_status,
+                discount_status,
                 dis_value
             }, {
                 where: {
@@ -86,7 +85,7 @@ export async function updateDiscount(req,res){
         })
     }
     return res.json({
-        message: 'category updated succesfully'
+        message: 'discount updated succesfully'
     })
 };
 
@@ -99,7 +98,7 @@ export async function deleteDiscount(req,res){
             }
         });
         res.json({            
-            message: 'User deleted successfully',
+            message: 'Discount deleted successfully',
             count: deleteRowCount
             })
     } catch (error) {
