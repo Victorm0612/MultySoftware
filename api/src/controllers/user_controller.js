@@ -1,7 +1,6 @@
 import User from '../models/user_model';
 
 export async function getUsers(req, res){
-    await User.sync({force: true});
     try {
         const users = await User.findAll();
         res.json({
@@ -16,7 +15,7 @@ export async function getUsers(req, res){
 };
 
 export async function create(req, res){
-    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_state } = req.body;
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
     try {
         let newUser = await User.create({
             document_type,
@@ -27,7 +26,7 @@ export async function create(req, res){
             phone,
             birthday,
             user_type,
-            user_state
+            user_status
         });
         if(newUser){
             res.json({
@@ -44,6 +43,7 @@ export async function create(req, res){
 };
 
 export async function getOneUser(req, res){
+    await User.sync({force: true});
     const { id } = req.params;
     try {
         const user = await User.findOne({
@@ -63,10 +63,10 @@ export async function getOneUser(req, res){
 
 export async function updateUser(req, res){
     const { id } = req.params;
-    const { type_document, document_id, first_name, last_name, gender, phone, birthday, user_type, user_state } = req.body;
+    const { type_document, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
 
         const userFound = await User.findAll({
-            attributes: ['document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday'],
+            attributes: ['type_document','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
             where:{
                 userId: id
             }
@@ -82,7 +82,7 @@ export async function updateUser(req, res){
                     phone, 
                     birthday,
                     user_type,
-                    user_state
+                    user_status
                 },{
                     where: {
                         userId: id

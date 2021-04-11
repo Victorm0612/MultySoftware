@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS User CASCADE;
-CREATE TABLE User(
+DROP TABLE IF EXISTS Users CASCADE;
+CREATE TABLE Users(
     userId SERIAL PRIMARY KEY,
     type_document INT,
     document_id INTEGER UNIQUE NOT NULL,
@@ -9,17 +9,17 @@ CREATE TABLE User(
     phone VARCHAR(255),
     birthday DATE,
     user_type INT,
-    user_state BOOLEAN
+    user_status BOOLEAN
 
 );
 
 DROP TABLE IF EXISTS Payment CASCADE;
 CREATE TABLE Payment(
     payment_id SERIAL PRIMARY KEY,
-    payDescription TEXT,
+    pay_description TEXT,
     payment_date DATE,
-    payTime TIME,
-    payStatus BOOLEAN
+    pay_time TIME,
+    pay_status BOOLEAN
 );
 -- en boolean 0 es falso, cualquier otro valor es true
 DROP TABLE IF EXISTS Bank CASCADE;
@@ -63,7 +63,7 @@ CREATE TABLE Domicile(
     domicile_address VARCHAR(255),
     phone VARCHAR(255),
     attention_time VARCHAR(255),
-    domicile_state BOOLEAN
+    domicile_status BOOLEAN
 );
 
 DROP TABLE IF EXISTS Sale CASCADE;
@@ -73,9 +73,9 @@ CREATE TABLE Sale(
     sale_time TIME,
     docId INT,
     domicile_id INT,
-    sale_state BOOLEAN,
+    sale_status BOOLEAN,
     --CONSTRAINT fkTipoDoc FOREIGN KEY (tipoDocId) REFERENCES Usuario(tipoDocumento),
-    CONSTRAINT fkDocId FOREIGN KEY (docId) REFERENCES User(document_number),
+    CONSTRAINT fkDocId FOREIGN KEY (docId) REFERENCES Users(document_id),
     CONSTRAINT fkDomicile FOREIGN KEY (domicile_id) REFERENCES  Domicile(domicile_id)
 );
 
@@ -86,7 +86,7 @@ CREATE TABLE Discount(
     dis_description TEXT,
     ini_date DATE,
     final_date DATE,
-    date_state BOOLEAN,
+    date_status BOOLEAN,
     dis_value DOUBLE PRECISION
 );
 
@@ -95,7 +95,7 @@ CREATE TABLE Category(
     category_id SERIAL PRIMARY KEY,
     cat_name VARCHAR(255),
     cat_description TEXT,
-    cat_state BOOLEAN
+    cat_status BOOLEAN
 );
 
 DROP TABLE IF EXISTS Product CASCADE;
@@ -106,7 +106,7 @@ CREATE TABLE Product(
     price INT,
     category_id INT,
     discount_id INT,
-    pro_state BOOLEAN,
+    pro_status BOOLEAN,
     percentage_Iva DOUBLE PRECISION,
     CONSTRAINT fkCategory FOREIGN KEY (category_id) REFERENCES Category(category_id),
     CONSTRAINT fkDiscount FOREIGN KEY (discount_id) REFERENCES Discount(discount_id)
@@ -174,7 +174,7 @@ CREATE TABLE Bill(
     totalIVA DOUBLE PRECISION,
     total_discount DOUBLE PRECISION,
     total_payment DOUBLE PRECISION,
-    bill_state boolean,
+    bill_status boolean,
     CONSTRAINT fkSale FOREIGN KEY (sale_number) REFERENCES Sale(sale_number),
     CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );

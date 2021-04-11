@@ -25,16 +25,16 @@ const user = sequelize.define('User',{
         type: Sequelize.STRING,
     },
     phone: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
     },
     birthday: {
         type: Sequelize.DATE,
     },
-    type: {
+    user_type: {
         type: Sequelize.INTEGER,
     },
-    state: {
-        type: Sequelize.INTEGER,
+    user_status: {
+        type: Sequelize.BOOLEAN,
     }
 
 }, {
