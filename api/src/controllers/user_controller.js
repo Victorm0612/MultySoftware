@@ -1,6 +1,7 @@
 import User from '../models/user_model';
 
 export async function getUsers(req, res){
+    await User.sync({force: true});
     try {
         const users = await User.findAll();
         res.json({
@@ -15,17 +16,18 @@ export async function getUsers(req, res){
 };
 
 export async function create(req, res){
-    const { document_type, document_id, first_name, last_name, gender, phone, birthday } = req.body;
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_state } = req.body;
     try {
         let newUser = await User.create({
-            id_user,
             document_type,
             document_id,
             first_name,
             last_name,
             gender,
             phone,
-            birthday
+            birthday,
+            user_type,
+            user_state
         });
         if(newUser){
             res.json({
@@ -46,7 +48,7 @@ export async function getOneUser(req, res){
     try {
         const user = await User.findOne({
             where: {
-                id_cliente: id
+                userId: id
             }
         });
         res.json({
@@ -61,26 +63,29 @@ export async function getOneUser(req, res){
 
 export async function updateUser(req, res){
     const { id } = req.params;
-    const { document_id, first_name, last_name, gender, phone, birthday } = req.body;
+    const { type_document, document_id, first_name, last_name, gender, phone, birthday, user_type, user_state } = req.body;
 
         const userFound = await User.findAll({
             attributes: ['document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday'],
             where:{
-                id_cliente: id
+                userId: id
             }
         });
         if(userFound.length > 0){
             userFound.forEach(async userFound  => {
                 await User.update({
+                    type_document,
                     document_id, 
                     first_name, 
                     last_name, 
                     gender, 
                     phone, 
-                    birthday
+                    birthday,
+                    user_type,
+                    user_state
                 },{
                     where: {
-                        id_cliente: id
+                        userId: id
                     }
                 });
             })
@@ -95,7 +100,7 @@ export async function deleteUser(req, res){
     try {
         const deleteRowCount = User.destroy({
             where: {
-                id_cliente: id
+                userId: id
             }
         });
         res.json({

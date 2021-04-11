@@ -1,179 +1,180 @@
-DROP TABLE IF EXISTS Usuario CASCADE;
-CREATE TABLE Usuario(
-    id_usuario SERIAL PRIMARY KEY,
-    tipoDocumento INT,
-    noDocumento INTEGER UNIQUE NOT NULL,
-    nombre TEXT,
-    apellido TEXT,
-    sexo VARCHAR(255),
-    telefono VARCHAR(255),
-    fechaNacimiento DATE
+DROP TABLE IF EXISTS User CASCADE;
+CREATE TABLE User(
+    userId SERIAL PRIMARY KEY,
+    type_document INT,
+    document_id INTEGER UNIQUE NOT NULL,
+    first_name TEXT,
+    last_name TEXT,
+    gender VARCHAR(255),
+    phone VARCHAR(255),
+    birthday DATE,
+    user_type INT,
+    user_state BOOLEAN
+
 );
 
-DROP TABLE IF EXISTS MedioPago CASCADE;
-CREATE TABLE MedioPago(
-    codMedioPago SERIAL PRIMARY KEY,
-    descripcion TEXT,
-    fecha DATE,
-    hora TIME,
-    activo BOOLEAN
+DROP TABLE IF EXISTS Payment CASCADE;
+CREATE TABLE Payment(
+    payment_id SERIAL PRIMARY KEY,
+    payDescription TEXT,
+    payment_date DATE,
+    payTime TIME,
+    payStatus BOOLEAN
 );
 -- en boolean 0 es falso, cualquier otro valor es true
-DROP TABLE IF EXISTS Entidad CASCADE;
-CREATE TABLE Entidad(
-    codEntidad SERIAL PRIMARY KEY,
-    nombreEntidad VARCHAR(255)
+DROP TABLE IF EXISTS Bank CASCADE;
+CREATE TABLE Bank(
+    bank_id SERIAL PRIMARY KEY,
+    bank_name VARCHAR(255)
 );
 
-DROP TABLE IF EXISTS TarjetaDebito CASCADE;
-CREATE TABLE TarjetaDebito(
-    codMedioPago INT PRIMARY KEY,
-    noTarjeta INT,
-    tipoCuenta VARCHAR(255),
-    entidad INT,
-    CONSTRAINT fkMedioPago FOREIGN KEY (codMedioPago) REFERENCES MedioPago(codMedioPago),
-    CONSTRAINT fkEntidad FOREIGN KEY (entidad) REFERENCES Entidad(codEntidad)
+DROP TABLE IF EXISTS Debit CASCADE;
+CREATE TABLE Debit(
+    payment_id INT PRIMARY KEY,
+    debit_name INT,
+    debit_type VARCHAR(255),
+    bank INT,
+    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
-DROP TABLE IF EXISTS Efectivo CASCADE;
-CREATE TABLE Efectivo(
-    codMedioPago INT PRIMARY KEY,
-    monto INT,
-    CONSTRAINT fkMedioPago FOREIGN KEY (codMedioPago) REFERENCES MedioPago(codMedioPago)
+DROP TABLE IF EXISTS Cash CASCADE;
+CREATE TABLE Cash(
+    payment_id INT PRIMARY KEY,
+    amount INT,
+    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );
 
-DROP TABLE IF EXISTS TarjetaCredito CASCADE;
-CREATE TABLE TarjetaCredito(
-    codMedioPago SERIAL PRIMARY KEY,
-    noTarjeta INT,
-    noAprobacion INT,
-    entidad int,
-    noCuotas int,
-    CONSTRAINT fkMedioPago FOREIGN KEY (codMedioPago) REFERENCES MedioPago(codMedioPago),
-    CONSTRAINT fkEntidad FOREIGN KEY (entidad) REFERENCES Entidad(codEntidad)
+DROP TABLE IF EXISTS Credit CASCADE;
+CREATE TABLE Credit(
+    payment_id SERIAL PRIMARY KEY,
+    credit_number INTEGER,
+    approval_number INTEGER,
+    bank INTEGER,
+    fees_numbers INTEGER,
+    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
-DROP TABLE IF EXISTS Sede CASCADE;
-CREATE TABLE Sede(
-    codSede SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    direccion VARCHAR(255),
-    telefono VARCHAR(255),
-    horarioAtencion VARCHAR(255),
-    activa BOOLEAN
+DROP TABLE IF EXISTS Domicile CASCADE;
+CREATE TABLE Domicile(
+    domicile_id SERIAL PRIMARY KEY,
+    domicile_name VARCHAR(255),
+    domicile_address VARCHAR(255),
+    phone VARCHAR(255),
+    attention_time VARCHAR(255),
+    domicile_state BOOLEAN
 );
 
-
-
-DROP TABLE IF EXISTS Venta CASCADE;
-CREATE TABLE Venta(
-    noVenta SERIAL PRIMARY KEY,
-    fecha DATE,
-    hora TIME,
-    tipoDocId INT,
+DROP TABLE IF EXISTS Sale CASCADE;
+CREATE TABLE Sale(
+    sale_number SERIAL PRIMARY KEY,
+    sale_date DATE,
+    sale_time TIME,
     docId INT,
-    codSede INT,
-    activa BOOLEAN,
+    domicile_id INT,
+    sale_state BOOLEAN,
     --CONSTRAINT fkTipoDoc FOREIGN KEY (tipoDocId) REFERENCES Usuario(tipoDocumento),
-    CONSTRAINT fkDocId FOREIGN KEY (docId) REFERENCES Usuario(noDocumento),
-    CONSTRAINT fkSede FOREIGN KEY (codSede) REFERENCES  Sede(codSede)
+    CONSTRAINT fkDocId FOREIGN KEY (docId) REFERENCES User(document_number),
+    CONSTRAINT fkDomicile FOREIGN KEY (domicile_id) REFERENCES  Domicile(domicile_id)
 );
 
-DROP TABLE IF EXISTS Descuento CASCADE;
-CREATE TABLE Descuento(
-    codDescuento SERIAL PRIMARY KEY,
-    titulo VARCHAR(255),
-    descripcion TEXT,
-    fechaini DATE,
-    fechafin DATE,
-    activo BOOLEAN,
-    porDescuento DOUBLE PRECISION
+DROP TABLE IF EXISTS Discount CASCADE;
+CREATE TABLE Discount(
+    discount_id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    dis_description TEXT,
+    ini_date DATE,
+    final_date DATE,
+    date_state BOOLEAN,
+    dis_value DOUBLE PRECISION
 );
 
-DROP TABLE IF EXISTS Categoria CASCADE;
-CREATE TABLE Categoria(
-    codCategoria SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    descripcion TEXT,
-    activa BOOLEAN
+DROP TABLE IF EXISTS Category CASCADE;
+CREATE TABLE Category(
+    category_id SERIAL PRIMARY KEY,
+    cat_name VARCHAR(255),
+    cat_description TEXT,
+    cat_state BOOLEAN
 );
 
-
-DROP TABLE IF EXISTS Producto CASCADE;
-CREATE TABLE Producto(
-    codProducto SERIAL PRIMARY KEY,
-    descripcion TEXT,
-    imagen VARCHAR(255),
-    precioVenta INT,
-    codCategoria INT,
-    codDescuento INT,
-    activo BOOLEAN,
-    porcentajeIva DOUBLE PRECISION,
-    CONSTRAINT fkCategoria FOREIGN KEY (codCategoria) REFERENCES Categoria(codCategoria),
-    CONSTRAINT fkDescuento FOREIGN KEY (codDescuento) REFERENCES Descuento(codDescuento)
+DROP TABLE IF EXISTS Product CASCADE;
+CREATE TABLE Product(
+    product_id SERIAL PRIMARY KEY,
+    pro_description TEXT,
+    pro_image VARCHAR(255),
+    price INT,
+    category_id INT,
+    discount_id INT,
+    pro_state BOOLEAN,
+    percentage_Iva DOUBLE PRECISION,
+    CONSTRAINT fkCategory FOREIGN KEY (category_id) REFERENCES Category(category_id),
+    CONSTRAINT fkDiscount FOREIGN KEY (discount_id) REFERENCES Discount(discount_id)
 );
 
-DROP TABLE IF EXISTS Ingrediente CASCADE;
-CREATE TABLE Ingrediente(
-    codIngrediente SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    precio INT
+DROP TABLE IF EXISTS Ingredient CASCADE;
+CREATE TABLE Ingredient(
+    ingredient_id SERIAL PRIMARY KEY,
+    ingredient_name VARCHAR(255),
+    price INT
 );
 
-DROP TABLE IF EXISTS itemIngrediente CASCADE;
-CREATE TABLE itemIngrediente(
-    codIngrediente INT,
-    codProducto INT,
-    cantidad INT,
-    CONSTRAINT fkIngrediente FOREIGN KEY (codIngrediente) REFERENCES Ingrediente(codIngrediente),
-    CONSTRAINT fkProducto FOREIGN KEY (codProducto) REFERENCES Producto(codProducto)
+DROP TABLE IF EXISTS IngredientItem CASCADE;
+CREATE TABLE IngredientItem(
+    ingredientItem_id SERIAL PRIMARY KEY,
+    ingredient_id INT,
+    product_id INT,
+    amount INT,
+    CONSTRAINT fkIngredient FOREIGN KEY (ingredient_id) REFERENCES Ingredient(ingredient_id),
+    CONSTRAINT fkProduct FOREIGN KEY (product_id) REFERENCES Product(product_id)
 );
 
-DROP TABLE IF EXISTS Promocion CASCADE;
-CREATE TABLE Promocion(
-    codPromocion SERIAL PRIMARY KEY,
-    fechaIni DATE,
-    fechaFin DATE,
-    nombre VARCHAR(255),
-    descripcion TEXT
+DROP TABLE IF EXISTS Promo CASCADE;
+CREATE TABLE Promo(
+    promo_id SERIAL PRIMARY KEY,
+    ini_date DATE,
+    final_date DATE,
+    promo_name VARCHAR(255),
+    promo_description TEXT
 );
 
-DROP TABLE IF EXISTS ItemPromocion CASCADE;
-CREATE TABLE ItemPromocion(
-    codPromocion INT,
-    codProducto INT,
-    cantidad INT,
-    CONSTRAINT fkPromocion FOREIGN KEY (codPromocion) REFERENCES Promocion(codPromocion),
-    CONSTRAINT fkProducto FOREIGN KEY (codProducto) REFERENCES Producto(codProducto)
+DROP TABLE IF EXISTS PromoItem CASCADE;
+CREATE TABLE ItemPromo(
+    itemPromo_id SERIAL PRIMARY KEY,
+    promo_id INT,
+    product_id INT,
+    amount INT,
+    CONSTRAINT fkPromo FOREIGN KEY (promo_id) REFERENCES Promo(promo_id),
+    CONSTRAINT fkProduct FOREIGN KEY (product_id) REFERENCES Product(product_id)
 );
 
-DROP TABLE IF EXISTS ItemVenta CASCADE;
-CREATE TABLE ItemVenta(
-    noItemVenta SERIAL PRIMARY KEY,
-    noVenta INT,
-    cantidad INT,
+DROP TABLE IF EXISTS SaleItem CASCADE;
+CREATE TABLE SaleItem(
+    saleItem_number SERIAL PRIMARY KEY,
+    sale_number INT,
+    amount INT,
     totalIva INT,
     subtotal INT,
-    totalItel INT,
-    totalDescuento INT,
-    codProducto INT,
-    CONSTRAINT fkProducto FOREIGN KEY (codProducto) REFERENCES Producto(codProducto),
-    CONSTRAINT fkVenta FOREIGN KEY (noVenta) REFERENCES Venta(noVenta)
+    item_total INT,
+    total_discount INT,
+    product_id INT,
+    CONSTRAINT fkProduct FOREIGN KEY (product_id) REFERENCES Product(product_id),
+    CONSTRAINT fkSale FOREIGN KEY (sale_number) REFERENCES Sale(sale_number)
 );
 
-DROP TABLE IF EXISTS Factura CASCADE;
-CREATE TABLE Factura(
-    noFactura SERIAL PRIMARY KEY,
+DROP TABLE IF EXISTS Bill CASCADE;
+CREATE TABLE Bill(
+    bill_number SERIAL PRIMARY KEY,
     nit INT,
-    noVenta INT,
-    codMedioPago INT,
-    hora TIME,
-    fecha DATE,
+    sale_number INT,
+    payment_id INT,
+    bill_time TIME,
+    bill_date DATE,
     subtotal DOUBLE PRECISION,
     totalIVA DOUBLE PRECISION,
-    totalDescuento DOUBLE PRECISION,
-    totalPago DOUBLE PRECISION,
-    activa boolean,
-    CONSTRAINT fkVenta FOREIGN KEY (noVenta) REFERENCES Venta(noVenta),
-    CONSTRAINT fkMedioPago FOREIGN KEY (codMedioPago) REFERENCES MedioPago(codMedioPago)
+    total_discount DOUBLE PRECISION,
+    total_payment DOUBLE PRECISION,
+    bill_state boolean,
+    CONSTRAINT fkSale FOREIGN KEY (sale_number) REFERENCES Sale(sale_number),
+    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );

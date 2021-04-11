@@ -30,6 +30,12 @@ const user = sequelize.define('Usuario',{
     birthday: {
         type: Sequelize.DATE,
     },
+    type: {
+        type: Sequelize.INTEGER,
+    },
+    state: {
+        type: Sequelize.INTEGER,
+    }
 
 }, {
     timestamps: false
