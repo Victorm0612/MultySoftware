@@ -64,34 +64,34 @@ export async function updateUser(req, res){
     const { id } = req.params;
     const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
 
-        const userFound = await User.findAll({
-            attributes: ['document_type','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
-            where:{
-                userId: id
-            }
-        });
-        if(userFound.length > 0){
-            userFound.forEach(async userFound  => {
-                await User.update({
-                    document_type,
-                    document_id, 
-                    first_name, 
-                    last_name, 
-                    gender, 
-                    phone, 
-                    birthday,
-                    user_type,
-                    user_status
-                },{
-                    where: {
-                        userId: id
-                    }
-                });
-            })
+    const userFound = await User.findAll({
+        attributes: ['document_type','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
+        where:{
+            userId: id
         }
-        return res.json({
-            message: 'user updated successfully'
+    });
+    if(userFound.length > 0){
+        userFound.forEach(async userFound  => {
+            await User.update({
+                document_type,
+                document_id, 
+                first_name, 
+                last_name, 
+                gender, 
+                phone, 
+                birthday,
+                user_type,
+                user_status
+            },{
+                where: {
+                    userId: id
+                }
+            });
         })
+    }
+    return res.json({
+        message: 'user updated successfully'
+    })
 };
 
 export async function deleteUser(req, res){
