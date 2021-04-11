@@ -16,10 +16,10 @@ app.use(json());
 
 //routes
 app.use('/api/category',categoryRoutes);
-app.use('/api/users',discountRoutes);
-app.use('/api/users',domicileRoutes);
-app.use('/api/users',productRoutes);
-app.use('/api/users',saleRoutes);
+app.use('/api/discount',discountRoutes);
+app.use('/api/domicile',domicileRoutes);
+app.use('/api/product',productRoutes);
+app.use('/api/sale',saleRoutes);
 app.use('/api/users',userRoutes);
 
 
