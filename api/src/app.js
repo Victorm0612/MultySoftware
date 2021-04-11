@@ -1,7 +1,7 @@
 import express, { json } from 'express';
 
 //importing routes
-import userRoutes from './routes/users';
+import userRoutes from './routes/user_route';
 
 // Initialization
 const app = express();

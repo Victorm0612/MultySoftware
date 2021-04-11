@@ -1,4 +1,4 @@
-import User from '../models/users';
+import User from '../models/user_model';
 
 export async function getUsers(req, res){
     try {
@@ -15,9 +15,11 @@ export async function getUsers(req, res){
 };
 
 export async function create(req, res){
-    const { document_id, first_name, last_name, gender, phone, birthday } = req.body;
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday } = req.body;
     try {
         let newUser = await User.create({
+            id_user,
+            document_type,
             document_id,
             first_name,
             last_name,

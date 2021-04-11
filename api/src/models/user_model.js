@@ -1,11 +1,14 @@
 import Sequelize from 'sequelize';
 import{ sequelize } from '../database/database';
 
-const users = sequelize.define('users',{
-    id_cliente: {
+const user = sequelize.define('Usuario',{
+    id_user: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true 
+    },
+    document_type:{
+        type: Sequelize.INTEGER,
     },
     document_id: {
         type: Sequelize.INTEGER,
@@ -32,4 +35,4 @@ const users = sequelize.define('users',{
     timestamps: false
 });
 
-export default users;
+export default user;

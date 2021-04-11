@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS Usuario CASCADE;
 CREATE TABLE Usuario(
-    id_cliente SERIAL PRIMARY KEY,
+    id_usuario SERIAL PRIMARY KEY,
     tipoDocumento INT,
     noDocumento INTEGER UNIQUE NOT NULL,
     nombre TEXT,
