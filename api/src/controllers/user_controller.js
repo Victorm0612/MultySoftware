@@ -62,10 +62,10 @@ export async function create(req, res){
 
 export async function updateUser(req, res){
     const { id } = req.params;
-    const { type_document, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
 
         const userFound = await User.findAll({
-            attributes: ['type_document','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
+            attributes: ['document_type','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
             where:{
                 userId: id
             }
@@ -73,7 +73,7 @@ export async function updateUser(req, res){
         if(userFound.length > 0){
             userFound.forEach(async userFound  => {
                 await User.update({
-                    type_document,
+                    document_type,
                     document_id, 
                     first_name, 
                     last_name, 

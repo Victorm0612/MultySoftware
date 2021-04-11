@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS Users CASCADE;
 CREATE TABLE Users(
     userId SERIAL PRIMARY KEY,
-    type_document INT,
+    document_type INT,
     document_id INTEGER UNIQUE NOT NULL,
     first_name TEXT,
     last_name TEXT,
