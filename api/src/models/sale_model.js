@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import{ sequelize } from '../database/database';
 
 const sale = sequelize.define('Sale',{
-    sale_number: {
+    sale_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,

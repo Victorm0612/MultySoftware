@@ -1,4 +1,5 @@
 import User from '../models/user_model';
+import sequelize from 'sequelize'
 
 export async function getUsers(req, res){
     try {
@@ -20,6 +21,40 @@ export async function getOneUser(req, res){
         const user = await User.findOne({
             where: {
                 userId: id
+            }
+        });
+        res.json({
+            data: user
+        })        
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something goes wrong '+ error,
+        })   
+    }
+};
+
+export async function getBirthdayUser(req, res){
+    try {
+        const user = await User.findAll({
+            where: {
+                birthday: sequelize.where(sequelize.literal('extract(MONTH FROM birthday)'), '01')
+            }
+        });
+        res.json({
+            data: user
+        })        
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something goes wrong '+ error,
+        })   
+    }
+};
+
+export async function getClientUser(req, res){
+    try {
+        const user = await User.findAll({
+            where: {
+               user_type: 1 //Cliente 1, Admin 2, trabajador 3
             }
         });
         res.json({
