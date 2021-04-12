@@ -2,7 +2,7 @@
 import Sequelize from 'sequelize';
 const keys = '../config/keys';
 
-export const sequelize = new Sequelize( 'postgres://postgres:password@localhost:5432/postgres', //keys.posgresqlURI,
+export const sequelize = new Sequelize( 'postgres://postgres:postgres@localhost:5432/postgres', //keys.posgresqlURI,
     {
         host: 'localhost',
         dialect: 'postgres',
