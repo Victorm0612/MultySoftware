@@ -14,6 +14,24 @@ export async function getProducts(req, res){
     }
 };
 
+export async function getProductsByName(req, res){
+    try {
+        const products = await Product.findAll({
+            where: {
+                pro_description: 'Un producto'
+            }
+        });
+        res.json({
+            data: products
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something goes wrong '+ error,
+            data: {}
+        })      
+    }
+};
+
 export async function getOneProduct(req, res){
     const { id } = req.params;
     try {
