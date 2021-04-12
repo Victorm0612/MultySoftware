@@ -68,7 +68,7 @@ CREATE TABLE Domicile(
 
 DROP TABLE IF EXISTS Sale CASCADE;
 CREATE TABLE Sale(
-    sale_number SERIAL PRIMARY KEY,
+    sale_id SERIAL PRIMARY KEY,
     sale_date DATE,
     sale_time TIME,
     docId INT,
@@ -151,7 +151,7 @@ CREATE TABLE PromoItem(
 DROP TABLE IF EXISTS SaleItem CASCADE;
 CREATE TABLE SaleItem(
     saleItem_number SERIAL PRIMARY KEY,
-    sale_number INT,
+    sale_id INT,
     amount INT,
     totalIva INT,
     subtotal INT,
@@ -159,14 +159,14 @@ CREATE TABLE SaleItem(
     total_discount INT,
     product_id INT,
     CONSTRAINT fkProduct FOREIGN KEY (product_id) REFERENCES Product(product_id),
-    CONSTRAINT fkSale FOREIGN KEY (sale_number) REFERENCES Sale(sale_number)
+    CONSTRAINT fkSale FOREIGN KEY (sale_id) REFERENCES Sale(sale_id)
 );
 
 DROP TABLE IF EXISTS Bill CASCADE;
 CREATE TABLE Bill(
     bill_number SERIAL PRIMARY KEY,
     nit INT,
-    sale_number INT,
+    sale_id INT,
     payment_id INT,
     bill_time TIME,
     bill_date DATE,
@@ -175,6 +175,6 @@ CREATE TABLE Bill(
     total_discount DOUBLE PRECISION,
     total_payment DOUBLE PRECISION,
     bill_status boolean,
-    CONSTRAINT fkSale FOREIGN KEY (sale_number) REFERENCES Sale(sale_number),
+    CONSTRAINT fkSale FOREIGN KEY (sale_id) REFERENCES Sale(sale_id),
     CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
 );
