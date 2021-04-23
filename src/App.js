@@ -9,6 +9,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
+          <NavBar/>
           <Switch>
             <Route path="/login">
               <Login/>
@@ -17,7 +18,6 @@ const App = () => {
               <Register/>
             </Route>
             <Route path="/">
-              <NavBar/>
               <Home/>
             </Route>                    
           </Switch>
