@@ -9,7 +9,7 @@ const App = () => {
   return (
     <div className="App">
       <Router>
-          <NavBar/>
+        <NavBar/>
           <Switch>
             <Route path="/login">
               <Login/>

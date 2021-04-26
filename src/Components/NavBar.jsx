@@ -1,5 +1,5 @@
 import React from 'react'
-import {AppBar, ThemeProvider, makeStyles, Toolbar, Button, Box} from '@material-ui/core'
+import {AppBar, ThemeProvider, makeStyles, Toolbar, Button} from '@material-ui/core'
 import {Link} from 'react-router-dom'
 import theme from '../themeConfig'
 import logo from '../Image/Logo.png'
@@ -20,16 +20,22 @@ const useStyles = makeStyles((theme) => ({
 const NavBar = () => {
     const classes = useStyles();
 
+    const buttonStyle = {
+        borderRadius:50,
+        textTransform: 'none',
+        margin: '0 0 0 .5rem'
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <AppBar position="fixed" color="primary">
             <Toolbar>
-                <img src={logo} alt="logo" className={classes.logo} />
+                <Link to="/">
+                    <img src={logo} alt="logo" className={classes.logo} />
+                </Link>
                 <div className={classes.grow}/>
-                <Box m={2}>
-                    <Button component={ Link } to="/login" style={{borderRadius:50}} variant="outlined">Login</Button>
-                </Box>
-                <Button component={ Link } to="/register" style={{borderRadius:50}} variant="outlined">Registrarse</Button>
+                    <Button component={ Link } to="/login" style={buttonStyle} variant="outlined">Login</Button>
+                    <Button component={ Link } to="/register" style={buttonStyle} variant="outlined">Registrarse</Button>
             </Toolbar>
             </AppBar>
         </ThemeProvider>
