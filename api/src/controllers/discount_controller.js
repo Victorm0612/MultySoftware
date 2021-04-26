@@ -1,6 +1,6 @@
 import Discount from '../models/discount_model';
 
-export async function getDiscounts(req,res){
+export async function getDiscounts(req, res){
     try {
         const discounts = await Discount.findAll();
         res.json({
@@ -14,7 +14,7 @@ export async function getDiscounts(req,res){
     }
 };
 
-export async function getOneDiscount(req,res){
+export async function getOneDiscount(req, res){
     const { id } = req.params;
     try {
         const discount = await Discount.findOne({
@@ -58,7 +58,7 @@ export async function create(req, res){
     }
 };
 
-export async function updateDiscount(req,res){
+export async function updateDiscount(req, res){
     const { id } = req.params;
     const { title, dis_description, ini_date, final_date, discount_status, dis_value } = req.body;
 
@@ -89,7 +89,7 @@ export async function updateDiscount(req,res){
     })
 };
 
-export async function deleteDiscount(req,res){
+export async function deleteDiscount(req, res){
     const { id } = req.params;
     try{
         const deleteRowCount = Discount.destroy({

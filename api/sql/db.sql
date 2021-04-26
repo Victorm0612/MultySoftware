@@ -19,6 +19,9 @@ CREATE TABLE Payment(
     pay_description TEXT,
     payment_date DATE,
     pay_time TIME,
+    pay_type VARCHAR(255),
+    amount INTEGER,
+    card_number VARCHAR(255),
     pay_status BOOLEAN
 );
 -- en boolean 0 es falso, cualquier otro valor es true
@@ -30,25 +33,17 @@ CREATE TABLE Bank(
 
 DROP TABLE IF EXISTS Debit CASCADE;
 CREATE TABLE Debit(
-    payment_id INT PRIMARY KEY,
-    debit_name INT,
+    debit_number VARCHAR(255) PRIMARY KEY,
     debit_type VARCHAR(255),
     bank INT,
     CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
     CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
-DROP TABLE IF EXISTS Cash CASCADE;
-CREATE TABLE Cash(
-    payment_id INT PRIMARY KEY,
-    amount INT,
-    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-);
 
 DROP TABLE IF EXISTS Credit CASCADE;
 CREATE TABLE Credit(
-    payment_id SERIAL PRIMARY KEY,
-    credit_number INTEGER,
+    credit_number VARCHAR(255) PRIMARY KEY,
     approval_number INTEGER,
     bank INTEGER,
     fees_numbers INTEGER,
@@ -56,14 +51,14 @@ CREATE TABLE Credit(
     CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
-DROP TABLE IF EXISTS Domicile CASCADE;
-CREATE TABLE Domicile(
-    domicile_id SERIAL PRIMARY KEY,
-    domicile_name VARCHAR(255),
-    domicile_address VARCHAR(255),
+DROP TABLE IF EXISTS Restaurant CASCADE;
+CREATE TABLE Restaurant(
+    restaurant_id SERIAL PRIMARY KEY,
+    restaurant_name VARCHAR(255),
+    restaurant_address VARCHAR(255),
     phone VARCHAR(255),
     attention_time VARCHAR(255),
-    domicile_status BOOLEAN
+    restaurant_status BOOLEAN
 );
 
 DROP TABLE IF EXISTS Sale CASCADE;
@@ -72,11 +67,11 @@ CREATE TABLE Sale(
     sale_date DATE,
     sale_time TIME,
     docId INT,
-    domicile_id INT,
+    restaurant_id INT,
     sale_status BOOLEAN,
     --CONSTRAINT fkTipoDoc FOREIGN KEY (tipoDocId) REFERENCES Usuario(tipoDocumento),
     CONSTRAINT fkDocId FOREIGN KEY (docId) REFERENCES Users(document_id),
-    CONSTRAINT fkDomicile FOREIGN KEY (domicile_id) REFERENCES  Domicile(domicile_id)
+    CONSTRAINT fkRestaurant FOREIGN KEY (restaurant_id) REFERENCES  Restaurant(restaurant_id)
 );
 
 DROP TABLE IF EXISTS Discount CASCADE;
@@ -150,7 +145,7 @@ CREATE TABLE PromoItem(
 
 DROP TABLE IF EXISTS SaleItem CASCADE;
 CREATE TABLE SaleItem(
-    saleItem_number SERIAL PRIMARY KEY,
+    saleItem_id SERIAL PRIMARY KEY,
     sale_id INT,
     amount INT,
     totalIva INT,
