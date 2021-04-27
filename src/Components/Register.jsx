@@ -1,5 +1,23 @@
-import { Avatar, Grid, MenuItem, InputAdornment, Input, IconButton, Paper, Select, TextField, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Button } from '@material-ui/core';
+import { 
+    Avatar, 
+    Grid, 
+    MenuItem, 
+    InputAdornment, 
+    Input, 
+    IconButton, 
+    Paper, 
+    Select, 
+    TextField, 
+    FormControl, 
+    FormHelperText,
+    FormLabel, 
+    RadioGroup, 
+    FormControlLabel, 
+    Radio, 
+    Button, 
+    Typography } from '@material-ui/core';
 import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
+import {Link} from 'react-router-dom'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -191,6 +209,7 @@ const Register = () => {
                     </Grid>
                     <Grid align="start" item xs={6} style={textStyle} required>
                         <Input
+                            error={values.password === values.passwordConfirmed ? false : true}
                             id="passwordConfirmedField"
                             type={values.showPassword ? 'text' : 'password'}
                             value={values.passwordConfirmed}
@@ -207,12 +226,20 @@ const Register = () => {
                             </InputAdornment>
                             }
                         />
+                        <FormHelperText error={values.password === values.passwordConfirmed ? false : true}>{
+                        values.password === values.passwordConfirmed ? '' : (values.password === ''? '' : 'Las contraseñas no coinciden')}</FormHelperText>
                     </Grid>   
                     <Grid item xs={12}>
                         <Button type='submit' color='primary' variant='contained' style={{textTransform: 'none', margin: '50px'}}>
                           Registrarse
                         </Button>
-                    </Grid>                                          
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography>
+                        ¿Ya tienes una cuenta creada?
+                        <Link to='/login' style={{margin: '0 0 0 5px'}}>Iniciar Sesión</Link>
+                        </Typography>   
+                    </Grid>                                      
                 </Grid>
             </Paper>
         </Grid>
