@@ -6,3 +6,19 @@ npx sequelize-cli model:generate --name Domicile --attributes domicile_name:stri
 npx sequelize-cli model:generate --name Discount --attributes title:string,dis_description:text,ini_date:date,final_date:date,discount_status:boolean,dis_value:double
 npx sequelize-cli model:generate --name Category --attributes cat_name:string,cat_description:text,cat_status:boolean
 npx sequelize-cli model:generate --name Bank --attributes bank_name:string
+
+#Crear bd
+npx sequelize-cli db:create
+
+#Crear modelos
+npx sequelize-cli model:generate --name Bank --attributes bank_name:string
+
+#Migrar
+sequelize db:migrate
+
+#Crear seeders
+npx sequelize-cli seed:generate --name users_seed
+npx sequelize-cli db:seed:all
+
+#Cambios
+npx sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate
