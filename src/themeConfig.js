@@ -8,6 +8,11 @@ const theme  = createMuiTheme({
         dark: {
             main:'#212121',
         }
+    },
+    typography: {
+        button: {
+            textTransform: 'none'
+        }
     }
 })
 
