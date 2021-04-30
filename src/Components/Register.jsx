@@ -3,7 +3,8 @@ import {
     Grid, 
     MenuItem, 
     InputAdornment, 
-    Input, 
+    Input,
+    InputLabel, 
     IconButton, 
     Paper, 
     Select, 
@@ -37,17 +38,22 @@ const Register = () => {
         listGender: ["Masculino", "Femenino", "Otro"],
         gender: '',
         phone: '',
-        selectedDate: new Date('2021-04-26T21:11:54'),
+        selectedDate: new Date('2021-04-29T11:01:54'),
         email: '',
         password: '',
         passwordConfirmed: '',
         showPassword: false,
+        valid: false
 
 
     });
     //Methods
     const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
+    };
+
+    const changeDate = (prop) => (event) => {
+        setValues({ ...values, [prop]: event });
     };
 
     const handleClickShowPassword = () => {
@@ -57,6 +63,22 @@ const Register = () => {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    const registrar = () => {
+        const {firstName, lastName, type_id, document, gender, phone, selectedDate, email, password} = values
+        let newUser = {
+            firstName,
+            lastName,
+            type_id,
+            document,
+            gender,
+            phone,
+            selectedDate,
+            email,
+            password
+        }
+        console.log(newUser)
+    }
 
     const avatarStyle = {
         backgroundColor: 'green',
@@ -165,12 +187,12 @@ const Register = () => {
                     <KeyboardDatePicker
                         disableToolbar
                         variant="inline"
-                        format="MM/dd/yyyy"
+                        format="dd/MM/yyyy"
                         margin="normal"
                         id="dateField"
                         label="Fecha de nacimiento"
                         value={values.selectedDate}
-                        onChange={handleChange('selectedDate')}
+                        onChange={changeDate('selectedDate')}
                         KeyboardButtonProps={{
                             'aria-label': 'change date',
                         }}
@@ -188,7 +210,9 @@ const Register = () => {
                         />
                     </Grid>
                     <Grid align="start" item xs={6} style={textStyle} required>
+                    <InputLabel align="start" htmlFor="passwordConfirmedField" style={{margin: '20px 0 0 0'}}>Contraseña</InputLabel>                        
                     <Input
+                        required
                         id="passwordField"
                         type={values.showPassword ? 'text' : 'password'}
                         value={values.password}
@@ -208,7 +232,9 @@ const Register = () => {
                     />
                     </Grid>
                     <Grid align="start" item xs={6} style={textStyle} required>
+                        <InputLabel align="start" htmlFor="passwordConfirmedField" style={{margin: '20px 0 0 0'}}>Confirmar contraseña</InputLabel>                        
                         <Input
+                            required
                             error={values.password === values.passwordConfirmed ? false : true}
                             id="passwordConfirmedField"
                             type={values.showPassword ? 'text' : 'password'}
@@ -230,7 +256,13 @@ const Register = () => {
                         values.password === values.passwordConfirmed ? '' : (values.password === ''? '' : 'Las contraseñas no coinciden')}</FormHelperText>
                     </Grid>   
                     <Grid item xs={12}>
-                        <Button type='submit' color='primary' variant='contained' style={{textTransform: 'none', margin: '50px'}}>
+                        <Button 
+                            type='submit' 
+                            color='primary' 
+                            variant='contained'
+                            disabled = {!values.valid} 
+                            onSubmit={registrar} 
+                            style={{textTransform: 'none', margin: '50px'}}>
                           Registrarse
                         </Button>
                     </Grid>
