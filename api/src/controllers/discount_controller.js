@@ -1,8 +1,8 @@
-import Discount from '../models/discount_model';
+const models = require("../models/index");
 
 export async function getDiscounts(req, res){
     try {
-        const discounts = await Discount.findAll();
+        const discounts = await models.Discount.findAll();
         res.json({
             data: discounts
         })
@@ -17,9 +17,9 @@ export async function getDiscounts(req, res){
 export async function getOneDiscount(req, res){
     const { id } = req.params;
     try {
-        const discount = await Discount.findOne({
+        const discount = await models.Discount.findOne({
             where: {
-                discount_id: id
+                id: id
             }
         });
         res.json({
@@ -36,7 +36,7 @@ export async function getOneDiscount(req, res){
 export async function create(req, res){
     const { title, dis_description, ini_date, final_date, discount_status, dis_value } = req.body;
     try {
-        let newDiscount = await Discount.create({
+        let newDiscount = await models.Discount.create({
             title,
             dis_description,
             ini_date,
@@ -62,15 +62,15 @@ export async function updateDiscount(req, res){
     const { id } = req.params;
     const { title, dis_description, ini_date, final_date, discount_status, dis_value } = req.body;
 
-    const discountFound = await Discount.findAll({
+    const discountFound = await models.Discount.findAll({
         attributes: ['title','dis_description','ini_date','final_date','discount_status','dis_value'],
         where:{
-            discount_id: id
+            id: id
         }
     });
     if(discountFound.length > 0){
         discountFound.forEach(async discountFound => {
-            await Discount.update({
+            await models.Discount.update({
                 title,
                 dis_description,
                 ini_date,
@@ -79,7 +79,7 @@ export async function updateDiscount(req, res){
                 dis_value
             }, {
                 where: {
-                    discount_id: id
+                    id: id
                 }
             });
         })
@@ -92,9 +92,9 @@ export async function updateDiscount(req, res){
 export async function deleteDiscount(req, res){
     const { id } = req.params;
     try{
-        const deleteRowCount = Discount.destroy({
+        const deleteRowCount = models.Discount.destroy({
             where: {
-                discount_id: id
+                id: id
             }
         });
         res.json({            

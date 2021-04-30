@@ -1,16 +1,16 @@
 {
-    "development":{
-        "username": "postgres",
-        "password": "061299victor",
-        "database": "multysoftware",
-        "host": "localhost",
-        "dialect": "postgres"
-    },
-    "production":{
-        "username": "xthqbujzgktueh",
-        "password": "f75379b0e1cbd32856693320636af5f9c6bca8f44ce22b3c61939b591d15ae7d",
-        "database": "df2cma5dvbb2mv",
-        "host": "ec2-52-71-161-140.compute-1.amazonaws.com",
-        "dialect": "postgres"
-    }
+  "development":{
+      "username": "postgres",
+      "password": "061299victor",
+      "database": "multysoftware",
+      "host": "localhost",
+      "dialect": "postgres"
+  },
+  "production":{
+      "username": "xthqbujzgktueh",
+      "password": "f75379b0e1cbd32856693320636af5f9c6bca8f44ce22b3c61939b591d15ae7d",
+      "database": "df2cma5dvbb2mv",
+      "host": "ec2-52-71-161-140.compute-1.amazonaws.com",
+      "dialect": "postgres"
+  }
 }

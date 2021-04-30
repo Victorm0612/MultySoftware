@@ -1,9 +1,9 @@
-import User from '../models/user_model';
+const models = require("../models/index");
 import sequelize from 'sequelize'
 
 export async function getUsers(req, res){
     try {
-        const users = await User.findAll();
+        const users = await models.User.findAll();
         res.json({
             data: users
         })        
@@ -18,9 +18,9 @@ export async function getUsers(req, res){
 export async function getOneUser(req, res){
     const { id } = req.params;
     try {
-        const user = await User.findOne({
+        const user = await models.User.findOne({
             where: {
-                userId: id
+                id: id
             }
         });
         res.json({
@@ -35,7 +35,7 @@ export async function getOneUser(req, res){
 
 export async function getBirthdayUser(req, res){
     try {
-        const user = await User.findAll({
+        const user = await models.User.findAll({
             where: {
                 birthday: sequelize.where(sequelize.literal('extract(MONTH FROM birthday)'), '01')
             }
@@ -52,7 +52,7 @@ export async function getBirthdayUser(req, res){
 
 export async function getClientUser(req, res){
     try {
-        const user = await User.findAll({
+        const user = await models.User.findAll({
             where: {
                user_type: 1 //Cliente 1, Admin 2, trabajador 3
             }
@@ -69,9 +69,9 @@ export async function getClientUser(req, res){
 
 export async function create(req, res){
 
-    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status, email, password } = req.body;
     try {
-        let newUser = await User.create({
+        let newUser = await models.User.create({
             document_type,
             document_id,
             first_name,
@@ -80,7 +80,9 @@ export async function create(req, res){
             phone,
             birthday,
             user_type,
-            user_status
+            user_status,
+            email,
+            password
         });
         if(newUser){
             res.json({
@@ -98,16 +100,16 @@ export async function create(req, res){
 
 export async function updateUser(req, res){
     const { id } = req.params;
-    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status } = req.body;
-    const userFound = await User.findAll({
+    const { document_type, document_id, first_name, last_name, gender, phone, birthday, user_type, user_status, email, password } = req.body;
+    const userFound = await models.User.findAll({
         attributes: ['document_type','document_id', 'first_name', 'last_name', 'gender', 'phone', 'birthday', 'user_type', 'user_status'],
         where:{
-            userId: id
+            id: id
         }
     });
     if(userFound.length > 0){
         userFound.forEach(async userFound  => {
-            await User.update({
+            await models.User.update({
                 document_type,
                 document_id, 
                 first_name, 
@@ -116,10 +118,12 @@ export async function updateUser(req, res){
                 phone, 
                 birthday,
                 user_type,
-                user_status
+                user_status,
+                email,
+                password
             },{
                 where: {
-                    userId: id
+                    id: id
                 }
             });
         })
@@ -132,9 +136,9 @@ export async function updateUser(req, res){
 export async function deleteUser(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = User.destroy({
+        const deleteRowCount = models.User.destroy({
             where: {
-                userId: id
+                id: id
             }
         });
         res.json({

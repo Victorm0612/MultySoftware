@@ -1,8 +1,8 @@
-import Product from '../models/product_model';
+const models = require("../models/index");
 
 export async function getProducts(req, res){
     try {
-        const products = await Product.findAll();
+        const products = await models.Product.findAll();
         res.json({
             data: products
         })
@@ -16,7 +16,7 @@ export async function getProducts(req, res){
 
 export async function getProductsByName(req, res){
     try {
-        const products = await Product.findAll({
+        const products = await models.Product.findAll({
             where: {
                 pro_description: 'Un producto'
             }
@@ -35,9 +35,9 @@ export async function getProductsByName(req, res){
 export async function getOneProduct(req, res){
     const { id } = req.params;
     try {
-        const product = await Product.findOne({
+        const product = await models.Product.findOne({
             where: {
-                product_id: id
+                id: id
             }
         });
         res.json({
@@ -54,7 +54,7 @@ export async function getOneProduct(req, res){
 export async function create(req, res){
     const { pro_description, pro_image, price, category_id, discount_id, pro_status, percentaje_Iva } = req.body;
     try {
-        let newProduct = await Product.create({
+        let newProduct = await models.Product.create({
             pro_description,
             pro_image,
             price,
@@ -81,15 +81,15 @@ export async function updateProduct(req, res){
     const { id } = req.params;
     const { pro_description, pro_image, price, category_id, discount_id, pro_status, percentaje_Iva } = req.body;
 
-    const productFound = await Product.findAll({
+    const productFound = await models.Product.findAll({
         attributes: ['pro_description','pro_image','price','category_id','discount_id','pro_status','percentaje_Iva'],
         where: {
-            product_id: id
+            id: id
         }
     });
     if(productFound.length > 0){
         productFound.forEach(async productFound => {
-            await Product.update({
+            await models.Product.update({
                 pro_description,
                 pro_image,
                 price,
@@ -99,7 +99,7 @@ export async function updateProduct(req, res){
                 percentaje_Iva
             }, {
                 where: {
-                    product_id: id
+                    id: id
                 }
             });
         })
@@ -112,9 +112,9 @@ export async function updateProduct(req, res){
 export async function deleteProduct(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = Product.destroy({
+        const deleteRowCount = models.Product.destroy({
             where: {
-                product_id: id
+                id: id
             }
         });
         res.json({

@@ -1,9 +1,8 @@
-import payment from '../models/payment_model';
-import Payment from '../models/payment_model';
+const models = require("../models/index");
 
 export async function getPayment(req, res){
     try {
-        const payments = await Payment.findAll();
+        const payments = await models.Payment.findAll();
         res.json({
             data: payments
         })
@@ -18,9 +17,9 @@ export async function getPayment(req, res){
 export async function getOnePayment(req, res){
     const { id } = req.params;
     try {
-        const payment = await Payment.findOne({
+        const payment = await models.Payment.findOne({
             where: {
-                payment_id: id
+                id: id
             }
         });
         res.json({
@@ -37,7 +36,7 @@ export async function getOnePayment(req, res){
 export async function create(req, res){
     const { pay_description, payment_date, pay_time, pay_status } = req.body;
     try {
-        let newPayment = await Payment.create({
+        let newPayment = await models.Payment.create({
             pay_description,
             payment_date,
             pay_time,
@@ -61,22 +60,22 @@ export async function updatePayment(req, res){
     const { id } = req.params;
     const { pay_description, payment_date, pay_time, pay_status } = req.body;
 
-    const paymentFound = await Payment.findAll({
+    const paymentFound = await models.Payment.findAll({
         attributes: ['pay_description','payment_date','pay_time','pay_status'],
         where: {
-            payment_id: id
+            id: id
         }
     });
     if(paymentFound.length > 0){
         paymentFound.forEach(async paymentFound =>{
-            await Payment.update({
+            await models.Payment.update({
                 pay_description,
                 payment_date,
                 pay_time,
                 pay_status
             }, {
                 where: {
-                    payment_id: id
+                    id: id
                 }
             });
         })
@@ -89,9 +88,9 @@ export async function updatePayment(req, res){
 export async function deletePayment(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = Payment.destroy({
+        const deleteRowCount = models.Payment.destroy({
             where: {
-                payment_id: id
+                id: id
             }
         });
         res.json({

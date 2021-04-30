@@ -1,8 +1,8 @@
-import Domicile from '../models/domicile_model';
+const models = require("../models/index");
 
 export async function getDomiciles(req, res){
     try {
-        const domiciles = await Domicile.findAll();
+        const domiciles = await models.Domicile.findAll();
         res.json({
             data: domiciles
         })
@@ -17,9 +17,9 @@ export async function getDomiciles(req, res){
 export async function getOneDomicile(req, res){
     const { id } = req.params;
     try {
-        const domicile = await Domicile.findOne({
+        const domicile = await models.Domicile.findOne({
             where: { 
-                domicile_id: id
+                id: id
             }
         });
         res.json({
@@ -36,7 +36,7 @@ export async function getOneDomicile(req, res){
 export async function create(req, res){
     const { domicile_name, domicile_address, phone, attention_time, domicile_status  } = req.body;
     try {
-        let newDomicile = await Domicile.create({
+        let newDomicile = await models.Domicile.create({
             domicile_name,
             domicile_address,
             phone,
@@ -61,15 +61,15 @@ export async function updateDomicile(req, res){
     const { id } = req.params;
     const { domicile_name, domicile_address, phone, attention_time, domicile_status } = req.body;
 
-    const domicileFound = await Domicile.findAll({
+    const domicileFound = await models.Domicile.findAll({
         attributes: ['domicile_name', 'domicile_address', 'phone', 'attention_time', 'domicile_status'],
         where: {
-            domicile_id: id
+            id: id
         }
     });
     if(domicileFound.length > 0){
         domicileFound.forEach(async domicileFound => {
-            await Domicile.update({
+            await models.Domicile.update({
                 domicile_name,
                 domicile_address,
                 phone,
@@ -77,7 +77,7 @@ export async function updateDomicile(req, res){
                 domicile_status
             }, {
                 where: {
-                    domicile_id: id
+                    id: id
                 }
             });
         })
@@ -90,9 +90,9 @@ export async function updateDomicile(req, res){
 export async function deleteDomicile(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = Domicile.destroy({
+        const deleteRowCount = models.Domicile.destroy({
             where: {
-                domicile_id: id
+                id: id
             }
         });
         res.json({

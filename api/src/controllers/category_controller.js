@@ -1,8 +1,8 @@
-import Category from '../models/category_model';
+const models = require("../models/index");
 
 export async function getCategorys(req, res){
     try {
-        const categorys = await Category.findAll();
+        const categorys = await models.Category.findAll();
         res.json({
             data: categorys
         })
@@ -17,9 +17,9 @@ export async function getCategorys(req, res){
 export async function getOneCategory(req,res){
     const { id } = req.params;
     try {
-        const category = await Category.findOne({
+        const category = await models.Category.findOne({
             where: {
-                category_id: id
+                id: id
             }
         });
         res.json({
@@ -35,7 +35,7 @@ export async function getOneCategory(req,res){
 export async function create(req,res){
     const { cat_name, cat_description, cat_status } = req.body;
     try {
-        let newCategory = await Category.create({
+        let newCategory = await models.Category.create({
             cat_name,
             cat_description,
             cat_status
@@ -58,21 +58,21 @@ export async function updateCategory(req,res){
     const { id } = req.params;
     const { cat_name, cat_description, cat_status } = req.body;
 
-    const categoryFound = await Category.findAll({
+    const categoryFound = await models.Category.findAll({
         attributes: ['cat_name','cat_description','cat_status'],
         where:{
-            category_id: id
+            id: id
         }
     });
     if(categoryFound.length > 0){
         categoryFound.forEach(async categoryFound => {
-            await Category.update({
+            await models.Category.update({
                 cat_name,
                 cat_description,
                 cat_status
             },{
                 where: {
-                    category_id: id
+                    id: id
                 }
             });
         })
@@ -85,9 +85,9 @@ export async function updateCategory(req,res){
 export async function deleteCategory(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = Category.destroy({
+        const deleteRowCount = models.Category.destroy({
             where:{
-                category_id: id
+                id: id
             }
         });
         res.json({

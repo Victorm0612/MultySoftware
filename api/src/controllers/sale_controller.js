@@ -1,8 +1,8 @@
-import Sale from '../models/sale_model';
+const models = require("../models/index");
 
 export async function getSales(req,res){
     try {
-        const sales = await Sale.findAll();
+        const sales = await models.Sale.findAll();
         res.json({
             data: sales
         })
@@ -17,9 +17,9 @@ export async function getSales(req,res){
 export async function getOneSale(req,res){
     const { id } = req.params;
     try {
-        const sale = await Sale.findOne({
+        const sale = await models.Sale.findOne({
             where: {
-                sale_id: id
+                id: id
             }
         });
         res.json({
@@ -34,10 +34,10 @@ export async function getOneSale(req,res){
 };
 
 export async function create(req, res){
-    const { sale_id, sale_date, sale_time, docId, domicile_id, sale_status } = req.body;
+    const { id, sale_date, sale_time, docId, domicile_id, sale_status } = req.body;
     try {
-        let newSale = await Sale.create({
-            sale_id,
+        let newSale = await models.Sale.create({
+            id,
             sale_date,
             sale_time,
             docId,
@@ -62,15 +62,15 @@ export async function updateSale(req, res){
     const { id } = req.params;
     const { sale_date, sale_time, docId, domicile_id, sale_status } = req.body;
 
-    const saleFound = await Sale.findAll({
+    const saleFound = await models.Sale.findAll({
         attribute: ['sale_date','sale_time','docId','domicile_id','sale_status'],
         where:{
-            sale_id: id
+            id: id
         }
     });
     if(saleFound.length > 0){
         saleFound.forEach(async saleFound => {
-            await Sale.update({
+            await models.Sale.update({
                 sale_date,
                 sale_time,
                 docId,
@@ -78,7 +78,7 @@ export async function updateSale(req, res){
                 sale_status
             },{
                 where: {
-                    sale_id: id
+                    id: id
                 }
             });
         })
@@ -91,9 +91,9 @@ export async function updateSale(req, res){
 export async function deleteSale(req, res){
     const { id } = req.params;
     try {
-        const deleteRowCount = Sale.destroy({
+        const deleteRowCount = models.Sale.destroy({
             where: {
-                sale_id: id
+                id: id
             }
         });
         res.json({
