@@ -91,8 +91,17 @@ export async function create(req, res){
             });
         }
     } catch (error) {
+        let errorMessage = `${error}`;
+        let flag = errorMessage.substring(errorMessage.indexOf('«') + 1, errorMessage.length-1);
+
+        const options ={
+            'Users_document_id_key' : 'Su documento de identidad ya se encuentra registrado en nuestra página web.',
+            'Users_email_key' : 'Su email ya se encuentra registrado en nuestra página web.',
+            'default': `Algo salió mal:  ${error}`,
+        }
+
         res.status(500).json({
-            message: 'Something goes wrong '+ error,
+            message: options[flag],
             data: {}
         })
     }
