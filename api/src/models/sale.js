@@ -11,14 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.SaleItem, { foreignKey: 'sale_id', sourceKey: 'id' })
+      models.SaleItem.belongsToOne(models.Sale, { foreignKey: 'sale_id', sourceKey: 'id'})
     }
   };
   Sale.init({
     sale_date: DataTypes.DATE,
     sale_time: DataTypes.TIME,
     docId: DataTypes.INTEGER,
-    domicile_id: DataTypes.INTEGER,
-    sale_status: DataTypes.BOOLEAN
+    restaurant_id: DataTypes.INTEGER,
+    sale_status: DataTypes.BOOLEAN    
   }, {
     sequelize,
     modelName: 'Sale',

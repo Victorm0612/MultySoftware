@@ -1,29 +1,41 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Payments', {
+    await queryInterface.createTable('Bills', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      pay_description: {
-        type: Sequelize.TEXT
-      },
-      pay_date: {
-        type: Sequelize.DATE
-      },
-      pay_time: {
-        type: Sequelize.TIME
-      },
-      pay_type: {
-        type: Sequelize.STRING
-      },
-      amount: {
+      nit: {
         type: Sequelize.INTEGER
       },
-      pay_status: {
+      sale_id: {
+        type: Sequelize.INTEGER
+      },
+      payment_id: {
+        type: Sequelize.INTEGER
+      },
+      bill_time: {
+        type: Sequelize.TIME
+      },
+      bill_date: {
+        type: Sequelize.DATE
+      },
+      subtotal: {
+        type: Sequelize.DOUBLE
+      },
+      totalIva: {
+        type: Sequelize.DOUBLE
+      },
+      total_discount: {
+        type: Sequelize.DOUBLE
+      },
+      total_payment: {
+        type: Sequelize.DOUBLE
+      },
+      bill_status: {
         type: Sequelize.BOOLEAN
       },
       createdAt: {
@@ -39,6 +51,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Payments');
+    await queryInterface.dropTable('Bills');
   }
 };

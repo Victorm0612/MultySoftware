@@ -11,12 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.Credit, { foreignKey: 'payment_id', sourceKey: 'id' })
+      models.Credit.belongsToMany(models.Payment, { foreignKey: 'payment_id', sourceKey: 'id' })
+
+      this.hasOne(models.Debit, { foreignKey: 'payment_id', sourceKey: 'id' })
+      models.Debit.belongsToMany(models.Payment, { foreignKey: 'payment_id', sourceKey: 'id'})
+      
     }
   };
   Payment.init({
     pay_description: DataTypes.TEXT,
     pay_date: DataTypes.DATE,
     pay_time: DataTypes.TIME,
+    pay_type: DataTypes.STRING,
+    amount: DataTypes.INTEGER,
     pay_status: DataTypes.BOOLEAN
   }, {
     sequelize,
