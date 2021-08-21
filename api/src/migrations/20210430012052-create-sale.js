@@ -17,7 +17,7 @@ module.exports = {
       docId: {
         type: Sequelize.INTEGER
       },
-      domicile_id: {
+      restaurant_id: {
         type: Sequelize.INTEGER
       },
       sale_status: {

@@ -1,4 +1,5 @@
 'use strict';
+const { TransferWithinAStationOutlined } = require('@material-ui/icons');
 const {
   Model
 } = require('sequelize');
@@ -11,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasMany(models.IngredientItem, { foreignKey: 'ingredient_id', sourceKey: 'id'})
+      models.IngredientItem.hasMany(models.Product, { foreigntKey: 'ingredient_id', sourceKey: 'id'} )
+
+      this.hasMany(models.PromoItem, { foreignKey: 'product_id', sourceKey: 'id'})
+      models.PromoItem.hasMany(models.Product, { foreigntKey: 'product_id', sourceKey: 'id'} )
     }
   };
   Product.init({

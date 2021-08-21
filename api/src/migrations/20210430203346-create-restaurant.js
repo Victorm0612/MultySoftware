@@ -1,29 +1,26 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Payments', {
+    await queryInterface.createTable('Restaurants', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      pay_description: {
-        type: Sequelize.TEXT
-      },
-      pay_date: {
-        type: Sequelize.DATE
-      },
-      pay_time: {
-        type: Sequelize.TIME
-      },
-      pay_type: {
+      restaurant_name: {
         type: Sequelize.STRING
       },
-      amount: {
-        type: Sequelize.INTEGER
+      restaurant_address: {
+        type: Sequelize.STRING
       },
-      pay_status: {
+      phone: {
+        type: Sequelize.STRING
+      },
+      attention_time: {
+        type: Sequelize.STRING
+      },
+      restaurant_status: {
         type: Sequelize.BOOLEAN
       },
       createdAt: {
@@ -39,6 +36,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Payments');
+    await queryInterface.dropTable('Restaurants');
   }
 };

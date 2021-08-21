@@ -36,7 +36,7 @@ CREATE TABLE Debit(
     debit_number VARCHAR(255) PRIMARY KEY,
     debit_type VARCHAR(255),
     bank INT,
-    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    CONSTRAINT fkPayment FOREIGN KEY (debit_number) REFERENCES Payment(payment_id),
     CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE Credit(
     approval_number INTEGER,
     bank INTEGER,
     fees_numbers INTEGER,
-    CONSTRAINT fkPayment FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
+    CONSTRAINT fkPayment FOREIGN KEY (credit_number ) REFERENCES Payment(payment_id),
     CONSTRAINT fkBank FOREIGN KEY (bank) REFERENCES Bank(bank_id)
 );
 
