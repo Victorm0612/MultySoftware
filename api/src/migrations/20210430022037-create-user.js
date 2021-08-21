@@ -12,6 +12,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       document_id: {
+        unique: true,
         type: Sequelize.INTEGER
       },
       first_name: {

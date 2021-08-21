@@ -1,5 +1,5 @@
 import express, { json } from 'express';
-
+import cors from 'cors';
 //importing routes
 import categoryRoutes from './routes/category_routes';
 import discountRoutes from './routes/discount_routes';
@@ -13,6 +13,7 @@ const app = express();
 
 //middlewares
 app.use(json());
+app.use(cors());
 
 //routes
 app.use('/api/category',categoryRoutes);
