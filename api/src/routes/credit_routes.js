@@ -1,3 +1,4 @@
+import { verifyToken } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
@@ -5,6 +6,6 @@ import { getCredits, getOneCredit, create, updateCredit, deleteCredit } from '..
 
 router.get('/', getCredits);
 router.get('/:id', getOneCredit);
-router.post('/', create);
-router.put('/:id', updateCredit);
-router.delete('/:id', deleteCredit);
+router.post('/', verifyToken, create);
+router.put('/:id', verifyToken, updateCredit);
+router.delete('/:id', verifyToken, deleteCredit);

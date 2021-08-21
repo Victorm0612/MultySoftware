@@ -82,7 +82,7 @@ export async function create(req, res){
             user_type,
             user_status,
             email,
-            password
+            password: await models.User.encryptPassword(password)
         });
         if(newUser){
             res.json({

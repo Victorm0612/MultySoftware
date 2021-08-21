@@ -1,6 +1,6 @@
 const models = require("../models/index");
 
-export async function getPayment(req, res){
+export async function getPayments(req, res){
     try {
         const payments = await models.Payment.findAll();
         res.json({

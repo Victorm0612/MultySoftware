@@ -1,3 +1,4 @@
+import { verifyToken, verifyBelongsToUser } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
@@ -8,8 +9,8 @@ router.get('/', getUsers);
 router.get('/birthday', getBirthdayUser);
 router.get('/client', getClientUser);
 router.get('/:id', getOneUser);
-router.post('/register', create);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.post('/register', verifyToken, create);
+router.put('/:id', verifyBelongsToUser, updateUser);
+router.delete('/:id', verifyBelongsToUser, deleteUser);
 
 export default router;

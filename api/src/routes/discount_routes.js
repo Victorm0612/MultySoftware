@@ -1,3 +1,4 @@
+import { verifyToken } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
@@ -5,8 +6,8 @@ import { create, deleteDiscount, getOneDiscount, getDiscounts, updateDiscount } 
 
 router.get('/', getDiscounts);
 router.get('/:id', getOneDiscount);
-router.post('/', create),
-router.put('/:id', updateDiscount);
-router.delete('/:id', deleteDiscount);
+router.post('/', verifyToken, create),
+router.put('/:id', verifyToken, updateDiscount);
+router.delete('/:id', verifyToken, deleteDiscount);
 
 export default router;

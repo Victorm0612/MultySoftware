@@ -1,3 +1,4 @@
+import { verifyToken } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
@@ -5,8 +6,8 @@ import { create, deleteSale, getOneSale, getSales, updateSale } from '../control
 
 router.get('/', getSales);
 router.get('/:id', getOneSale);
-router.post('/', create);
-router.put('/:id', updateSale);
-router.delete('/:id', deleteSale);
+router.post('/', verifyToken, create);
+router.put('/:id', verifyToken, updateSale);
+router.delete('/:id', verifyToken, deleteSale);
 
 export default router;
