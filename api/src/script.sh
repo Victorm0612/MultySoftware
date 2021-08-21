@@ -49,4 +49,4 @@ npx sequelize-cli db:seed:all
 npx sequelize-cli db:seed:undo:all
 
 #Cambios
-npx sequelize-cli db:migrate:undo:all and npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate
