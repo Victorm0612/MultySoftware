@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 'use strict';
 const {
   Model
@@ -14,7 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Sale, { foreignKey: 'docId', sourceKey: 'document_id'})
       models.Sale.belongsTo(models.User, { foreignKey: 'docId', sourceKey: 'document_id' }) 
     }
+
   };
+
   User.init({
     document_type: DataTypes.INTEGER,
     document_id: DataTypes.INTEGER,
@@ -31,5 +35,17 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
   });
+
+  
+
+  User.encryptPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10)
+    return await bcrypt.hash(password, salt)
+  }
+  
+  User.comparePassword = async(password, receivedPassword) => {
+    return await bcrypt.compare(password, receivedPassword)
+  }
+
   return User;
 };
