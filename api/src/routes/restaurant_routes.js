@@ -1,13 +1,13 @@
-import { verifyToken } from '../middlewares'
+import { verifyToken, verifyAccess } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
 import { getRestaurants, getOneRestaurant, create, updateRestaurant, deleteRestaurant } from '../controllers/restaurant_controller'
 
-router.get('/', getRestaurants);
-router.get('/:id', getOneRestaurant);
-router.post('/', verifyToken, create);
-router.put('/:id', verifyToken, updateRestaurant);
-router.delete('/:id', verifyToken, deleteRestaurant);
+router.get('/', verifyToken, getRestaurants);
+router.get('/:id', verifyToken, getOneRestaurant);
+router.post('/', [verifyToken, verifyAccess], create);
+router.put('/:id', [verifyToken, verifyAccess], updateRestaurant);
+router.delete('/:id', [verifyToken, verifyAccess], deleteRestaurant);
 
 export default router;

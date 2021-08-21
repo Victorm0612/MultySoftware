@@ -1,25 +1,22 @@
-import { verifyToken, verifyBelongsToUser } from "../middlewares";
+import { verifyToken, verifyBelongsToUser, verifyAccess } from "../middlewares";
 import { Router } from "express";
-import { verifyToken } from "../jwt/functions";
 const router = Router();
 
 import {
   create,
   deleteUser,
   getBirthdayUser,
-  getClientUser,
   getOneUser,
   getUsers,
   updateUser,
 } from "../controllers/user_controller";
 
 //   /api/users/..
-router.get("/", getUsers);
-router.get("/birthday", getBirthdayUser);
-router.get("/client", getClientUser);
-router.get("/:id", getOneUser);
-router.post("/register", verifyToken, create);
-router.put("/:id", verifyBelongsToUser, updateUser);
-router.delete("/:id", verifyBelongsToUser, deleteUser);
+router.get("/", [verifyToken, verifyAccess], getUsers);
+router.get("/birthday", [verifyToken, verifyAccess], getBirthdayUser);
+router.get("/:id", [verifyToken, verifyBelongsToUser], getOneUser);
+router.post("/register", [verifyToken, verifyAccess], create);
+router.put("/:id", [verifyToken, verifyAccess], updateUser);
+router.delete("/:id", [verifyToken, verifyAccess], deleteUser);
 
 export default router;
