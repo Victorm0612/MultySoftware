@@ -1,4 +1,6 @@
-"use strict";
+import bcrypt from "bcryptjs";
+
+("use strict");
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -19,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   User.init(
     {
       document_type: DataTypes.INTEGER,
@@ -38,5 +41,15 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
+
+  User.encryptPassword = async (password) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  };
+
+  User.comparePassword = async (password, receivedPassword) => {
+    return await bcrypt.compare(password, receivedPassword);
+  };
+
   return User;
 };

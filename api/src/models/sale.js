@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasOne(models.SaleItem, { foreignKey: 'sale_id', sourceKey: 'id' })
-      models.SaleItem.belongsToOne(models.Sale, { foreignKey: 'sale_id', sourceKey: 'id'})
+      models.SaleItem.belongsTo(models.Sale, { foreignKey: 'sale_id', sourceKey: 'id'})
     }
   };
   Sale.init({

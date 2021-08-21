@@ -12,10 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.hasOne(models.Credit, { foreignKey: 'payment_id', sourceKey: 'id' })
-      models.Credit.belongsToMany(models.Payment, { foreignKey: 'payment_id', sourceKey: 'id' })
+      models.Credit.belongsToMany(models.Payment, { through: 'CreditPayment'})
 
       this.hasOne(models.Debit, { foreignKey: 'payment_id', sourceKey: 'id' })
-      models.Debit.belongsToMany(models.Payment, { foreignKey: 'payment_id', sourceKey: 'id'})
+      models.Debit.belongsToMany(models.Payment, { through: 'DebitPayment'})
       
     }
   };

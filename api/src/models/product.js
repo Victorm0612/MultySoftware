@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.IngredientItem, { foreignKey: 'ingredient_id', sourceKey: 'id'})
-      models.IngredientItem.hasMany(models.Product, { foreigntKey: 'ingredient_id', sourceKey: 'id'} )
+      this.hasMany(models.Ingredient, { as: 'IngredientItem' })
+      //models.IngredientItem.hasMany(models.Product, { foreigntKey: 'ingredient_id', sourceKey: 'id'} )
 
-      this.hasMany(models.PromoItem, { foreignKey: 'product_id', sourceKey: 'id'})
-      models.PromoItem.hasMany(models.Product, { foreigntKey: 'product_id', sourceKey: 'id'} )
+      this.hasMany(models.Promo, { as: 'PromoItem' })
+      //models.PromoItem.hasMany(models.Product, { foreigntKey: 'product_id', sourceKey: 'id'} )
     }
   };
   Product.init({

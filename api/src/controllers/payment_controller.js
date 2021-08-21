@@ -1,5 +1,20 @@
 const models = require("../models/index");
 
+<<<<<<< HEAD
+export async function getPayments(req, res){
+    try {
+        const payments = await models.Payment.findAll();
+        res.json({
+            data: payments
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something goes wrong '+ error,
+            data: {}
+        }) 
+    }
+};
+=======
 export async function getPayment(req, res) {
   try {
     const payments = await models.Payment.findAll();
@@ -13,6 +28,7 @@ export async function getPayment(req, res) {
     });
   }
 }
+>>>>>>> develop
 
 export async function getOnePayment(req, res) {
   const { id } = req.params;

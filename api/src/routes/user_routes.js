@@ -1,19 +1,22 @@
-import { Router } from 'express';
-import { verifyToken } from '../jwt/functions';
+import { verifyToken, verifyBelongsToUser, verifyAccess } from "../middlewares";
+import { Router } from "express";
 const router = Router();
 
-import { login, refresh_token, create, deleteUser, getBirthdayUser, getClientUser, getOneUser, getUsers, updateUser } from '../controllers/user_controller';
+import {
+  create,
+  deleteUser,
+  getBirthdayUser,
+  getOneUser,
+  getUsers,
+  updateUser,
+} from "../controllers/user_controller";
 
 //   /api/users/..
-
-router.post('/login', login);
-router.post('/refresh', verifyToken, refresh_token);
-router.get('/', verifyToken, getUsers);
-router.get('/birthday', verifyToken, getBirthdayUser);
-router.get('/client', verifyToken, getClientUser);
-router.get('/:id', verifyToken, getOneUser);
-router.post('/register', create);
-router.put('/:id', verifyToken, updateUser);
-router.delete('/:id', verifyToken, deleteUser);
+router.get("/", [verifyToken, verifyAccess], getUsers);
+router.get("/birthday", [verifyToken, verifyAccess], getBirthdayUser);
+router.get("/:id", [verifyToken, verifyBelongsToUser], getOneUser);
+router.post("/register", [verifyToken, verifyAccess], create);
+router.put("/:id", [verifyToken, verifyAccess], updateUser);
+router.delete("/:id", [verifyToken, verifyAccess], deleteUser);
 
 export default router;
