@@ -2,13 +2,14 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
   padding: 0.3rem 0.5rem;
   background-color: white;
   position: sticky;
   z-index: 1;
 }
 
-.navbar div {
+.navbar__logo {
   margin: 0.5rem 0.5rem;
 }
 
@@ -24,14 +25,14 @@
   margin: 0;
 }
 
-.navbar li {
+.links {
   margin: 0 0.5rem;
   background: linear-gradient(315deg, #ff4e00 0%, #ec8005 74%);
   padding: 0.5rem 1rem;
   border-radius: 30px;
 }
 
-.navbar li:hover {
+.links:hover {
   background: #ff4e00;
 }
 
@@ -46,4 +47,8 @@
   color: white;
   stroke-width: 4px;
   cursor: pointer;
+}
+
+.navbar button {
+  margin: 0;
 }

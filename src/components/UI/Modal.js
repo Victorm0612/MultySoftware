@@ -1,16 +1,9 @@
 import Card from "./Card";
 import classes from "./Modal.module.css";
-const Modal = () => {
+const Modal = (props) => {
   return (
-    <div className={classes.modal}>
-      <Card>
-        <h1>Carro de compras</h1>
-        <ul>
-          <li>Pollo</li>
-          <li>Pollo</li>
-          <li>Pollo</li>
-        </ul>
-      </Card>
+    <div className={classes.modal} onClick={props.closeModal}>
+      <Card>{props.children}</Card>
     </div>
   );
 };

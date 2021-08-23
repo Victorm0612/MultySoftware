@@ -1,0 +1,23 @@
+ul {
+  margin: 2rem 0;
+  list-style: none;
+}
+
+.list-product {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+}
+
+.list-product div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-product__amount button {
+  margin: 0 0.5rem;
+  margin-bottom: 0.5rem;
+  height: 1rem;
+  font-weight: 900;
+}

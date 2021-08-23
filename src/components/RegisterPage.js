@@ -36,6 +36,12 @@ const RegisterPage = () => {
             minLength="8"
             min="0"
           />
+          <label htmlFor="gender__input">Género</label>
+          <select required id="gender__input">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+            <option value="O">Otro</option>
+          </select>
           <label htmlFor="email__input">Correo electrónico</label>
           <input required id="email__input" type="email" />
           <label htmlFor="password__input">Contraseña</label>
@@ -49,6 +55,16 @@ const RegisterPage = () => {
             type="password"
             minLength="8"
           />
+          <label htmlFor="phone__input">Teléfono</label>
+          <input
+            required
+            id="phone__input"
+            type="number"
+            min="0"
+            minLength="10"
+          />
+          <label htmlFor="birthday__input">Fecha de Nacimiento</label>
+          <input required id="birthday__input" type="date" min="2003-08-22" />
           <Button submitFor="submit">Registrarse</Button>
         </form>
         <p>

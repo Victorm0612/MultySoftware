@@ -6,8 +6,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10;
+  opacity: 1;
+  transition: all ease 1s;
 }
 
 .modal h1 {
   font-weight: bold;
+  text-align: center;
 }
