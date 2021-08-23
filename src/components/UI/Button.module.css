@@ -1,0 +1,11 @@
+.button {
+  background: linear-gradient(315deg, #ff4e00 0%, #ec8005 74%);
+  padding: 0.7rem 1rem;
+  margin-top: 1rem;
+  border-radius: 30px;
+  border: none;
+  color: white;
+  font-weight: 700;
+  max-width: 15rem;
+  align-self: center;
+}
