@@ -17,7 +17,7 @@ const NavBar = (props) => {
           <Link to="/register">Registrarse</Link>
         </li>
         <li>
-          <Button action={props.openCart}>
+          <Button action={props.openModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

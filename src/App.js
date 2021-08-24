@@ -6,18 +6,24 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import Cart from "./components/Cart/Cart";
+import Modal from "./components/UI/Modal";
+
 const App = () => {
   const [show, setShow] = useState(false);
-  const openCart = () => {
+  const openModal = () => {
     setShow(true);
   };
-  const closeCart = () => {
+  const closeModal = () => {
     setShow(false);
   };
   return (
     <Fragment>
-      {show && <Cart openCart={openCart} closeCart={closeCart} />}
-      <NavBar openCart={openCart} closeCart={closeCart} />
+      {show && (
+        <Modal show={show}>
+          <Cart closeModal={closeModal} />
+        </Modal>
+      )}
+      <NavBar openModal={openModal} />
       <Switch>
         <Route path="/" exact>
           <Home />
