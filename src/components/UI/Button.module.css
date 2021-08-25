@@ -11,3 +11,8 @@
   display: inline-flex;
   align-items: center;
 }
+
+.button[disabled] {
+  cursor: not-allowed;
+  background: #ccc;
+}

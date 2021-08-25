@@ -37,5 +37,9 @@
   margin: 0.5rem 0;
   border-radius: 10px;
   outline: none !important;
-  border: 2px solid rgb(228, 56, 3);
+  border: 2px solid rgb(230, 155, 17);
+}
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
 }
