@@ -13,19 +13,10 @@ const InputForm = (props) => {
     }
   };
 
-  /*   const isLetter = function (evt) {
-    evt = evt ? evt : window.event;
-    var charCode = evt.which ? evt.which : evt.keyCode;
-    if ((charCode < 97 || charCode > 122) && (charCode < 65 || charCode > 90)) {
-      evt.preventDefault();
-    } else {
-      return true;
-    }
-  };
- */
   const validInputClasses = (hasError) => {
     return hasError ? classes.error_input : null;
   };
+
   return (
     <Fragment>
       <label htmlFor={props.id}>{props.labelMessage}</label>
@@ -40,7 +31,11 @@ const InputForm = (props) => {
         onKeyPress={props.keyPress && isNumber}
       />
       {props.inputHasError && (
-        <p className={classes.error_message}>{props.errorMessage}</p>
+        <p className={classes.error_message}>
+          {props.checkPassword
+            ? "Las contraseñas deben coincidir."
+            : props.errorMessage}
+        </p>
       )}
     </Fragment>
   );

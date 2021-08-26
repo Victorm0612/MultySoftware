@@ -12,31 +12,54 @@
   font-weight: bold;
   align-self: center;
   margin: 2rem 0;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.425);
 }
 
 .section__description {
   margin: 4rem 0;
+  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
 .section__description p {
-  margin: 0 2rem;
+  margin: 2rem 2rem;
   width: 25rem;
   text-align: justify;
   font-size: 1.5rem;
   font-weight: 700;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.425);
 }
 
 .section__description > div {
   overflow: hidden;
-  width: 50%;
+  width: 80%;
   height: 100%;
   transform: skewY(5deg);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .section__description img {
-  transform: scale(105%) translateX(-20px);
+  transform: scale(100%) translateX(-180px);
+}
+
+/*40rem = 640px setup to pc 'cause first mobile*/
+@media (min-width: 40rem) {
+  .section__description {
+    flex-direction: row;
+    width: 79%;
+  }
+
+  .section__description p {
+    margin: 0 2rem;
+  }
+
+  .section__description > div {
+    width: 50%;
+  }
+  .section__description img {
+    transform: scale(105%) translateX(-20px);
+  }
 }

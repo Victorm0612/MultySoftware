@@ -125,6 +125,9 @@ const RegisterPage = () => {
       new Date().getFullYear() - parseInt(birthday.split("-")[0]) >= 18
   );
 
+  let passwordsAreEquals =
+    password.length > 0 && password === passwordConfirmed;
+
   let formIsValid =
     firstNameIsValid &&
     lastNameIsValid &&
@@ -134,6 +137,7 @@ const RegisterPage = () => {
     emailIsValid &&
     passwordIsValid &&
     passwordConfirmedIsValid &&
+    passwordsAreEquals &&
     phoneIsValid &&
     birthdayIsValid;
 
@@ -268,6 +272,7 @@ const RegisterPage = () => {
             id="password__input"
             labelMessage="Contraseña"
             change={changePassword}
+            checkPassword={!passwordsAreEquals}
             blur={passwordBlurHandler}
             value={password}
             typeInput="password"
@@ -278,6 +283,7 @@ const RegisterPage = () => {
             id="password-confirmed__input"
             labelMessage="Confirmar contraseña"
             change={changePasswordConfirmed}
+            checkPassword={!passwordsAreEquals}
             blur={passwordConfirmedBlurHandler}
             value={passwordConfirmed}
             typeInput="password"
@@ -305,7 +311,7 @@ const RegisterPage = () => {
             inputHasError={birthdayHasError}
             errorMessage="Debe ser mayor de 18 años."
           />
-          <Button isValid={!formIsValid} submitFor="submit">
+          <Button isInvalid={!formIsValid} submitFor="submit">
             Registrarse
           </Button>
         </form>

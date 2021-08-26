@@ -4,7 +4,7 @@ const Button = (props) => {
     <button
       onClick={props.action}
       type={props.submitFor}
-      disabled={props.isValid}
+      disabled={props.isInvalid}
       className={classes.button}
     >
       {props.children}
