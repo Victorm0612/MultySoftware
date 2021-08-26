@@ -1,0 +1,9 @@
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
+}
+
+.error_input {
+  border: 2px solid #cc0000 !important;
+  background-color: #cc00003b;
+}

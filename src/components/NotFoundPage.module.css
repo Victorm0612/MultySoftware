@@ -1,0 +1,15 @@
+.page__not_found {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.page__not_found h1 {
+  margin: 2rem 0;
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.541);
+}

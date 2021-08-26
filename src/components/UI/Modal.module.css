@@ -1,0 +1,48 @@
+.modal {
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.466);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  transition: all 0.3s ease-out;
+}
+
+.modal h1 {
+  font-weight: bold;
+  text-align: center;
+}
+
+.modal_open {
+  animation: openModal 0.4s ease-out forwards;
+}
+
+.modal_closed {
+  animation: closeModal 1s ease-out forwards;
+}
+
+@keyframes openModal {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes closeModal {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
