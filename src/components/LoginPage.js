@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import InputForm from "./Form/InputForm";
 import classes from "./LoginPage.module.css";
 import Button from "./UI/Button";
 import Card from "./UI/Card";
+import {axiosInstance} from "../config/axiosConfig"
+
 const LoginPage = () => {
   const {
     value: email,
@@ -29,9 +32,18 @@ const LoginPage = () => {
 
   let loginIsValid = emailIsValid && passwordIsValid;
 
-  const submitHandler = (e) => {
+  useEffect(() => {
+    axios
+      .post("auth/signin/", {
+        email: "test@gmail.com",
+        password: "testtest",
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  }, []);
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log({ email, password });
     resetEmail();
     resetPassword();
   };
