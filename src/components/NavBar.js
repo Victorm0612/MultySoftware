@@ -1,12 +1,26 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import actionTypes from "../store/actionsType";
 import classes from "./NavBar.module.css";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
-
+  const isLogged = useSelector((state) => state.userData.isLogged);
+  const ROUTES = [
+    { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
+    { path: "/register", namePath: "Registrarse", access: !isLogged },
+    { path: "/profile", namePath: "Perfil", access: isLogged },
+  ];
   const openMobileNav = () => {
     setmobileNav((prevState) => !prevState);
   };
+
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    dispatch({ type: actionTypes.LOGOUT });
+  };
+
   return (
     <header className={classes.navbar}>
       <div className={classes.navbar__logo}>
@@ -16,12 +30,19 @@ const NavBar = (props) => {
       </div>
       <nav className={classes.main_nav}>
         <ul>
-          <li className={classes.links}>
-            <Link to="/login">Iniciar Sesión</Link>
-          </li>
-          <li className={classes.links}>
-            <Link to="/register">Registrarse</Link>
-          </li>
+          {ROUTES.map(
+            (route, index) =>
+              route.access && (
+                <li key={index} className={classes.links}>
+                  <Link to={route.path}>{route.namePath}</Link>
+                </li>
+              )
+          )}
+          {isLogged && (
+            <li className={classes.links} onClick={logout}>
+              Cerrar Sesión
+            </li>
+          )}
           <li className={classes.cart}>
             <span onClick={props.openModal}>
               <svg
@@ -51,12 +72,14 @@ const NavBar = (props) => {
       {mobileNav && (
         <nav className={classes.mobile_nav}>
           <ul>
-            <li>
-              <Link to="/login">Iniciar Sesión</Link>
-            </li>
-            <li>
-              <Link to="/register">Registrarse</Link>
-            </li>
+            {ROUTES.filter(
+              (index, route) =>
+                route.access && (
+                  <li key={index} className={classes.links}>
+                    <Link to={route.path}>{route.namePath}</Link>
+                  </li>
+                )
+            )}
             <li className={classes.cart}>
               <span onClick={props.openModal}>
                 <svg

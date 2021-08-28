@@ -49,7 +49,7 @@ export async function signUp(req, res) {
       });
     }
   } else {
-    res.json({
+    res.status(303).json({
       message: "That email already exist",
     });
   }
@@ -88,7 +88,7 @@ export async function signIn(req, res) {
       });
     }
   } else {
-    res.json({
+    res.status(422).json({
       message: "That user doesnt exist",
     });
   }

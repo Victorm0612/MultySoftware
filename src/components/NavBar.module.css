@@ -41,6 +41,9 @@
   border-radius: 30px;
   text-align: center;
   font-size: 1.1rem;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .links:hover {
