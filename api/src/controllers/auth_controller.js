@@ -7,7 +7,7 @@ export async function signUp(req,res){
     
     const { document_type, document_id, first_name, last_name, gender, birthday, phone, user_status, email, password } = req.body
 
-    const userExist = await models.User.findAll({
+    const userExist = await models.User.findOne({
         where: {
             email : email
         }
@@ -63,7 +63,7 @@ export async function signIn(req,res){
 
     if(userFound){
 
-        const matchPassword = await models.User.comparePassword(req.body.password, userFound.password)
+        const matchPassword = await models.User.comparePassword(password, userFound.password)
         if(!matchPassword){
             res.json({
                 message: 'Invalid password',

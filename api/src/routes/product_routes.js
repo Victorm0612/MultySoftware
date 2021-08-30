@@ -4,11 +4,11 @@ const router = Router();
 
 import { create, deleteProduct, getOneProduct, getProducts, getProductsByName, updateProduct } from '../controllers/product_controller';
 
-router.get('/', verifyToken, getProducts);
-router.get('/un_producto', verifyToken, getProductsByName);
-router.get('/:id', verifyToken, getOneProduct);
-router.post('/', [verifyToken, verifyAccess], create);
-router.put('/:id', [verifyToken, verifyAccess], updateProduct);
-router.delete('/:id', [verifyToken, verifyAccess], deleteProduct);
+router.get('/', getProducts);
+router.get('/un_producto', getProductsByName);
+router.get('/:id', getOneProduct);
+router.post('/', verifyAccess, create);
+router.put('/:id',  verifyAccess, updateProduct);
+router.delete('/:id', verifyAccess, deleteProduct);
 
 export default router;

@@ -6,8 +6,8 @@ import { getPromos, getOnePromo, create, updatePromo, deletePromo } from '../con
 
 router.get('/', getPromos);
 router.get('/:id', getOnePromo);
-router.post('/', [verifyToken, verifyAccess], create);
-router.put('/:id', [verifyToken, verifyAccess], updatePromo);
-router.delete('/:id', [verifyToken, verifyAccess], deletePromo);
+router.post('/', verifyAccess, create);
+router.put('/:id', verifyAccess, updatePromo);
+router.delete('/:id', verifyAccess, deletePromo);
 
 export default router;

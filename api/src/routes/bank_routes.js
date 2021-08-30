@@ -4,10 +4,10 @@ const router = Router();
 
 import { getBanks, getOneBank, create, updateBank, deleteBank } from '../controllers/bank_controller'
 
-router.get('/', verifyToken, getBanks);
-router.get('/:id', verifyToken, getOneBank);
-router.post('/', [verifyToken, verifyAccess], create);
-router.put('/:id', [verifyToken, verifyAccess], updateBank);
-router.delete('/:id', [verifyToken, verifyAccess], deleteBank)
+router.get('/', getBanks);
+router.get('/:id', getOneBank);
+router.post('/',  verifyAccess, create);
+router.put('/:id', verifyAccess, updateBank);
+router.delete('/:id', verifyAccess, deleteBank)
 
 export default router;

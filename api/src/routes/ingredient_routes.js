@@ -4,8 +4,8 @@ const router = Router();
 
 import { getIngredients, getOneIngredient, create, updateIngredient, deleteIngredient } from '../controllers/ingredient_controller'
 
-router.get('/', verifyToken, getIngredients);
-router.get('/:id', verifyToken, getOneIngredient);
-router.post('/', [verifyToken, verifyAccess], create);
-router.put('/:id', [verifyToken, verifyAccess], updateIngredient);
-router.delete('/:id', [verifyToken, verifyAccess], deleteIngredient);
+router.get('/',  getIngredients);
+router.get('/:id', getOneIngredient);
+router.post('/', verifyAccess, create);
+router.put('/:id', verifyAccess, updateIngredient);
+router.delete('/:id', verifyAccess, deleteIngredient);

@@ -4,10 +4,10 @@ const router = Router();
 
 import { create, deleteCategory, getOneCategory, getCategorys, updateCategory} from '../controllers/category_controller'
 
-router.get('/', verifyToken, getCategorys);
-router.get('/:id', verifyToken, getOneCategory);
-router.post('/', [verifyToken, verifyAccess], create);
-router.put('/:id', [verifyToken, verifyAccess], updateCategory);
-router.delete('/:id', [verifyToken, verifyAccess], deleteCategory)
+router.get('/', getCategorys);
+router.get('/:id', getOneCategory);
+router.post('/', verifyAccess, create);
+router.put('/:id', verifyAccess, updateCategory);
+router.delete('/:id', verifyAccess, deleteCategory)
 
 export default router;
