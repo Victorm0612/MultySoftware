@@ -9,6 +9,7 @@ import Cart from "./components/Cart/Cart";
 import Modal from "./components/UI/Modal";
 import ProfileUser from "./pages/ProfileUser";
 import { useSelector } from "react-redux";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -37,8 +38,12 @@ const App = () => {
           {isLogged && <Redirect to="/" />}
         </Route>
         <Route path="/profile">
-          {!isLogged && <ProfileUser />}
-          {isLogged && <Redirect to="/" />}
+          {isLogged && <ProfileUser />}
+          {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/dashboard">
+          {isLogged && <Dashboard />}
+          {!isLogged && <Redirect to="/" />}
         </Route>
         <Route path="*">
           <NotFound />

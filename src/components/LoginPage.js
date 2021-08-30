@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import useForm from "../hooks/useForm";
 import InputForm from "./Form/InputForm";
@@ -43,34 +43,50 @@ const LoginPage = () => {
     setIsLoading(true);
   };
 
-  const fetchData = useCallback(async () => {
-    try {
-      const { data } = await axios.post("auth/signin/", {
-        email,
-        password,
-      });
-      dispatch({
-        type: actionTypes.SET_USER,
-        isLogged: true,
-        token: data.token,
-        firstName: "UserFirstName",
-      });
-      history.replace("/");
-    } catch (error) {
-      console.log(error.response);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.post("auth/signin/", {
+          email,
+          password,
+        });
+        const { data: response } = await axios.get(`users/${data.id}`, {
+          headers: {
+            token: data.token,
+          },
+        });
+        dispatch({
+          type: actionTypes.SET_USER,
+          isLogged: true,
+          token: data.token,
+          firstName: "",
+          id: data.id,
+          typeUser: response.data.user_type,
+        });
+        history.replace("/");
+      } catch (error) {
+        console.log(error.response);
+        setIsLoading(false);
+      }
+    };
+    if (!isLoading) {
+      return;
     }
+    fetchData();
     return () => {
       setIsLoading(false);
       resetEmail();
       resetPassword();
     };
-  }, [email, password, dispatch, history, resetEmail, resetPassword]);
-
-  useEffect(() => {
-    if (isLoading) {
-      fetchData();
-    }
-  }, [isLoading, fetchData]);
+  }, [
+    isLoading,
+    email,
+    password,
+    resetEmail,
+    resetPassword,
+    dispatch,
+    history,
+  ]);
 
   return (
     <div className={classes.login}>

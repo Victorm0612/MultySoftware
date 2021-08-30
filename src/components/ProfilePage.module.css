@@ -9,6 +9,8 @@
 .profile > div:nth-child(1) {
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .profile_header svg {
@@ -18,4 +20,36 @@
 
 .profile_header h1 {
   font-weight: 700;
+}
+
+.form_control {
+  margin: 1rem 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.form_control__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.form_control__body label {
+  font-weight: 700;
+}
+.form_control__body select {
+  font-family: inherit;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+}
+
+.form_control__buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.form_control__buttons button {
+  margin: 0 1rem;
+  margin-top: 1rem;
 }

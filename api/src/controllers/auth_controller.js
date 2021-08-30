@@ -70,12 +70,17 @@ export async function signIn(req, res) {
   });
 
   if (userFound) {
+    if (!userFound.user_status) {
+      res.status(422).json({
+        message: "account disabled",
+      });
+    }
     const matchPassword = await models.User.comparePassword(
-      req.body.password,
+      password,
       userFound.password
     );
     if (!matchPassword) {
-      res.json({
+      res.status(422).json({
         message: "Invalid password",
       });
     } else {
@@ -83,6 +88,7 @@ export async function signIn(req, res) {
         expiresIn: 86400, //24 Hours
       });
       res.json({
+        id: userFound.id,
         token: token,
         message: "Welcome",
       });

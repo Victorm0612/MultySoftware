@@ -6,20 +6,24 @@ const initialState = {
     isLogged: false,
     token: null,
     firstName: "",
+    typeUser: "",
+    id: "",
   },
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SET_USER:
-      const userData = {
+      const data = {
         isLogged: action.isLogged,
         token: action.token,
         firstName: action.firstName,
+        typeUser: action.typeUser,
+        id: action.id,
       };
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(data));
       return {
-        userData: { ...userData },
+        userData: { ...data },
       };
     case actionTypes.LOGOUT:
       localStorage.removeItem("user");
@@ -28,6 +32,8 @@ const authReducer = (state = initialState, action) => {
           isLogged: false,
           token: null,
           firstName: "",
+          typeUser: "",
+          id: "",
         },
       };
     default:

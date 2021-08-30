@@ -6,9 +6,15 @@ import classes from "./NavBar.module.css";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
   const isLogged = useSelector((state) => state.userData.isLogged);
+  const typeUser = useSelector((state) => state.userData.typeUser);
   const ROUTES = [
     { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
     { path: "/register", namePath: "Registrarse", access: !isLogged },
+    {
+      path: "/dashboard",
+      namePath: "Dashboard",
+      access: isLogged && typeUser === 3,
+    },
     { path: "/profile", namePath: "Perfil", access: isLogged },
   ];
   const openMobileNav = () => {
@@ -72,14 +78,15 @@ const NavBar = (props) => {
       {mobileNav && (
         <nav className={classes.mobile_nav}>
           <ul>
-            {ROUTES.filter(
-              (index, route) =>
+            {ROUTES.map(
+              (route, index) =>
                 route.access && (
-                  <li key={index} className={classes.links}>
+                  <li key={index}>
                     <Link to={route.path}>{route.namePath}</Link>
                   </li>
                 )
             )}
+            {isLogged && <li onClick={logout}>Cerrar Sesión</li>}
             <li className={classes.cart}>
               <span onClick={props.openModal}>
                 <svg
