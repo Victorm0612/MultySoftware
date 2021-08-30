@@ -16,7 +16,7 @@ router.get("/", [verifyToken, verifyAccess], getUsers);
 router.get("/birthday", [verifyToken, verifyAccess], getBirthdayUser);
 router.get("/:id", [verifyToken, verifyBelongsToUser], getOneUser);
 router.post("/register", [verifyToken, verifyAccess], create);
-router.put("/:id", [verifyToken, verifyAccess], updateUser);
+router.put("/:id", [verifyToken, verifyBelongsToUser], updateUser);
 router.delete("/:id", [verifyToken, verifyAccess], deleteUser);
 
 export default router;

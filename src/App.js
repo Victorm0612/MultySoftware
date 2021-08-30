@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -7,15 +7,16 @@ import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import Cart from "./components/Cart/Cart";
 import Modal from "./components/UI/Modal";
+import ProfileUser from "./pages/ProfileUser";
+import { useSelector } from "react-redux";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   const [show, setShow] = useState(false);
-  const openModal = () => {
-    setShow(true);
-  };
-  const closeModal = () => {
-    setShow(false);
-  };
+  const openModal = () => setShow(true);
+  const closeModal = () => setShow(false);
+  const isLogged = useSelector((state) => state.userData.isLogged);
+
   return (
     <Fragment>
       {show && (
@@ -29,10 +30,20 @@ const App = () => {
           <Home />
         </Route>
         <Route path="/login">
-          <Login />
+          {!isLogged && <Login />}
+          {isLogged && <Redirect to="/" />}
         </Route>
         <Route path="/register">
-          <Register />
+          {!isLogged && <Register />}
+          {isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/profile">
+          {isLogged && <ProfileUser />}
+          {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/dashboard">
+          {isLogged && <Dashboard />}
+          {!isLogged && <Redirect to="/" />}
         </Route>
         <Route path="*">
           <NotFound />

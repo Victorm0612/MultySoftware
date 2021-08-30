@@ -25,6 +25,7 @@ const useForm = (validateFunction, initialState = "") => {
     isValid: valueIsValid,
     hasError,
     changeInputValueHandler,
+    setInputValue,
     inputBlurHandler,
     reset,
   };
