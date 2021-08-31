@@ -1,4 +1,8 @@
-import { verifyToken, verifyBelongsToUser, verifyAccess, passwordAccess } from "../middlewares";
+import {
+  verifyBelongsToUser,
+  verifyAccess,
+  passwordAccess,
+} from "../middlewares";
 import { Router } from "express";
 const router = Router();
 
@@ -22,9 +26,9 @@ router.get("/:id", verifyBelongsToUser, getOneUser);
 router.post("/register", verifyAccess, create);
 router.put("/:id", verifyBelongsToUser, updateUser);
 router.delete("/:id", verifyBelongsToUser, deleteUser);
-router.put("/changeStatus/:id", verifyBelongsToUser, updateUserStatus)
-router.put("/changePassword/:id", verifyBelongsToUser, updatePassword)
-router.post("/resetPasswordEmail/:id/", resetPasswordEmail)
-router.put("/resetPassword/:token", passwordAccess, resetPassword)
+router.put("/changeStatus/:id", verifyBelongsToUser, updateUserStatus);
+router.put("/changePassword/:id", verifyBelongsToUser, updatePassword);
+router.post("/resetPasswordEmail/:id/", resetPasswordEmail);
+router.put("/resetPassword/:token", passwordAccess, resetPassword);
 
 export default router;
