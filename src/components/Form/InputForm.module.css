@@ -1,3 +1,15 @@
+.form-control_label {
+  font-weight: 700;
+}
+
+.form-control_input {
+  font-family: inherit;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+}
+
 .error_message {
   color: #cc0000;
   font-weight: 700;
@@ -6,4 +18,5 @@
 .error_input {
   border: 2px solid #cc0000 !important;
   background-color: #cc00003b;
+  border-radius: 10px;
 }

@@ -14,13 +14,16 @@ const InputForm = (props) => {
   };
 
   const validInputClasses = (hasError) => {
-    return hasError ? classes.error_input : null;
+    return hasError ? classes.error_input : classes["form-control_input"];
   };
 
   return (
     <Fragment>
-      <label htmlFor={props.id}>{props.labelMessage}</label>
+      <label className={classes["form-control_label"]} htmlFor={props.id}>
+        {props.labelMessage}
+      </label>
       <input
+        defaultValue={props.onlyValue}
         className={validInputClasses(props.inputHasError)}
         onChange={props.change}
         onBlur={props.blur}
@@ -29,6 +32,7 @@ const InputForm = (props) => {
         id={props.id}
         type={props.typeInput}
         onKeyPress={props.keyPress && isNumber}
+        disabled={props.disabled}
       />
       {props.inputHasError && (
         <p className={classes.error_message}>
