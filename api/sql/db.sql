@@ -33,7 +33,7 @@ CREATE TABLE Bank(
 
 DROP TABLE IF EXISTS Debit CASCADE;
 CREATE TABLE Debit(
-    debit_number VARCHAR(255) PRIMARY KEY,
+    debit_number INT PRIMARY KEY,
     debit_type VARCHAR(255),
     bank INT,
     CONSTRAINT fkPayment FOREIGN KEY (debit_number) REFERENCES Payment(payment_id),
@@ -43,7 +43,7 @@ CREATE TABLE Debit(
 
 DROP TABLE IF EXISTS Credit CASCADE;
 CREATE TABLE Credit(
-    credit_number VARCHAR(255) PRIMARY KEY,
+    credit_number INT PRIMARY KEY,
     approval_number INTEGER,
     bank INTEGER,
     fees_numbers INTEGER,
