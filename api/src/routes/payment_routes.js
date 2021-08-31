@@ -4,10 +4,10 @@ const router = Router();
 
 import { getPayments, getOnePayment, create, updatePayment, deletePayment} from '../controllers/payment_controller'
 
-router.get('/', getPayments);
-router.get('/:id', [verifyToken, verifyBelongsToUser], getOnePayment);
-router.post('/', [verifyToken, verifyAccess], verifyToken, create);
-router.put('/:id', [verifyToken, verifyAccess], verifyToken, updatePayment);
-router.delete('/:id', [verifyToken, verifyAccess], verifyToken, deletePayment);
+router.get('/', verifyAccess, getPayments);
+router.get('/:id', verifyBelongsToUser, getOnePayment);
+router.post('/', verifyAccess, create);
+router.put('/:id', verifyAccess, updatePayment);
+router.delete('/:id', verifyAccess, deletePayment);
 
 export default router;

@@ -1,3 +1,5 @@
-import {verifyToken, verifyBelongsToUser, verifyAccess } from "./authJwt"
+import {verifyBelongsToUser, passwordAccess, verifyAccess} from "./authJwt"
+import { sendEmail } from "./resetPassword"
+ 
 
-export { verifyToken, verifyBelongsToUser, verifyAccess }
+export {verifyBelongsToUser, passwordAccess, verifyAccess, sendEmail }

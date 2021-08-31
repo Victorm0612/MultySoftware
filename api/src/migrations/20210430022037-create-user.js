@@ -34,7 +34,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       user_status: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        writable: true
       },
       email: {
         type: Sequelize.STRING,

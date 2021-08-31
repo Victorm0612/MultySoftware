@@ -1,6 +1,8 @@
 const models = require("../models/index");
+import { sendEmail } from '../middlewares'
 import sequelize from "sequelize";
 import jwt from "jsonwebtoken";
+import config from '../config'
 require("dotenv").config();
 
 //Funcion que devuelve mensaje de error personalizado segun diccionario
@@ -184,12 +186,9 @@ export async function updateUser(req, res) {
     phone,
     birthday,
     user_type,
-    user_status,
-    email,
-    password,
   } = req.body;
 
-  const userFound = await models.User.findAll({
+  const userFound = await models.User.findOne({
     attributes: [
       "document_type",
       "document_id",
@@ -199,41 +198,47 @@ export async function updateUser(req, res) {
       "phone",
       "birthday",
       "user_type",
-      "user_status",
     ],
     where: {
       id: id,
     },
   });
-  if (userFound.length > 0) {
-    userFound.forEach(async (userFound) => {
-      await models.User.update(
-        {
-          document_type,
-          document_id,
-          first_name,
-          last_name,
-          gender,
-          phone,
-          birthday,
-          user_type,
-          user_status,
-          email,
-          password: await models.User.encryptPassword(password)
+  if (userFound) {
+    const update = await models.User.update(
+      {
+        document_type,
+        document_id,
+        first_name,
+        last_name,
+        gender,
+        phone,
+        birthday,
+        user_type,
+      },
+      {
+        where: {
+          id: id,
         },
-        {
-          where: {
-            id: id,
-          },
-        }
-      );
+      }
+    );
+
+    if(update){
+      res.json({
+        message: "user updated successfully",
+      });
+    }else{
+      res.status(403).json({
+        message: "There was an error updating the user",
+      });
+    }
+
+  }else {
+    res.status(500).json({
+      message: "That user does not exist",
     });
   }
-  return res.json({
-    message: "user updated successfully",
-  });
+  
 }  
-
 
 export async function deleteUser(req, res) {
   const { id } = req.params;
@@ -247,5 +252,189 @@ export async function deleteUser(req, res) {
       message: "User deleted successfully",
       count: deleteRowCount,
     });
+}
+
+export async function updateUserStatus(req,res) {
+  const { id } = req.params;
+
+  let status = true;
+
+  const userFound = await models.User.findOne({
+    attributes: [
+      "user_status",
+    ],
+    where: {
+      id: id,
+    },
+  });
+
+  if (userFound) {
+    if( userFound.user_status == true){
+      status = false;
+    }else {
+      status = true;
+    }
+
+    const updated = await models.User.update(
+      {
+        user_status : status
+      },
+      {
+        where: {
+          id: id,
+        },
+      }
+    );
+    if(updated){
+      return res.json({
+        message: "user updated successfully",
+      });
+    }else{
+      res.status(500).json({
+        message: "There was an error updating the user"
+      })
+    }
+  }else{
+    res.status(500).json({
+      message: "That user does not exist"
+    })
+  }
+}
+
+export const updatePassword = async (req, res) => {
+  const { id } = req.params
+  const { old_password, new_password } = req.body
+
+  const userFound = await models.User.findOne({
+    attributes: [
+      "password",
+    ],
+    where: {
+      id: id
+    }
+  })
+
+  if(userFound) {
+
+    const matchPassword = await models.User.comparePassword(old_password, userFound.password)
+
+    if(matchPassword) {
+
+      const updated = await models.User.update(
+        {
+          password : await models.User.encryptPassword(new_password)
+        },
+        {
+          where: {
+            id: id,
+          },
+        });
+      if(updated){
+        return res.json({
+          message: "User password updated successfully",
+        });
+      }else{
+        res.status(500).json({
+          message: "There was an error updating the user password"
+        })
+      }
+      
+    }else {
+      res.status(401).json({
+        message: 'Invalid password provided'
+      })
+    }
+
+  }else{
+    res.status(401).json({
+      message: 'User does not exist'
+    })
+  }
+
+}
+
+export const resetPasswordEmail = async (req, res) => {
+  const token = req.headers["authorization"]
+
+  const { id } = req.params
+
+  const { email } = req.body
+
+  const userFound = await models.User.findOne({
+    attributes: [
+      "email",
+    ],
+    where: {
+      id: id,
+    },
+  })
+
+  if(userFound){
+
+    if(userFound.email == email){
+      const link = `${process.env.Base_URL}/users/resetPassword/${token}`
+      await sendEmail(userFound.email, "Password Reset - Chicks Restaurant", link, res)
+    }else{
+      res.status(403).json({
+        message: 'The email does not match the user'
+      })
+    }
+
+  }else {
+    res.status(403).json({
+      message: 'That user does not exist'
+    })
+  }
+
+}
+
+export const resetPassword = async (req,res) => {
+  
+  const { token } = req.params
+  const { old_password, new_password } = req.body
+
+  const decoded = jwt.verify(token, config.SECRET)
+  const userFound = await models.User.findOne({
+    where: {
+      id: decoded.id
+    }
+  })
+
+  if(userFound){
+
+    const matchPassword = await models.User.comparePassword(old_password, userFound.password)
+
+    if(matchPassword){
+      const updated = models.User.update(
+        {
+          password : await models.User.encryptPassword(new_password)
+        },
+        {
+        where: {
+            id: decoded.id,
+          }
+        })
+      
+      if(updated){
+        res.json({
+          message: 'Updated password successfully'
+        })      
+      }else {
+        res.status(403).json({
+          message: 'There was a problem updating your password'
+        })
+      }
+      
+    }else {
+      res.status(403).json({
+        message: 'The password you entered is incorrect'
+      })
+    }
+
+  }else{
+    res.status(403).json({
+      message: 'User not found'
+    })
+  }
 
 }

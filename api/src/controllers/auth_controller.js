@@ -49,8 +49,9 @@ export async function signUp(req, res) {
       });
     }
   } else {
-    res.status(303).json({
-      message: "That email already exist",
+    res.json({
+      message: "SUCCESS!!",
+      data: newUser,
     });
   }
 
