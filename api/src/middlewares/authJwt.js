@@ -93,7 +93,6 @@ export const verifyBelongsToUser = async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const userExist = await verifyToken(req, res);
-
     //Verifying that only the client has access to update/delete of his account, or the admin
     if (userExist.user_type == 1 && userExist.id != id) {
       res.status(500).json({

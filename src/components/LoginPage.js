@@ -52,7 +52,7 @@ const LoginPage = () => {
         });
         const { data: response } = await axios.get(`users/${data.id}`, {
           headers: {
-            token: data.token,
+            Authorization: data.token,
           },
         });
         dispatch({

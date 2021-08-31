@@ -153,7 +153,7 @@ const ProfilePage = () => {
       try {
         const { data: response } = await axios.get(`users/${id}`, {
           headers: {
-            token: token,
+            Authorization: token,
           },
         });
         setDataForm(response.data);
@@ -168,7 +168,6 @@ const ProfilePage = () => {
         const response = await axios.put(
           `users/${id}`,
           {
-            id: id,
             document_type: documentType,
             document_id: documentId,
             first_name: firstName,
@@ -177,13 +176,10 @@ const ProfilePage = () => {
             phone: phone,
             birthday: birthday,
             user_type: userType,
-            user_status: true,
-            email: email,
-            password: newPassword,
           },
           {
             headers: {
-              token: token,
+              Authorization: token,
             },
           }
         );
@@ -197,33 +193,21 @@ const ProfilePage = () => {
     };
     const deleteAccount = async () => {
       try {
-        await axios.put(
-          `users/${id}`,
-          {
-            id: id,
-            document_type: documentType,
-            document_id: documentId,
-            first_name: firstName,
-            last_name: lastName,
-            gender: gender,
-            phone: phone,
-            birthday: birthday,
-            user_type: userType,
-            user_status: false,
-            email: email,
-            password: oldPassword,
-          },
+        const response = await axios.put(
+          `users/changeStatus/${id}`,
+          {},
           {
             headers: {
-              token: token,
+              Authorization: token,
             },
           }
         );
+        console.log(response);
+        setIsLoading(false);
+        setDisabledAccount(false);
         dispatch({ type: actionTypes.LOGOUT });
         history.replace("/");
-      } catch (error) {
-        console.log(error);
-      }
+      } catch (error) {}
     };
     if (!edit && isLoading && !disabledAccount) {
       getData();
