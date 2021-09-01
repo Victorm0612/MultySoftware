@@ -179,7 +179,7 @@ const DiscountsPage = () => {
     isValid: discountIdIsValid,
     hasError: discountIdHasError,
     changeInputValueHandler: changeDiscountId,
-    setInputValue: setDiscountId,
+    /* setInputValue: setDiscountId, */
     inputBlurHandler: discountIdBlurHandler,
     reset: resetDiscountId,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
@@ -189,7 +189,7 @@ const DiscountsPage = () => {
     isValid: discountNameIsValid,
     hasError: discountNameHasError,
     changeInputValueHandler: changeDiscountName,
-    setInputValue: setDiscountName,
+    /* setInputValue: setDiscountName, */
     inputBlurHandler: discountNameBlurHandler,
     reset: resetDiscountName,
   } = useForm((value) => value.trim().length > 0);
@@ -199,7 +199,7 @@ const DiscountsPage = () => {
     isValid: discountDescriptionIsValid,
     hasError: discountDescriptionHasError,
     changeInputValueHandler: changeDiscountDescription,
-    setInputValue: setDiscountDescription,
+    /* setInputValue: setDiscountDescription, */
     inputBlurHandler: discountDescriptionBlurHandler,
     reset: resetDiscountDescription,
   } = useForm((value) => value.trim().length > 0);
@@ -209,7 +209,7 @@ const DiscountsPage = () => {
     isValid: discountInitDateIsValid,
     hasError: discountInitDateHasError,
     changeInputValueHandler: changeDiscountInitDate,
-    setInputValue: setDiscountInitDate,
+    /* setInputValue: setDiscountInitDate, */
     inputBlurHandler: discountInitDateBlurHandler,
     reset: resetDiscountInitDate,
   } = useForm((value) => value.trim().length > 0);
@@ -219,7 +219,7 @@ const DiscountsPage = () => {
     isValid: discountEndDateIsValid,
     hasError: discountEndDateHasError,
     changeInputValueHandler: changeDiscountEndDate,
-    setInputValue: setDiscountEndDate,
+    /* setInputValue: setDiscountEndDate, */
     inputBlurHandler: discountEndDateBlurHandler,
     reset: resetDiscountEndDate,
   } = useForm((value) => value.trim().length > 0);
@@ -229,7 +229,7 @@ const DiscountsPage = () => {
     isValid: discountStatusIsValid,
     hasError: discountStatusHasError,
     changeInputValueHandler: changeDiscountStatus,
-    setInputValue: setDiscountStatus,
+    /* setInputValue: setDiscountStatus, */
     inputBlurHandler: discountStatusBlurHandler,
     reset: resetDiscountStatus,
   } = useForm((value) => +value === 0 || +value === 1);
@@ -239,7 +239,7 @@ const DiscountsPage = () => {
     isValid: discountValueIsValid,
     hasError: discountValueHasError,
     changeInputValueHandler: changeDiscountValue,
-    setInputValue: setDiscountValue,
+    /* setInputValue: setDiscountValue, */
     inputBlurHandler: discountValueBlurHandler,
     reset: resetDiscountValue,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
@@ -379,45 +379,49 @@ const DiscountsPage = () => {
             </Button>
           </div>
           <InventoryTable titles={TITLES}>
-            {discounts.map((discount, index) => (
-              <tr key={index}>
-                <td>{discount.id}</td>
-                <td>{discount.title}</td>
-                <td>{discount.dis_description}</td>
-                <td>{discount.ini_date.split("T")[0]}</td>
-                <td>{discount.final_date.split("T")[0]}</td>
-                <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>
-                <td className={classes.product_list__table__edit}>
-                  <svg
-                    onClick={() => {
-                      setAction("update");
-                      setDiscountForm(true);
-                    }}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                    <path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                  </svg>
-                  <svg
-                    onClick={() => {
-                      setAction("delete");
-                      setDiscountForm(true);
-                    }}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                  </svg>
-                </td>
-              </tr>
-            ))}
+            {discounts.length === 0 ? (
+              <tr></tr>
+            ) : (
+              discounts.map((discount, index) => (
+                <tr key={index}>
+                  <td>{discount.id}</td>
+                  <td>{discount.title}</td>
+                  <td>{discount.dis_description}</td>
+                  <td>{discount.ini_date.split("T")[0]}</td>
+                  <td>{discount.final_date.split("T")[0]}</td>
+                  <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>
+                  <td className={classes.product_list__table__edit}>
+                    <svg
+                      onClick={() => {
+                        setAction("update");
+                        setDiscountForm(true);
+                      }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                      <path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg>
+                    <svg
+                      onClick={() => {
+                        setAction("delete");
+                        setDiscountForm(true);
+                      }}
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </td>
+                </tr>
+              ))
+            )}
           </InventoryTable>
         </Fragment>
       )}
