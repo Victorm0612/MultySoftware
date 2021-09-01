@@ -1,0 +1,40 @@
+.product_list {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0rem 1.5rem;
+}
+
+.product_list__header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.product_list h1 {
+  color: white;
+  font-weight: 700;
+  margin: 3rem 0;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.719);
+}
+
+.product_list__header button {
+  margin: 1.2rem 0;
+}
+
+.product_list__table__edit svg {
+  cursor: pointer;
+  margin: 0 0.3rem;
+}
+
+@media (min-width: 40rem) {
+  .product_list__header {
+    width: 80%;
+  }
+  .product_list__header button {
+    margin: 1.2rem 1.2rem;
+  }
+}

@@ -1,0 +1,32 @@
+.product_list__table {
+  background-color: white;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.603);
+  border-radius: 10px;
+  margin: 1.2rem 1.2rem;
+  width: 100%;
+}
+
+.product_list__table thead {
+  font-weight: 900;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.384);
+}
+.product_list__table th {
+  padding: 1rem 1rem;
+}
+
+.product_list__table tbody {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.product_list__table td {
+  padding: 1rem 0.5rem;
+}
+
+@media (min-width: 40rem) {
+  .product_list__table {
+    width: 80%;
+  }
+}
