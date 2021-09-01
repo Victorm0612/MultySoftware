@@ -1,4 +1,4 @@
-import classes from "./ProductsPage.module.css";
+import classes from "./shared.module.css";
 import Button from "../UI/Button";
 import InventoryTable from "../UI/InventoryTable";
 

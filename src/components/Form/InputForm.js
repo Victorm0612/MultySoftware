@@ -17,6 +17,13 @@ const InputForm = (props) => {
     return hasError ? classes.error_input : classes["form-control_input"];
   };
 
+  let date = new Date();
+  let minDate =
+    props.typeInput === "date" && props.minDate
+      ? `${date.getFullYear()}-${date.getMonth() < 10 && "0"}${
+          date.getMonth() + 1
+        }-${date.getDate() < 10 && "0"}${date.getDate()}`
+      : null;
   return (
     <Fragment>
       <label className={classes["form-control_label"]} htmlFor={props.id}>
@@ -30,6 +37,7 @@ const InputForm = (props) => {
         value={props.value}
         required
         id={props.id}
+        min={minDate}
         type={props.typeInput}
         onKeyPress={props.keyPress && isNumber}
         disabled={props.disabled}

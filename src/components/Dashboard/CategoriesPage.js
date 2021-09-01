@@ -1,4 +1,4 @@
-import classes from "./CategoriesPage.module.css";
+import classes from "./shared.module.css";
 import Button from "../UI/Button";
 import InventoryTable from "../UI/InventoryTable";
 import { axiosInstance as axios } from "../../config/axiosConfig";
@@ -152,7 +152,7 @@ const CategoriesPage = () => {
     if (action === "delete" && isLoading) {
       deleteCategories();
     }
-  }, [action, isLoading]);
+  }, [action, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openCategoryForm = (e) => {
     e.preventDefault();
@@ -234,20 +234,19 @@ const CategoriesPage = () => {
               onSubmit={submitCreateCategory}
               className={classes.form_control}
             >
-              {action === "update" ||
-                (action === "delete" && (
-                  <InputForm
-                    id="id__input"
-                    labelMessage="Id de la categoría"
-                    change={changeCategoryId}
-                    value={categoryId}
-                    blur={categoryIdBlurHandler}
-                    typeInput="text"
-                    inputHasError={categoryIdHasError}
-                    errorMessage="Ingrese un id válido."
-                    keyPress={true}
-                  />
-                ))}
+              {action !== "create" && (
+                <InputForm
+                  id="id__input"
+                  labelMessage="Id de la categoría"
+                  change={changeCategoryId}
+                  value={categoryId}
+                  blur={categoryIdBlurHandler}
+                  typeInput="text"
+                  inputHasError={categoryIdHasError}
+                  errorMessage="Ingrese un id válido."
+                  keyPress={true}
+                />
+              )}
               {action !== "delete" && (
                 <Fragment>
                   <InputForm

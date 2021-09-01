@@ -5,6 +5,7 @@ import CustomersPage from "./Dashboard/CustomersPage";
 import OrdersPage from "./Dashboard/OrdersPage";
 import RestaurantsPage from "./Dashboard/RestaurantsPage";
 import classes from "./DashboardPage.module.css";
+import DiscountsPage from "./Dashboard/DiscountsPage";
 const DashboardPage = () => {
   let { path, url } = useRouteMatch();
   const ROUTES = [
@@ -16,6 +17,11 @@ const DashboardPage = () => {
     {
       path: `${url}/categories`,
       pathName: "Categorías",
+      access: true,
+    },
+    {
+      path: `${url}/discounts`,
+      pathName: "Descuentos",
       access: true,
     },
     {
@@ -58,6 +64,9 @@ const DashboardPage = () => {
         </Route>
         <Route path={`${path}/categories`}>
           <CategoriesPage />
+        </Route>
+        <Route path={`${path}/discounts`}>
+          <DiscountsPage />
         </Route>
         <Route path={`${path}/customers`}>
           <CustomersPage />
