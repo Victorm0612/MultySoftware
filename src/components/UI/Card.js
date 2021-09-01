@@ -1,6 +1,6 @@
 import classes from "./Card.module.css";
-const Card = (props) => {
-  return <div className={classes.card}>{props.children}</div>;
+const Card = ({ classNames = "card", children }) => {
+  return <div className={classes[classNames]}>{children}</div>;
 };
 
 export default Card;
