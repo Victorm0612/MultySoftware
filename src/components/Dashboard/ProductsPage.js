@@ -350,11 +350,15 @@ const ProductsPage = () => {
                     required
                     id="categories__input"
                   >
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.cat_name}
-                      </option>
-                    ))}
+                    {categories.length === 0 ? (
+                      <option value="0">No hay categorias</option>
+                    ) : (
+                      categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.cat_name}
+                        </option>
+                      ))
+                    )}
                   </select>
                   {productCategoriesHasError && (
                     <p className={classes.error_message}>
@@ -369,11 +373,15 @@ const ProductsPage = () => {
                     required
                     id="discounts__input"
                   >
-                    {discounts.map((discount) => (
-                      <option key={discount.id} value={discount.id}>
-                        {discount.title}
-                      </option>
-                    ))}
+                    {discounts.length === 0 ? (
+                      <option value="0">No hay descuentos</option>
+                    ) : (
+                      discounts.map((discount) => (
+                        <option key={discount.id} value={discount.id}>
+                          {discount.title}
+                        </option>
+                      ))
+                    )}
                   </select>
                   {productDiscountsHasError && (
                     <p className={classes.error_message}>
