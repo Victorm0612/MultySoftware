@@ -307,7 +307,7 @@ const CategoriesPage = () => {
                 openCategoryForm(e);
               }}
             >
-              Añadir Producto
+              Añadir Categoría
             </Button>
           </div>
           <InventoryTable titles={TITLES}>
