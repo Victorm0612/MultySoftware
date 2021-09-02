@@ -1,0 +1,94 @@
+.categories,
+.product_list,
+.discount_page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0rem 0rem;
+}
+
+.categories__header,
+.product_list__header,
+.discount_page__header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.categories h1,
+.product_list h1,
+.discount_page h1 {
+  color: white;
+  font-weight: 700;
+  margin: 3rem 0;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.719);
+}
+
+.categories__header button,
+.product_list__header button,
+.discount_page__header button {
+  margin: 1.2rem 0;
+}
+
+.product_list__table__edit svg,
+.categories__table__edit svg,
+.discount_page__table__edit svg {
+  cursor: pointer;
+  margin: 0 0.3rem;
+}
+
+.form_control {
+  margin: 1rem 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form_control__buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.form_control__buttons button {
+  margin: 0 1rem;
+  margin-top: 1rem;
+}
+.form_control label {
+  font-weight: 700;
+}
+.form_control select {
+  font-family: inherit;
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+}
+
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
+}
+
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
+}
+
+@media (min-width: 40rem) {
+  .product_list {
+    padding: 0rem 1.5rem;
+  }
+  .categories__header,
+  .product_list__header,
+  .discount_page__header {
+    width: 80%;
+  }
+  .categories__header button,
+  .product_list__header button,
+  .discount_page__header button {
+    margin: 1.2rem 1.2rem;
+  }
+}

@@ -1,0 +1,15 @@
+.message_box {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+}
+
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
+}
+
+.success_message {
+  color: green;
+  font-weight: 700;
+}

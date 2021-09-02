@@ -5,3 +5,8 @@
   border-radius: 10px;
   padding: 1.5rem 2rem;
 }
+
+.card_error {
+  background-color: #e23b3bfd;
+  color: white;
+}

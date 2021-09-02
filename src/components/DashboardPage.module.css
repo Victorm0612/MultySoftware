@@ -1,0 +1,61 @@
+.dashboard {
+  display: flex;
+}
+
+.dashboard__menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.548);
+  height: 100vh;
+}
+
+.dashboard__menu ul {
+  padding: 0 1rem;
+  width: 100%;
+}
+.dashboard__menu li {
+  margin: 1rem 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 8px -5px black;
+}
+
+.dashboard__menu a {
+  text-decoration: none;
+  color: inherit;
+}
+.dashboard__menu a:hover {
+  color: #ff4e00;
+}
+
+.dashboard__main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard__main div {
+  background-color: white;
+  width: 10rem;
+  height: 20rem;
+  margin: 1rem 1rem;
+  padding: 0 1rem;
+}
+
+/*40rem = 640px setup to pc 'cause first mobile*/
+@media (min-width: 40rem) {
+  .dashboard__menu {
+    width: 30rem;
+  }
+  .dashboard__menu li {
+    font-size: 1.4rem;
+  }
+  .dashboard__main div {
+    width: 40rem;
+  }
+}

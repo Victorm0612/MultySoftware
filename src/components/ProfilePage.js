@@ -1,6 +1,6 @@
 import Card from "./UI/Card";
 import classes from "./ProfilePage.module.css";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import useForm from "../hooks/useForm";
 import { axiosInstance as axios } from "../config/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,9 @@ import Button from "./UI/Button";
 import InputForm from "./Form/InputForm";
 import SpinnerLoading from "./UI/SpinnerLoading";
 import actionTypes from "../store/actionsType";
+import Modal from "./UI/Modal";
 import { useHistory } from "react-router-dom";
+import MessageBox from "./UI/MessageBox";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -16,12 +18,28 @@ const ProfilePage = () => {
   const { id, token } = useSelector((state) => state.userData);
   const [isLoading, setIsLoading] = useState(true);
   const [edit, setEdit] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [disabledAccount, setDisabledAccount] = useState(false);
+  const [message, setMessage] = useState({
+    isError: false,
+    message: "",
+  });
 
   const changeEditHandler = () => {
     setEdit((prevState) => !prevState);
   };
+
+  const openPasswordForm = (e) => {
+    e.preventDefault();
+    setShowPasswordForm(true);
+  };
+
+  const closePasswordForm = (e) => {
+    e.preventDefault();
+    setShowPasswordForm(false);
+    setMessage({ isError: false, message: "" });
+  };
+
   const DOCUMENT_TYPES = [
     "Cédula de Ciudadania",
     "Cédula de extranjería",
@@ -94,11 +112,22 @@ const ProfilePage = () => {
 
   //enteredPassword input
   const {
+    value: oldPassword,
+    isValid: oldPasswordIsValid,
+    hasError: oldPasswordHasError,
+    changeInputValueHandler: changeOldPassword,
+    inputBlurHandler: oldPasswordBlurHandler,
+    reset: resetOldPassword,
+  } = useForm((password) => password.trim().length >= 8);
+
+  //enteredPassword input
+  const {
     value: newPassword,
     isValid: newPasswordIsValid,
     hasError: newPasswordHasError,
     changeInputValueHandler: changeNewPassword,
     inputBlurHandler: newPasswordBlurHandler,
+    reset: resetNewPassword,
   } = useForm((password) => password.trim().length >= 8);
 
   //enteredPasswordConfirmed input
@@ -108,6 +137,7 @@ const ProfilePage = () => {
     hasError: newPasswordConfirmedHasError,
     changeInputValueHandler: changeNewPasswordConfirmed,
     inputBlurHandler: newPasswordConfirmedBlurHandler,
+    reset: resetNewPasswordConfirmed,
   } = useForm((password) => password.trim().length >= 8);
 
   //enteredPhone
@@ -143,7 +173,6 @@ const ProfilePage = () => {
     setDocumentId(data.document_id);
     setGender(data.gender);
     setEmail(data.email);
-    setOldPassword(data.password);
     setPhone(data.phone);
     setBirthday(data.birthday.split("T")[0]);
   };
@@ -160,12 +189,16 @@ const ProfilePage = () => {
         userType = response.data.user_type;
         setIsLoading(false);
       } catch (error) {
-        console.log(error.response);
+        setMessage({
+          isError: true,
+          message:
+            "¡Ha sucedido algo inesperado y no se ha podido mostrar tu información!",
+        });
       }
     };
     const sendData = async () => {
       try {
-        const response = await axios.put(
+        await axios.put(
           `users/${id}`,
           {
             document_type: documentType,
@@ -185,15 +218,22 @@ const ProfilePage = () => {
         );
         setIsLoading(false);
         changeEditHandler();
-        console.log(response);
+        setMessage({
+          isError: false,
+          message: "¡Tu información se ha actualizado correctamente!",
+        });
       } catch (error) {
-        console.log(error.response);
+        setMessage({
+          isError: true,
+          message:
+            "¡Ha sucedido algo inesperado y no se ha actualizado tu información!",
+        });
         setIsLoading(false);
       }
     };
     const deleteAccount = async () => {
       try {
-        const response = await axios.put(
+        await axios.put(
           `users/changeStatus/${id}`,
           {},
           {
@@ -202,28 +242,69 @@ const ProfilePage = () => {
             },
           }
         );
-        console.log(response);
         setIsLoading(false);
         setDisabledAccount(false);
         dispatch({ type: actionTypes.LOGOUT });
         history.replace("/");
-      } catch (error) {}
+      } catch (error) {
+        setMessage({
+          isError: true,
+          message:
+            "¡Ha sucedido algo inesperado y no se ha deshabilitado tu cuenta!",
+        });
+      }
+    };
+
+    const changePassword = async () => {
+      try {
+        await axios.put(
+          `users/changePassword/${id}`,
+          {
+            old_password: oldPassword,
+            new_password: newPassword,
+          },
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        setIsLoading(false);
+        setMessage({
+          isError: false,
+          message: "¡La contraseña ha sido actualizada correctamente!",
+        });
+        resetNewPassword();
+        resetOldPassword();
+        resetNewPasswordConfirmed();
+      } catch (error) {
+        setIsLoading(false);
+        setMessage({
+          isError: true,
+          message:
+            "¡Ha sucedido algo inesperado y no se ha actualizado la contraseña!",
+        });
+      }
     };
     if (!edit && isLoading && !disabledAccount) {
       getData();
-    } else if (edit && isLoading && !disabledAccount) {
+    } else if (edit && isLoading && !disabledAccount && !showPasswordForm) {
       sendData();
+    }
+    if (edit && isLoading && showPasswordForm) {
+      changePassword();
     }
     if (disabledAccount) {
       deleteAccount();
     }
-  }, [id, token, isLoading, disabledAccount]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [id, token, isLoading, disabledAccount, showPasswordForm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   let formIsValid =
     firstNameIsValid &&
     lastNameIsValid &&
     genderIsValid &&
     emailIsValid &&
+    oldPasswordIsValid &&
     newPasswordIsValid &&
     newPasswordConfirmedIsValid &&
     newPasswordsAreEquals &&
@@ -235,104 +316,38 @@ const ProfilePage = () => {
     setIsLoading(true);
   };
 
-  return (
-    <div className={classes.profile}>
-      {isLoading ? (
-        <SpinnerLoading />
-      ) : (
-        <Card>
-          <div className={classes.profile_header}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-              <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-            </svg>
-            <h1>{firstName}</h1>
-          </div>
-          <form onSubmit={submitHandler} className={classes.form_control}>
-            <div className={classes.form_control__body}>
-              <InputForm
-                id="name__input"
-                labelMessage="Nombre"
-                change={changeFirstName}
-                value={firstName}
-                blur={firstNameBlurHandler}
-                typeInput="text"
-                inputHasError={firstNameHasError}
-                errorMessage="Ingresa un nombre válido."
-                disabled={!edit}
-              />
-              <InputForm
-                id="last_name__input"
-                labelMessage="Apellido"
-                change={changeLastName}
-                blur={lastNameBlurHandler}
-                value={lastName}
-                typeInput="text"
-                inputHasError={lastNameHasError}
-                errorMessage="Ingresa un apellido válido"
-                disabled={!edit}
-              />
-              <InputForm
-                id="document_type__input"
-                labelMessage="Tipo de documento"
-                onlyValue={DOCUMENT_TYPES[documentType - 1]}
-                typeInput="text"
-                disabled={true}
-              />
-              <InputForm
-                id="document-number__input"
-                labelMessage="Número de documento"
-                change={changeDocumentId}
-                blur={documentIdBlurHandler}
-                value={documentId}
-                typeInput="text"
-                inputHasError={documentIdHasError}
-                errorMessage="El documento es inválido o contiene menos de 8 carácteres."
-                keyPress={true}
-                disabled={true}
-              />
+  const submitPasswordHandler = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+  };
 
-              <label htmlFor="gender__input">Género</label>
-              <select
-                onChange={changeGender}
-                onBlur={genderBlurHandler}
-                value={gender}
-                required
-                id="gender__input"
-                disabled={!edit}
-              >
-                {GENDERS.map((gender, index) => {
-                  return (
-                    <option key={index} value={gender.substr(0, 1)}>
-                      {gender}
-                    </option>
-                  );
-                })}
-              </select>
-              {genderHasError && (
-                <p className={classes.error_message}>
-                  Seleccione una opción válida.
-                </p>
-              )}
+  return (
+    <Fragment>
+      {isLoading ? (
+        <div className={classes.profile}>
+          <SpinnerLoading />
+        </div>
+      ) : (
+        <div className={classes.profile}>
+          <Modal show={showPasswordForm} closeModal={closePasswordForm}>
+            <h1>Cambiar Contraseña</h1>
+            <form
+              onSubmit={submitPasswordHandler}
+              className={classes.form_control}
+            >
               <InputForm
-                id="email__input"
-                labelMessage="Correo electrónico"
-                change={changeEmail}
-                blur={emailBlurHandler}
-                value={email}
-                typeInput="email"
-                inputHasError={emailHasError}
-                errorMessage="El email debe ser válido."
+                id="password_old__input"
+                labelMessage="Contraseña anterior"
+                change={changeOldPassword}
+                blur={oldPasswordBlurHandler}
+                value={oldPassword}
+                typeInput="password"
+                inputHasError={oldPasswordHasError}
+                errorMessage="La contraseña debe contener al menos 8 carácteres."
                 disabled={!edit}
               />
               <InputForm
-                id="password__input"
+                id="password_new__input"
                 labelMessage="Nueva contraseña"
                 change={changeNewPassword}
                 checkPassword={!newPasswordsAreEquals}
@@ -344,7 +359,7 @@ const ProfilePage = () => {
                 disabled={!edit}
               />
               <InputForm
-                id="password-confirmed__input"
+                id="password_new_confirmed__input"
                 labelMessage="Confirmar contraseña"
                 change={changeNewPasswordConfirmed}
                 checkPassword={!newPasswordsAreEquals}
@@ -355,52 +370,161 @@ const ProfilePage = () => {
                 errorMessage="La contraseña debe contener al menos 8 carácteres."
                 disabled={!edit}
               />
-              <InputForm
-                id="phone__input"
-                labelMessage="Teléfono"
-                change={changePhone}
-                blur={phoneBlurHandler}
-                value={phone}
-                typeInput="text"
-                inputHasError={phoneHasError}
-                errorMessage="El teléfono es inválido o contiene menos de 10 carácteres."
-                keyPress={true}
-                disabled={!edit}
-              />
-              <InputForm
-                id="birthday__input"
-                labelMessage="Fecha de Nacimiento"
-                blur={birthdayBlurHandler}
-                change={changeBirthday}
-                value={birthday}
-                typeInput="date"
-                inputHasError={birthdayHasError}
-                errorMessage="Debe ser mayor de 18 años."
-                disabled={!edit}
-              />
+              <div className={classes.form_control__buttons}>
+                <Button submitFor="submit">Cambiar</Button>
+                <Button submitFor="button" action={closePasswordForm}>
+                  Cancelar
+                </Button>
+              </div>
+              <MessageBox isError={message.isError} message={message.message} />
+            </form>
+          </Modal>
+          <Card>
+            <div className={classes.profile_header}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+              </svg>
+              <h1>{firstName}</h1>
             </div>
-            <div className={classes.form_control__buttons}>
-              {!edit && <Button action={changeEditHandler}>Editar</Button>}
-              {!edit && (
-                <Button
-                  action={() => {
-                    setDisabledAccount(true);
-                  }}
+            <form onSubmit={submitHandler} className={classes.form_control}>
+              <div className={classes.form_control__body}>
+                <InputForm
+                  id="name__input"
+                  labelMessage="Nombre"
+                  change={changeFirstName}
+                  value={firstName}
+                  blur={firstNameBlurHandler}
+                  typeInput="text"
+                  inputHasError={firstNameHasError}
+                  errorMessage="Ingresa un nombre válido."
+                  disabled={!edit}
+                />
+                <InputForm
+                  id="last_name__input"
+                  labelMessage="Apellido"
+                  change={changeLastName}
+                  blur={lastNameBlurHandler}
+                  value={lastName}
+                  typeInput="text"
+                  inputHasError={lastNameHasError}
+                  errorMessage="Ingresa un apellido válido"
+                  disabled={!edit}
+                />
+                <InputForm
+                  id="document_type__input"
+                  labelMessage="Tipo de documento"
+                  onlyValue={DOCUMENT_TYPES[documentType - 1]}
+                  typeInput="text"
+                  disabled={true}
+                />
+                <InputForm
+                  id="document-number__input"
+                  labelMessage="Número de documento"
+                  change={changeDocumentId}
+                  blur={documentIdBlurHandler}
+                  value={documentId}
+                  typeInput="text"
+                  inputHasError={documentIdHasError}
+                  errorMessage="El documento es inválido o contiene menos de 8 carácteres."
+                  keyPress={true}
+                  disabled={true}
+                />
+
+                <label htmlFor="gender__input">Género</label>
+                <select
+                  onChange={changeGender}
+                  onBlur={genderBlurHandler}
+                  value={gender}
+                  required
+                  id="gender__input"
+                  disabled={!edit}
                 >
-                  Cerrar Cuenta
-                </Button>
-              )}
-              {edit && (
-                <Button isInvalid={!formIsValid} submitFor="submit">
-                  Aplicar cambios
-                </Button>
-              )}
-              {edit && <Button action={changeEditHandler}>Cancelar</Button>}
-            </div>
-          </form>
-        </Card>
+                  {GENDERS.map((gender, index) => {
+                    return (
+                      <option key={index} value={gender.substr(0, 1)}>
+                        {gender}
+                      </option>
+                    );
+                  })}
+                </select>
+                {genderHasError && (
+                  <p className={classes.error_message}>
+                    Seleccione una opción válida.
+                  </p>
+                )}
+                <InputForm
+                  id="email__input"
+                  labelMessage="Correo electrónico"
+                  change={changeEmail}
+                  blur={emailBlurHandler}
+                  value={email}
+                  typeInput="email"
+                  inputHasError={emailHasError}
+                  errorMessage="El email debe ser válido."
+                  disabled={!edit}
+                />
+                <InputForm
+                  id="phone__input"
+                  labelMessage="Teléfono"
+                  change={changePhone}
+                  blur={phoneBlurHandler}
+                  value={phone}
+                  typeInput="text"
+                  inputHasError={phoneHasError}
+                  errorMessage="El teléfono es inválido o contiene menos de 10 carácteres."
+                  keyPress={true}
+                  disabled={!edit}
+                />
+                <InputForm
+                  id="birthday__input"
+                  labelMessage="Fecha de Nacimiento"
+                  blur={birthdayBlurHandler}
+                  change={changeBirthday}
+                  value={birthday}
+                  typeInput="date"
+                  inputHasError={birthdayHasError}
+                  errorMessage="Debe ser mayor de 18 años."
+                  disabled={!edit}
+                />
+              </div>
+              <div className={classes.form_control__buttons}>
+                {!edit && <Button action={changeEditHandler}>Editar</Button>}
+                {!edit && (
+                  <Button
+                    action={() => {
+                      setDisabledAccount(true);
+                    }}
+                  >
+                    Cerrar Cuenta
+                  </Button>
+                )}
+                {edit && (
+                  <Button isInvalid={!formIsValid} submitFor="submit">
+                    Aplicar cambios
+                  </Button>
+                )}
+                {edit && <Button action={changeEditHandler}>Cancelar</Button>}
+              </div>
+              <div className={classes.form_control__buttons}>
+                {edit && (
+                  <Button action={openPasswordForm}>Cambiar contraseña</Button>
+                )}
+              </div>
+            </form>
+            {!showPasswordForm && (
+              <MessageBox isError={message.isError} message={message.message} />
+            )}
+          </Card>
+        </div>
       )}
-    </div>
+    </Fragment>
   );
 };
 

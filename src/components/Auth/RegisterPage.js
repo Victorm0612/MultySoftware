@@ -1,12 +1,12 @@
 import classes from "./RegisterPage.module.css";
 import { Link, useHistory } from "react-router-dom";
-import Card from "./UI/Card";
-import Button from "./UI/Button";
-import useForm from "../hooks/useForm";
-import InputForm from "./Form/InputForm";
-import { axiosInstance as axios } from "../config/axiosConfig";
+import Card from "../UI/Card";
+import Button from "../UI/Button";
+import useForm from "../../hooks/useForm";
+import InputForm from "../Form/InputForm";
+import { axiosInstance as axios } from "../../config/axiosConfig";
 import { useState, useEffect } from "react";
-import SpinnerLoading from "./UI/SpinnerLoading";
+import SpinnerLoading from "../UI/SpinnerLoading";
 
 const RegisterPage = () => {
   const [isLoading, setIsLoading] = useState(false);

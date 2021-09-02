@@ -59,7 +59,7 @@ export async function create(req, res) {
     category_id,
     discount_id,
     pro_status,
-    percentaje_Iva,
+    percentage_tax,
   } = req.body;
   try {
     let newProduct = await models.Product.create({
@@ -69,7 +69,7 @@ export async function create(req, res) {
       category_id,
       discount_id,
       pro_status,
-      percentaje_Iva,
+      percentage_tax,
     });
     if (newProduct) {
       res.json({
@@ -94,7 +94,7 @@ export async function updateProduct(req, res) {
     category_id,
     discount_id,
     pro_status,
-    percentaje_Iva,
+    percentage_tax,
   } = req.body;
 
   const productFound = await models.Product.findAll({
@@ -105,7 +105,7 @@ export async function updateProduct(req, res) {
       "category_id",
       "discount_id",
       "pro_status",
-      "percentaje_Iva",
+      "percentage_tax",
     ],
     where: {
       id: id,
@@ -121,7 +121,7 @@ export async function updateProduct(req, res) {
           category_id,
           discount_id,
           pro_status,
-          percentaje_Iva,
+          percentage_tax,
         },
         {
           where: {

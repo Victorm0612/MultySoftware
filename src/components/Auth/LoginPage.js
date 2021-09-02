@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import useForm from "../hooks/useForm";
-import InputForm from "./Form/InputForm";
+import useForm from "../../hooks/useForm";
+import InputForm from "../Form/InputForm";
 import classes from "./LoginPage.module.css";
-import Button from "./UI/Button";
-import Card from "./UI/Card";
-import { axiosInstance as axios } from "../config/axiosConfig";
-import SpinnerLoading from "./UI/SpinnerLoading";
+import Button from "../UI/Button";
+import Card from "../UI/Card";
+import { axiosInstance as axios } from "../../config/axiosConfig";
+import SpinnerLoading from "../UI/SpinnerLoading";
 import { useDispatch } from "react-redux";
-import actionTypes from "../store/actionsType";
+import actionTypes from "../../store/actionsType";
+import MessageBox from "../UI/MessageBox";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({
+    isError: false,
+    message: "",
+  });
   const dispatch = useDispatch();
   let history = useHistory();
   const {
@@ -66,6 +71,10 @@ const LoginPage = () => {
         history.replace("/");
       } catch (error) {
         console.log(error.response);
+        setMessage({
+          isError: true,
+          message: `No se ha podido iniciar sesión: ${error.response.data.message}`,
+        });
         setIsLoading(false);
       }
     };
@@ -135,6 +144,7 @@ const LoginPage = () => {
             <Link to="/register">¡Haz click aquí!</Link>
           </p>
           <Link to="/reset-password">Olvide mi contraseña</Link>
+          <MessageBox isError={message.isError} message={message.message} />
         </Card>
       )}
     </div>
