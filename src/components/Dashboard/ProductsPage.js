@@ -438,19 +438,19 @@ const ProductsPage = () => {
                   <td>{product.id}</td>
                   <td>{product.pro_description}</td>
                   <td>
-                    {
-                      categories.filter(
-                        (category, index) => index === product.category_id
-                      )[0].cat_name
-                    }
+                    {categories.length === 0
+                      ? ""
+                      : categories.filter(
+                          (category, index) => index === product.category_id
+                        )[0].cat_name}
                   </td>
                   <td>{product.price}</td>
                   <td>
-                    {
-                      discounts.filter(
-                        (discount, index) => index === product.discount_id
-                      )[0].title
-                    }
+                    {discounts.length === 0
+                      ? ""
+                      : discounts.filter(
+                          (discount, index) => index === product.discount_id
+                        )[0].title}
                   </td>
                   <td>{product.pro_status ? "Sí" : "No"}</td>
                   <td className={classes.product_list__table__edit}>
