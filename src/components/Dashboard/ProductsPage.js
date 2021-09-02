@@ -51,6 +51,11 @@ const ProductsPage = () => {
         setDiscounts(discountResponse.data);
         setCategories(categoryResponse.data);
         setProducts(response.data);
+        setProductDiscounts(discountResponse.data[0].id);
+        setProductCategories(categoryResponse.data[0].id);
+        console.log(categoryResponse.data);
+        console.log(discountResponse.data);
+        console.log(response.data);
       } catch (error) {
         console.log(error.response);
       } finally {
@@ -65,8 +70,8 @@ const ProductsPage = () => {
             pro_description: productDescription,
             pro_image: null,
             price: productPrice,
-            category_id: productCategories,
-            discount_id: productDiscounts,
+            category_id: +productCategories,
+            discount_id: +productDiscounts,
             pro_status: +productStatus === 0 ? true : false,
             percentage_tax: productTax,
           },
@@ -244,20 +249,20 @@ const ProductsPage = () => {
     isValid: productCategoriesIsValid,
     hasError: productCategoriesHasError,
     changeInputValueHandler: changeProductCategories,
-    /* setInputValue: setProductCategories, */
+    setInputValue: setProductCategories,
     inputBlurHandler: productCategoriesBlurHandler,
     reset: resetProductCategories,
-  } = useForm((value) => /^[0-9\b]+$/.test(value), 0);
+  } = useForm((value) => /^[0-9\b]+$/.test(value), "");
 
   const {
     value: productDiscounts,
     isValid: productDiscountsIsValid,
     hasError: productDiscountsHasError,
     changeInputValueHandler: changeProductDiscounts,
-    /* setInputValue: setProductDiscounts, */
+    setInputValue: setProductDiscounts,
     inputBlurHandler: productDiscountsBlurHandler,
     reset: resetProductDiscounts,
-  } = useForm((value) => /^[0-9\b]+$/.test(value), 0);
+  } = useForm((value) => /^[0-9\b]+$/.test(value), "");
 
   let formIsValid =
     action === "delete"
@@ -347,6 +352,9 @@ const ProductsPage = () => {
                     onChange={changeProductCategories}
                     onBlur={productCategoriesBlurHandler}
                     value={productCategories}
+                    onClick={() => {
+                      console.log("ID Product:", productCategories);
+                    }}
                     required
                     id="categories__input"
                   >
@@ -370,6 +378,9 @@ const ProductsPage = () => {
                     onChange={changeProductDiscounts}
                     onBlur={productDiscountsBlurHandler}
                     value={productDiscounts}
+                    onClick={() => {
+                      console.log("ID Discount:", productCategories);
+                    }}
                     required
                     id="discounts__input"
                   >
@@ -441,7 +452,8 @@ const ProductsPage = () => {
                     {categories.length === 0
                       ? "No tiene"
                       : categories.filter(
-                          (category, index) => index === product.category_id
+                          (category, index) =>
+                            category.id === product.category_id
                         )[0].cat_name}
                   </td>
                   <td>{product.price}</td>
@@ -449,7 +461,8 @@ const ProductsPage = () => {
                     {discounts.length === 0
                       ? "No tiene"
                       : discounts.filter(
-                          (discount, index) => index === product.discount_id
+                          (discount, index) =>
+                            discount.id === product.discount_id
                         )[0].title}
                   </td>
                   <td>{product.pro_status ? "Sí" : "No"}</td>
