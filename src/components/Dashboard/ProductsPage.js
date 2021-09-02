@@ -439,7 +439,7 @@ const ProductsPage = () => {
                   <td>{product.pro_description}</td>
                   <td>
                     {categories.length === 0
-                      ? ""
+                      ? "No tiene"
                       : categories.filter(
                           (category, index) => index === product.category_id
                         )[0].cat_name}
@@ -447,7 +447,7 @@ const ProductsPage = () => {
                   <td>{product.price}</td>
                   <td>
                     {discounts.length === 0
-                      ? ""
+                      ? "No tiene"
                       : discounts.filter(
                           (discount, index) => index === product.discount_id
                         )[0].title}
