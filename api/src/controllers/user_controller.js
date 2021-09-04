@@ -3,6 +3,7 @@ import { sendEmail } from '../middlewares'
 import sequelize from "sequelize";
 import jwt from "jsonwebtoken";
 import config from '../config'
+import { verifyToken } from '../middlewares/authJwt';
 require("dotenv").config();
 
 //Funcion que devuelve mensaje de error personalizado segun diccionario
@@ -203,6 +204,9 @@ export async function updateUser(req, res) {
       id: id,
     },
   });
+
+  const { user_type: user_type_req } = await verifyToken(req,res)
+
   if (userFound) {
     const update = await models.User.update(
       {
@@ -213,7 +217,7 @@ export async function updateUser(req, res) {
         gender,
         phone,
         birthday,
-        user_type,
+        user_type : user_type_req === 3 ? user_type : userFound.user_type,
       },
       {
         where: {

@@ -42,7 +42,7 @@ export const passwordAccess = async (req, res, next) => {
 export const verifyToken = async (req, res) => {
   try {
     const token = req.headers["authorization"];
-
+ 
     if (!token) {
       res.status(500).json({
         message: "No token provided",
@@ -55,13 +55,22 @@ export const verifyToken = async (req, res) => {
         },
       });
       if (userExist) {
-        return userExist;
+
+        if (!userExist.user_status) {
+          res.status(422).json({
+            message: "account disabled",
+          });
+        }else{
+          return userExist;
+        }        
+        
       } else {
         res.status(403).json({
           message: "No user match with the token provided",
         });
       }
-    }
+    }    
+    
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -72,7 +81,7 @@ export const verifyToken = async (req, res) => {
 export const verifyAccess = async (req, res, next) => {
   try {
     //Verifying if the token is valid
-    const userExist = await verifyToken(req, res);
+    const userExist = await verifyToken(req, res);    
 
     if (userExist.user_type != 1) {
       next();
@@ -94,7 +103,7 @@ export const verifyBelongsToUser = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const userExist = await verifyToken(req, res);
     //Verifying that only the client has access to update/delete of his account, or the admin
-    if (userExist.user_type == 1 && userExist.id != id) {
+    if (userExist.user_type != 3 && userExist.id != id) {
       res.status(500).json({
         message: "You are not allowed to do that",
       });
