@@ -3,6 +3,7 @@ import { sendEmail } from '../middlewares'
 import sequelize from "sequelize";
 import jwt from "jsonwebtoken";
 import config from '../config'
+import { verifyToken } from '../middlewares/authJwt';
 require("dotenv").config();
 
 //Funcion que devuelve mensaje de error personalizado segun diccionario
@@ -203,6 +204,9 @@ export async function updateUser(req, res) {
       id: id,
     },
   });
+
+  const { user_type: user_type_req } = await verifyToken(req,res)
+
   if (userFound) {
     const update = await models.User.update(
       {
@@ -213,7 +217,7 @@ export async function updateUser(req, res) {
         gender,
         phone,
         birthday,
-        user_type,
+        user_type : user_type_req === 3 ? user_type : userFound.user_type,
       },
       {
         where: {
@@ -353,12 +357,13 @@ export const updatePassword = async (req, res) => {
 
 }
 
-export const resetPasswordEmail = async (req, res) => {
-  const token = req.headers["authorization"]
+export const resetPasswordEmail = async (req, res) => {  
 
   const { id } = req.params
 
   const { email } = req.body
+
+  
 
   const userFound = await models.User.findOne({
     attributes: [
@@ -372,6 +377,9 @@ export const resetPasswordEmail = async (req, res) => {
   if(userFound){
 
     if(userFound.email == email){
+      const token = jwt.sign({ id: id }, config.SECRET, {
+        expiresIn: 86400, // 2 Hours
+      })
       const link = `${process.env.Base_URL}/users/resetPassword/${token}`
       await sendEmail(userFound.email, "Password Reset - Chicks Restaurant", link, res)
     }else{
