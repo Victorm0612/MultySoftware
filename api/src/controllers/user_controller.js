@@ -357,12 +357,13 @@ export const updatePassword = async (req, res) => {
 
 }
 
-export const resetPasswordEmail = async (req, res) => {
-  const token = req.headers["authorization"]
+export const resetPasswordEmail = async (req, res) => {  
 
   const { id } = req.params
 
   const { email } = req.body
+
+  
 
   const userFound = await models.User.findOne({
     attributes: [
@@ -376,6 +377,9 @@ export const resetPasswordEmail = async (req, res) => {
   if(userFound){
 
     if(userFound.email == email){
+      const token = jwt.sign({ id: id }, config.SECRET, {
+        expiresIn: 86400, // 2 Hours
+      })
       const link = `${process.env.Base_URL}/users/resetPassword/${token}`
       await sendEmail(userFound.email, "Password Reset - Chicks Restaurant", link, res)
     }else{

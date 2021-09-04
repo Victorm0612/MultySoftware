@@ -70,31 +70,27 @@ export async function signIn(req, res) {
     },
   });
 
-  if (userFound) {
-    if (!userFound.user_status) {
+  if (userFound) {    
+    
+    const matchPassword = await models.User.comparePassword(
+      password,
+      userFound.password
+    );
+    if (!matchPassword) {
       res.status(422).json({
-        message: "account disabled",
+        message: "Invalid password",
       });
-    }else{
-      const matchPassword = await models.User.comparePassword(
-        password,
-        userFound.password
-      );
-      if (!matchPassword) {
-        res.status(422).json({
-          message: "Invalid password",
-        });
-      } else {
-        const token = jwt.sign({ id: userFound.id }, config.SECRET, {
-          expiresIn: 86400, //24 Hours
-        });
-        res.json({
-          id: userFound.id,
-          token: token,
-          message: "Welcome",
-        });
-      }
+    } else {
+      const token = jwt.sign({ id: userFound.id }, config.SECRET, {
+        expiresIn: 86400, //24 Hours
+      });
+      res.json({
+        id: userFound.id,
+        token: token,
+        message: "Welcome",
+      });      
     }    
+    
   } else {
     res.status(422).json({
       message: "That user doesnt exist",
