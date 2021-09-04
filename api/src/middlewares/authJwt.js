@@ -19,13 +19,7 @@ export const passwordAccess = async (req, res, next) => {
       });
 
       if (userExist) {
-        if (userExist.user_type == 1 && userExist.id != id) {
-          res.status(500).json({
-            message: "You are not allowed to do that",
-          });
-        } else {
-          next();
-        }
+        next();
       } else {
         res.status(403).json({
           message: "No user match with the token provided",
