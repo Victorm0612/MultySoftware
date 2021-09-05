@@ -15,7 +15,12 @@ module.exports = {
         type: Sequelize.TIME
       },
       docId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Users',
+          key: 'document_id'
+        }
       },
       restaurant_id: {
         type: Sequelize.INTEGER

@@ -2,7 +2,16 @@ const models = require("../models/index");
 
 export async function getSales(req, res) {
   try {
-    const sales = await models.Sale.findAll();
+    const sales = await models.Sale.findAll({
+      include: {
+        model: models.User,
+        as: "User",
+        attributes: ["document_type",
+          "document_id",
+          "first_name",
+          "last_name",]
+      }
+    });
     res.json({
       data: sales,
     });
