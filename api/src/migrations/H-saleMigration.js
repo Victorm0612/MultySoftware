@@ -1,33 +1,37 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('SaleItems', {
+    await queryInterface.createTable('Sales', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      sale_id: {
-        type: Sequelize.INTEGER
+      sale_date: {
+        type: Sequelize.DATE
       },
-      amount: {
-        type: Sequelize.INTEGER
+      sale_time: {
+        type: Sequelize.TIME
       },
-      totalIva: {
-        type: Sequelize.INTEGER
+      docId: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Users',
+          key: 'document_id'
+        }
       },
-      subtotal: {
-        type: Sequelize.INTEGER
+      restaurant_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Restaurants',
+          key: 'id'
+        }
       },
-      item_total: {
-        type: Sequelize.INTEGER
-      },
-      total_discount: {
-        type: Sequelize.INTEGER
-      },
-      product_id: {
-        type: Sequelize.INTEGER
+      sale_status: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -42,6 +46,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('SaleItems');
+    await queryInterface.dropTable('Sales');
   }
 };

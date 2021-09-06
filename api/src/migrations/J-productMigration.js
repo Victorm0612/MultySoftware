@@ -18,10 +18,20 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       category_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Categories',
+          key: 'id'
+        }
       },
       discount_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Discounts',
+          key: 'id'
+        }
       },
       pro_status: {
         type: Sequelize.BOOLEAN

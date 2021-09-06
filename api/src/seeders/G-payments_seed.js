@@ -4,24 +4,27 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('Payments',[
       {
-        pay_description: "1 pollo asado, 2 cocacola litro",
+        pay_description: "1 Pernil pollo asado, 1 cocacola litro",
         pay_date: "28/04/2021",
         pay_time: "17:45",
-        amount: 22300,
-        pay_status: true
-      },
-      {
-        pay_description: "1 pollo asado, 1 cocacola litro",
-        pay_date: "29/04/2021",
-        pay_time: "10:30",
+        pay_type: "Credito",
         amount: 18500,
         pay_status: true
       },
       {
-        pay_description: "2 pollo asado, 2 cocacola litro, 3 porcion de papa ",
-        pay_date: "30/04/2021",
-        pay_time: "11:51",
-        amount: 41500,
+        pay_description: "1 Porcion Papas",
+        pay_date: "29/04/2021",
+        pay_time: "10:30",
+        pay_type: "Debito",
+        amount: 10000,
+        pay_status: true
+      },
+      {
+        pay_description: "1 cocacola litro",
+        pay_date: "29/04/2021",
+        pay_time: "10:30",
+        pay_type: "Efectivo",
+        amount: 3500,
         pay_status: true
       }
     ])

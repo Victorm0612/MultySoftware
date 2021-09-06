@@ -6,8 +6,7 @@ npx sequelize-cli model:generate --name Domicile --attributes domicile_name:stri
 npx sequelize-cli model:generate --name Discount --attributes title:string,dis_description:text,ini_date:date,final_date:date,discount_status:boolean,dis_value:double
 npx sequelize-cli model:generate --name Category --attributes cat_name:string,cat_description:text,cat_status:boolean
 npx sequelize-cli model:generate --name Bank --attributes bank_name:string
-npx sequelize-cli model:generate --name Debit --attributes debit_number:string,debit_type:string,bank:integer
-npx sequelize-cli model:generate --name Credit --attributes credit_number:string,approval_number:integer,bank:integer,fees_number:integer,amount:integer
+npx sequelize-cli model:generate --name Card --attributes credit_number:string,approval_number:integer,bank:integer,fees_number:integer,amount:integer
 npx sequelize-cli model:generate --name Restaurant --attributes restaurant_name:string,restaurant_address:string,phone:string,attention_time:string,restaurant_status:boolean
 npx sequelize-cli model:generate --name Ingredient --attributes ingredient_name:string,price:integer
 npx sequelize-cli model:generate --name IngredientItem --attributes ingredient_id:integer,product_id:integer,amount:integer
@@ -15,6 +14,10 @@ npx sequelize-cli model:generate --name Promo --attributes ini_date:date,final_d
 npx sequelize-cli model:generate --name PromoItem --attributes promo_id:integer,product_id:integer,amount:integer
 npx sequelize-cli model:generate --name SaleItem --attributes sale_id:integer,amount:integer,totalIva:integer,subtotal:integer,item_total:integer,total_discount:integer,product_id:integer
 npx sequelize-cli model:generate --name Bill --attributes nit:integer,sale_id:integer,payment_id:integer,bill_time:time,bill_date:date,subtotal:double,totalIva:double,total_discount:double,total_payment:double,bill_status:boolean
+npx sequelize-cli model:generate --name Credit_pay --attributes approval_number:integer,fees_number:integer,card_number:integer,payment_id:integer
+npx sequelize-cli model:generate --name Debit_pay --attributes debit_type:string,card_number:integer,payment_id:integer
+npx sequelize-cli model:generate --name Cash_pay --attributes payment_id:integer,payer_id:integer
+npx sequelize-cli model:generate --name Card --attributes card_number:integer,owner_id:integer,exp_date:date,bank:integer
 
 #Crear bd
 npx sequelize-cli db:create

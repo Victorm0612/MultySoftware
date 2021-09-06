@@ -5,16 +5,16 @@ module.exports = {
     await queryInterface.bulkInsert('Ingredients',[
       //Ob1
       {
-        ingredient_name: "Sal",
-        price: "500"
+        ingredient_name: "Pernil de pollo asado",
+        price: "5000"
       },
       {
-        ingredient_name: "Pimienta",
-        price: "800"
+        ingredient_name: "Gaseosa 1Lt",
+        price: "3500"
       },
       {
-        ingredient_name: "Salsa bbq",
-        price: "2000"
+        ingredient_name: "Entrada papas",
+        price: "10000"
       },
     ])
   },

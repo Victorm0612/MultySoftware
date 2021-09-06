@@ -2,7 +2,12 @@ const models = require("../models/index");
 
 export async function getProducts(req, res) {
   try {
-    const products = await models.Product.findAll();
+    const products = await models.Product.findAll({
+      include: [{
+        as: "IngredientProduct",
+        attributes: [""]
+      }
+    ]});
     res.json({
       data: products,
     });

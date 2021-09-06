@@ -5,17 +5,17 @@ module.exports = {
     await queryInterface.bulkInsert('Categories',[
       {
         cat_name: "Bebidas",
-        cat_description: "Bebidas incluidas en el menu",
+        cat_description: "Bebidas incluidas para disfrutar con tu comida",
         cat_status: true
       },
       {
         cat_name: "Entradas",
-        cat_description: "Entradas para disfrutar",
+        cat_description: "Entradas para disfrutar antes de una gran comida",
         cat_status: true
       },
       {
-        cat_name: "Pollo",
-        cat_description: "Tipos de pollos incluidos en el menu",
+        cat_name: "Almuerzos",
+        cat_description: "Tipos de almuerzos para disfrutar al medio dia",
         cat_status: true
       }
     ])

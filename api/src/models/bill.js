@@ -4,13 +4,30 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Bill extends Model {
+    
     /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+       * @as Way to access in backend
+       * @foreignKey The name of the column that haves the foreignKey
+       * @targetKey The source value for foreignKey - default: id
+       * @through The model that contains the many to many relationship
+    */
+
     static associate(models) {
-      // define association here
+      //========== Bill - Sale ==========
+      //Bill belongs to one Sale
+      models.Bill.belongsTo(models.Sale, { as: "SaleBill", foreignKey: "sale_id"})
+
+      //Sale Have one Bill
+      models.Sale.hasOne(models.Bill, { as: "SaleBill", foreignKey: "sale_id"})
+      
+
+      //========== Bill - Payment ==========
+      //Bill have one Payment
+      models.Bill.hasOne(models.Payment, { as: "BillPayment", foreignKey: "payment_id"})
+
+      //Payment belongs to one Bill
+      models.Payment.belongsTo(models.Bill, { as: "BillPayment", foreignKey: "payment_id"})
+
     }
   };
   Bill.init({

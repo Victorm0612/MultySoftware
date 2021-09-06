@@ -12,10 +12,20 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       sale_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Sales',
+          key: 'id'
+        }
       },
       payment_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Payments',
+          key: 'id'
+        }
       },
       bill_time: {
         type: Sequelize.TIME

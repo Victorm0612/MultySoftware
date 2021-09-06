@@ -3,7 +3,14 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('Discounts',[
-      //Ob1
+      {
+        title: 'No descuento',
+        dis_description: 'Sin descuento',
+        ini_date: '28/04/2021',
+        final_date: '01/01/2050',
+        discount_status: true,
+        dis_value: 0,
+      },
       {
         title: "Descuento de 50%",
         dis_description: "Descuento de 50% en la segunda unidad que lleves de pollo asado",
@@ -27,7 +34,7 @@ module.exports = {
         final_date: '03/05/2021',
         discount_status: true,
         dis_value: 5,
-      }
+      }      
     ])
   },
 

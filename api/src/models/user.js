@@ -16,12 +16,12 @@ module.exports = (sequelize, DataTypes) => {
       /**
       * User have many sales
       */
-      models.User.hasMany(models.Sale, { as: "Sales", foreignKey: "docId"});
+      models.User.hasMany(models.Sale, { as: "SaleUser", foreignKey: "docId"});
 
       /**
        * Sales belongs to one user.
       */
-      models.Sale.belongsTo(models.User, {as: "User", foreignKey: "docId", targetKey: "document_id"});
+      models.Sale.belongsTo(models.User, {as: "SaleUser", foreignKey: "docId", targetKey: "document_id"});
     }
 
   }
