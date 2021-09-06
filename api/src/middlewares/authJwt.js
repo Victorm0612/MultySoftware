@@ -101,3 +101,33 @@ export const verifyBelongsToUser = async (req, res, next) => {
     });
   }
 };
+
+export const verifyTokenIsValid = async (req, res) => {
+  try {
+    const token = req.headers["authorization"];
+
+    if (!token) {
+      return res.status(500).json({
+        message: "No token provided",
+      });
+    }
+    const decoded = jwt.verify(token, config.SECRET);
+    const userExist = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+    if (userExist) {
+      return res.json({
+        message: "OK",
+      });
+    }
+    return res.status(403).json({
+      message: "No user match with the token provided",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};

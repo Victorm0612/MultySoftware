@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
 import { axiosInstance as axios } from "../../config/axiosConfig";
 import actionTypes from "../../store/actionsType";
 import Button from "../UI/Button";
@@ -16,7 +15,6 @@ const AccountDisabledPage = () => {
     isError: false,
     message: "",
   });
-  let history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {

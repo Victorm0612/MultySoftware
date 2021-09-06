@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import Dashboard from "./pages/Dashboard";
 import AccountDisabled from "./pages/Auth/AccountDisabled";
 import ResetPassword from "./pages/Auth/ResetPassword";
+import NewPassword from "./pages/Auth/NewPassword";
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -19,8 +20,6 @@ const App = () => {
   const closeModal = () => setShow(false);
   const { isLogged, userStatus } = useSelector((state) => state.userData);
   const accountDisabled = isLogged && !userStatus;
-  console.log(userStatus);
-  console.log(accountDisabled);
   return (
     <Fragment>
       {show && (
@@ -52,7 +51,7 @@ const App = () => {
           {isLogged && <ProfileUser />}
           {!isLogged && <Redirect to="/" />}
         </Route>
-        <Route path="/reset-password">
+        <Route path="/reset-password" exact>
           {accountDisabled && <Redirect to="/account-disabled" />}
           {!isLogged && <ResetPassword />}
           {isLogged && <Redirect to="/" />}
@@ -61,6 +60,9 @@ const App = () => {
           {accountDisabled && <Redirect to="/account-disabled" />}
           {isLogged && <Dashboard />}
           {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/reset-password/:token">
+          <NewPassword />
         </Route>
         <Route path="*">
           <NotFound />

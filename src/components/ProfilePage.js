@@ -1,6 +1,6 @@
 import Card from "./UI/Card";
 import classes from "./ProfilePage.module.css";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import useForm from "../hooks/useForm";
 import { axiosInstance as axios } from "../config/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +17,7 @@ const ProfilePage = () => {
   let history = useHistory();
   const { id, token } = useSelector((state) => state.userData);
   const [isLoading, setIsLoading] = useState(true);
+  const [action, setAction] = useState("get");
   const [edit, setEdit] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [disabledAccount, setDisabledAccount] = useState(false);
@@ -166,34 +167,55 @@ const ProfilePage = () => {
   let newPasswordsAreEquals =
     newPassword.length > 0 && newPassword === newPasswordConfirmed;
 
-  const setDataForm = (data) => {
-    setFirstName(data.first_name);
-    setLastName(data.last_name);
-    setDocumentType(data.document_type);
-    setDocumentId(data.document_id);
-    setGender(data.gender);
-    setEmail(data.email);
-    setPhone(data.phone);
-    setBirthday(data.birthday.split("T")[0]);
-  };
+  const setDataForm = useCallback(
+    (data) => {
+      setFirstName(data.first_name);
+      setLastName(data.last_name);
+      setDocumentType(data.document_type);
+      setDocumentId(data.document_id);
+      setGender(data.gender);
+      setEmail(data.email);
+      setPhone(data.phone);
+      setBirthday(data.birthday.split("T")[0]);
+    },
+    [
+      setFirstName,
+      setLastName,
+      setDocumentType,
+      setDocumentId,
+      setGender,
+      setEmail,
+      setPhone,
+      setBirthday,
+    ]
+  );
   useEffect(() => {
     let userType;
+    let errorMessage = false;
+    let message = "";
     const getData = async () => {
+      let response;
       try {
-        const { data: response } = await axios.get(`users/${id}`, {
+        const { data } = await axios.get(`users/${id}`, {
           headers: {
             Authorization: token,
           },
         });
-        setDataForm(response.data);
+        response = data;
         userType = response.data.user_type;
-        setIsLoading(false);
       } catch (error) {
+        errorMessage = true;
+        message =
+          "¡Ha sucedido algo inesperado y no se ha podido mostrar tu información!";
+      } finally {
+        setIsLoading(false);
+        setDataForm(response.data);
         setMessage({
-          isError: true,
-          message:
-            "¡Ha sucedido algo inesperado y no se ha podido mostrar tu información!",
+          isError: errorMessage,
+          message: message,
         });
+        errorMessage = false;
+        message = "";
       }
     };
     const sendData = async () => {
@@ -216,19 +238,20 @@ const ProfilePage = () => {
             },
           }
         );
-        setIsLoading(false);
         changeEditHandler();
-        setMessage({
-          isError: false,
-          message: "¡Tu información se ha actualizado correctamente!",
-        });
+        errorMessage = false;
+        message = "¡Tu información se ha actualizado correctamente!";
       } catch (error) {
-        setMessage({
-          isError: true,
-          message:
-            "¡Ha sucedido algo inesperado y no se ha actualizado tu información!",
-        });
+        errorMessage = true;
+        message =
+          "¡Ha sucedido algo inesperado y no se ha actualizado tu información!";
+      } finally {
         setIsLoading(false);
+        setAction("get");
+        setMessage({
+          isError: errorMessage,
+          message: message,
+        });
       }
     };
     const deleteAccount = async () => {
@@ -242,19 +265,22 @@ const ProfilePage = () => {
             },
           }
         );
-        setIsLoading(false);
-        setDisabledAccount(false);
         dispatch({ type: actionTypes.LOGOUT });
         history.replace("/");
       } catch (error) {
+        errorMessage = true;
+        message =
+          "¡Ha sucedido algo inesperado y no se ha deshabilitado tu cuenta!";
+      } finally {
+        setIsLoading(false);
+        setDisabledAccount(false);
         setMessage({
-          isError: true,
-          message:
-            "¡Ha sucedido algo inesperado y no se ha deshabilitado tu cuenta!",
+          isError: errorMessage,
+          message: message,
         });
+        setAction("get");
       }
     };
-
     const changePassword = async () => {
       try {
         await axios.put(
@@ -269,35 +295,63 @@ const ProfilePage = () => {
             },
           }
         );
+        errorMessage = false;
+        message = "¡La contraseña ha sido actualizada correctamente!";
+      } catch (error) {
+        errorMessage = true;
+        message =
+          "¡Ha sucedido algo inesperado y no se ha actualizado la contraseña!";
+      } finally {
         setIsLoading(false);
-        setMessage({
-          isError: false,
-          message: "¡La contraseña ha sido actualizada correctamente!",
-        });
         resetNewPassword();
         resetOldPassword();
         resetNewPasswordConfirmed();
-      } catch (error) {
-        setIsLoading(false);
         setMessage({
-          isError: true,
-          message:
-            "¡Ha sucedido algo inesperado y no se ha actualizado la contraseña!",
+          isError: errorMessage,
+          message: message,
         });
+        setAction("get");
       }
     };
-    if (!edit && isLoading && !disabledAccount) {
+
+    if (!isLoading) {
+      return;
+    }
+    if (action === "get") {
       getData();
-    } else if (edit && isLoading && !disabledAccount && !showPasswordForm) {
+    }
+    if (action === "put" && !showPasswordForm && !disabledAccount) {
       sendData();
     }
-    if (edit && isLoading && showPasswordForm) {
+    if (action === "put" && showPasswordForm && !disabledAccount) {
       changePassword();
     }
-    if (disabledAccount) {
+    if (action === "put" && disabledAccount && !showPasswordForm) {
       deleteAccount();
     }
-  }, [id, token, isLoading, disabledAccount, showPasswordForm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    isLoading,
+    action,
+    showPasswordForm,
+    disabledAccount,
+    dispatch,
+    history,
+    token,
+    firstName,
+    gender,
+    birthday,
+    documentId,
+    documentType,
+    lastName,
+    oldPassword,
+    phone,
+    resetNewPassword,
+    resetNewPasswordConfirmed,
+    resetOldPassword,
+    setDataForm,
+    id,
+    newPassword,
+  ]);
 
   let formIsValid =
     firstNameIsValid &&
@@ -315,11 +369,13 @@ const ProfilePage = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setAction("put");
     setIsLoading(true);
   };
 
   const submitPasswordHandler = (e) => {
     e.preventDefault();
+    setAction("put");
     setIsLoading(true);
   };
 
@@ -501,6 +557,8 @@ const ProfilePage = () => {
                 {!edit && (
                   <Button
                     action={() => {
+                      setAction("put");
+                      setIsLoading(true);
                       setDisabledAccount(true);
                     }}
                   >
