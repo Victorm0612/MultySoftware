@@ -304,10 +304,12 @@ const ProfilePage = () => {
     lastNameIsValid &&
     genderIsValid &&
     emailIsValid &&
-    oldPasswordIsValid &&
-    newPasswordIsValid &&
-    newPasswordConfirmedIsValid &&
-    newPasswordsAreEquals &&
+    (showPasswordForm
+      ? oldPasswordIsValid &&
+        newPasswordIsValid &&
+        newPasswordConfirmedIsValid &&
+        newPasswordsAreEquals
+      : true) &&
     phoneIsValid &&
     birthdayIsValid;
 
@@ -502,7 +504,7 @@ const ProfilePage = () => {
                       setDisabledAccount(true);
                     }}
                   >
-                    Cerrar Cuenta
+                    Suspender Cuenta
                   </Button>
                 )}
                 {edit && (

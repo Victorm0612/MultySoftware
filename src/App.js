@@ -10,13 +10,17 @@ import Modal from "./components/UI/Modal";
 import ProfileUser from "./pages/ProfileUser";
 import { useSelector } from "react-redux";
 import Dashboard from "./pages/Dashboard";
+import AccountDisabled from "./pages/Auth/AccountDisabled";
+import ResetPassword from "./pages/Auth/ResetPassword";
 
 const App = () => {
   const [show, setShow] = useState(false);
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const isLogged = useSelector((state) => state.userData.isLogged);
-
+  const { isLogged, userStatus } = useSelector((state) => state.userData);
+  const accountDisabled = isLogged && !userStatus;
+  console.log(userStatus);
+  console.log(accountDisabled);
   return (
     <Fragment>
       {show && (
@@ -29,19 +33,32 @@ const App = () => {
         <Route path="/" exact>
           <Home />
         </Route>
+        <Route path="/account-disabled">
+          {accountDisabled && <AccountDisabled />}
+          {!accountDisabled && <Redirect to="/" />}
+        </Route>
         <Route path="/login">
+          {accountDisabled && <Redirect to="/account-disabled" />}
           {!isLogged && <Login />}
           {isLogged && <Redirect to="/" />}
         </Route>
         <Route path="/register">
+          {accountDisabled && <Redirect to="/account-disabled" />}
           {!isLogged && <Register />}
           {isLogged && <Redirect to="/" />}
         </Route>
         <Route path="/profile">
+          {accountDisabled && <Redirect to="/account-disabled" />}
           {isLogged && <ProfileUser />}
           {!isLogged && <Redirect to="/" />}
         </Route>
+        <Route path="/reset-password">
+          {accountDisabled && <Redirect to="/account-disabled" />}
+          {!isLogged && <ResetPassword />}
+          {isLogged && <Redirect to="/" />}
+        </Route>
         <Route path="/dashboard">
+          {accountDisabled && <Redirect to="/account-disabled" />}
           {isLogged && <Dashboard />}
           {!isLogged && <Redirect to="/" />}
         </Route>
