@@ -2,7 +2,7 @@ import { verifyToken, verifyAccess, verifyBelongsToUser } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
-import { getBills, getOneBill, create, updateBill, deleteBill } from '../controllers/bill_controllerl'
+import { getBills, getOneBill, create, updateBill, deleteBill } from '../controllers/bill_controller'
 
 router.get('/', verifyAccess, getBills);
 router.get('/:id', verifyBelongsToUser, getOneBill);

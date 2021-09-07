@@ -70,8 +70,7 @@ export async function signIn(req, res) {
     },
   });
 
-  if (userFound) {    
-    
+  if (userFound) {
     const matchPassword = await models.User.comparePassword(
       password,
       userFound.password
@@ -88,9 +87,8 @@ export async function signIn(req, res) {
         id: userFound.id,
         token: token,
         message: "Welcome",
-      });      
-    }    
-    
+      });
+    }
   } else {
     res.status(422).json({
       message: "That user doesnt exist",

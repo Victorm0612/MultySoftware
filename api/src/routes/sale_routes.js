@@ -1,4 +1,4 @@
-import { verifyToken, verifyAccess } from '../middlewares'
+import { verifyAccess, verifyBelongsToUser } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 

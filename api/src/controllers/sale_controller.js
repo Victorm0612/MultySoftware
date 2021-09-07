@@ -3,32 +3,36 @@ const models = require("../models/index");
 export async function getSales(req, res) {
   try {
     const sales = await models.Sale.findAll({
-      include: [{
-        model: models.User,
-        as: "SaleUser",
-        attributes: ["document_type",
-          "document_id",
-          "first_name",
-          "last_name",]
-      },
-      {
-        model: models.Restaurant,
-        as: "RestaurantSales",
-        attributes: ["id",
-          "restaurant_name",
-          "restaurant_address"],
-      },
-      {
-        model: models.SaleItem,
-        as: "SaleItems",
-        attributes: ["product_id",
-          "amount",
-          "totalIva",
-          "subtotal",
-          "item_total",
-          "total_discount"]
-      },
-    ]})
+      include: [
+        {
+          model: models.User,
+          as: "SaleUser",
+          attributes: [
+            "document_type",
+            "document_id",
+            "first_name",
+            "last_name",
+          ],
+        },
+        {
+          model: models.Restaurant,
+          as: "RestaurantSales",
+          attributes: ["id", "restaurant_name", "restaurant_address"],
+        },
+        {
+          model: models.SaleItem,
+          as: "SaleItems",
+          attributes: [
+            "product_id",
+            "amount",
+            "totalIva",
+            "subtotal",
+            "item_total",
+            "total_discount",
+          ],
+        },
+      ],
+    });
     res.json({
       data: sales,
     });

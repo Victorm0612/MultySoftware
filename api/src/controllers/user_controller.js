@@ -1,9 +1,9 @@
 const models = require("../models/index");
-import { sendEmail } from '../middlewares'
+import { sendEmail } from "../middlewares";
 import sequelize from "sequelize";
 import jwt from "jsonwebtoken";
-import config from '../config'
-import { verifyToken } from '../middlewares/authJwt';
+import config from "../config";
+import { verifyToken } from "../middlewares/authJwt";
 require("dotenv").config();
 
 //Funcion que devuelve mensaje de error personalizado segun diccionario
@@ -91,24 +91,21 @@ function errors(error) {
 }*/
 
 export async function getUsers(req, res) {
-  
-    const users = await models.User.findAll();
+  const users = await models.User.findAll({});
 
-    if(users.length > 0) {
-      res.json({
-        data: users
-      })
-    }else{
-      res.json({
-        message: 'There is no users'
-      })
-    }
+  if (users.length > 0) {
+    res.json({
+      data: users,
+    });
+  } else {
+    res.json({
+      message: "There is no users",
+    });
+  }
 }
 
-
 export async function getOneUser(req, res) {
-
-  const { id } = req.params; 
+  const { id } = req.params;
   const user = await models.User.findOne({
     where: {
       id: id,
@@ -116,11 +113,10 @@ export async function getOneUser(req, res) {
   });
   res.json({
     data: user,
-  });   
+  });
 }
 
-export async function getBirthdayUser(req, res) {  
-    
+export async function getBirthdayUser(req, res) {
   const user = await models.User.findAll({
     where: {
       birthday: sequelize.where(
@@ -205,7 +201,7 @@ export async function updateUser(req, res) {
     },
   });
 
-  const { user_type: user_type_req } = await verifyToken(req,res)
+  const { user_type: user_type_req } = await verifyToken(req, res);
 
   if (userFound) {
     const update = await models.User.update(
@@ -217,7 +213,7 @@ export async function updateUser(req, res) {
         gender,
         phone,
         birthday,
-        user_type : user_type_req === 3 ? user_type : userFound.user_type,
+        user_type: user_type_req === 3 ? user_type : userFound.user_type,
       },
       {
         where: {
@@ -226,62 +222,58 @@ export async function updateUser(req, res) {
       }
     );
 
-    if(update){
+    if (update) {
       res.json({
         message: "user updated successfully",
       });
-    }else{
+    } else {
       res.status(403).json({
         message: "There was an error updating the user",
       });
     }
-
-  }else {
+  } else {
     res.status(500).json({
       message: "That user does not exist",
     });
   }
-  
-}  
+}
 
 export async function deleteUser(req, res) {
   const { id } = req.params;
-  
-  const deleteRowCount = models.User.destroy({  
+
+  const deleteRowCount = models.User.destroy({
     where: {
       id: id,
     },
-    });
-    res.json({
-      message: "User deleted successfully",
-      count: deleteRowCount,
-    });
+  });
+  res.json({
+    message: "User deleted successfully",
+    count: deleteRowCount,
+  });
 }
 
-export async function updateUserStatus(req,res) {
+export async function updateUserStatus(req, res) {
   const { id } = req.params;
 
   let status = true;
 
   const userFound = await models.User.findOne({
-    attributes: [
-      "user_status",
-    ],
+    attributes: ["user_status"],
     where: {
       id: id,
     },
   });
 
   if (userFound) {
-    if( userFound.user_status == true){
+    if (userFound.user_status == true) {
       status = false;
-    }else {
+    } else {
       status = true;
     }
 
     const updated = await models.User.update(
       {
-        user_status : status
+        user_status: status,
       },
       {
         where: {
@@ -289,160 +281,153 @@ export async function updateUserStatus(req,res) {
         },
       }
     );
-    if(updated){
+    if (updated) {
       return res.json({
         message: "user updated successfully",
       });
-    }else{
+    } else {
       res.status(500).json({
-        message: "There was an error updating the user"
-      })
+        message: "There was an error updating the user",
+      });
     }
-  }else{
+  } else {
     res.status(500).json({
-      message: "That user does not exist"
-    })
+      message: "That user does not exist",
+    });
   }
 }
 
 export const updatePassword = async (req, res) => {
-  const { id } = req.params
-  const { old_password, new_password } = req.body
+  const { id } = req.params;
+  const { old_password, new_password } = req.body;
 
   const userFound = await models.User.findOne({
-    attributes: [
-      "password",
-    ],
+    attributes: ["password"],
     where: {
-      id: id
-    }
-  })
+      id: id,
+    },
+  });
 
-  if(userFound) {
+  if (userFound) {
+    const matchPassword = await models.User.comparePassword(
+      old_password,
+      userFound.password
+    );
 
-    const matchPassword = await models.User.comparePassword(old_password, userFound.password)
-
-    if(matchPassword) {
-
+    if (matchPassword) {
       const updated = await models.User.update(
         {
-          password : await models.User.encryptPassword(new_password)
+          password: await models.User.encryptPassword(new_password),
         },
         {
           where: {
             id: id,
           },
-        });
-      if(updated){
+        }
+      );
+      if (updated) {
         return res.json({
           message: "User password updated successfully",
         });
-      }else{
+      } else {
         res.status(500).json({
-          message: "There was an error updating the user password"
-        })
+          message: "There was an error updating the user password",
+        });
       }
-      
-    }else {
+    } else {
       res.status(401).json({
-        message: 'Invalid password provided'
-      })
+        message: "Invalid password provided",
+      });
     }
-
-  }else{
+  } else {
     res.status(401).json({
-      message: 'User does not exist'
-    })
+      message: "User does not exist",
+    });
   }
+};
 
-}
+export const resetPasswordEmail = async (req, res) => {
+  const { id } = req.params;
 
-export const resetPasswordEmail = async (req, res) => {  
-
-  const { id } = req.params
-
-  const { email } = req.body
-
-  
+  const { email } = req.body;
 
   const userFound = await models.User.findOne({
-    attributes: [
-      "email",
-    ],
+    attributes: ["email"],
     where: {
       id: id,
     },
-  })
+  });
 
-  if(userFound){
-
-    if(userFound.email == email){
+  if (userFound) {
+    if (userFound.email == email) {
       const token = jwt.sign({ id: id }, config.SECRET, {
         expiresIn: 86400, // 2 Hours
-      })
-      const link = `${process.env.Base_URL}/users/resetPassword/${token}`
-      await sendEmail(userFound.email, "Password Reset - Chicks Restaurant", link, res)
-    }else{
+      });
+      const link = `${process.env.Base_URL}/users/resetPassword/${token}`;
+      await sendEmail(
+        userFound.email,
+        "Password Reset - Chicks Restaurant",
+        link,
+        res
+      );
+    } else {
       res.status(403).json({
-        message: 'The email does not match the user'
-      })
+        message: "The email does not match the user",
+      });
     }
-
-  }else {
+  } else {
     res.status(403).json({
-      message: 'That user does not exist'
-    })
+      message: "That user does not exist",
+    });
   }
+};
 
-}
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { old_password, new_password } = req.body;
 
-export const resetPassword = async (req,res) => {
-  
-  const { token } = req.params
-  const { old_password, new_password } = req.body
-
-  const decoded = jwt.verify(token, config.SECRET)
+  const decoded = jwt.verify(token, config.SECRET);
   const userFound = await models.User.findOne({
     where: {
-      id: decoded.id
-    }
-  })
+      id: decoded.id,
+    },
+  });
 
-  if(userFound){
+  if (userFound) {
+    const matchPassword = await models.User.comparePassword(
+      old_password,
+      userFound.password
+    );
 
-    const matchPassword = await models.User.comparePassword(old_password, userFound.password)
-
-    if(matchPassword){
+    if (matchPassword) {
       const updated = models.User.update(
         {
-          password : await models.User.encryptPassword(new_password)
+          password: await models.User.encryptPassword(new_password),
         },
         {
-        where: {
+          where: {
             id: decoded.id,
-          }
-        })
-      
-      if(updated){
+          },
+        }
+      );
+
+      if (updated) {
         res.json({
-          message: 'Updated password successfully'
-        })      
-      }else {
+          message: "Updated password successfully",
+        });
+      } else {
         res.status(403).json({
-          message: 'There was a problem updating your password'
-        })
+          message: "There was a problem updating your password",
+        });
       }
-      
-    }else {
+    } else {
       res.status(403).json({
-        message: 'The password you entered is incorrect'
-      })
+        message: "The password you entered is incorrect",
+      });
     }
-
-  }else{
+  } else {
     res.status(403).json({
-      message: 'User not found'
-    })
+      message: "User not found",
+    });
   }
-
-}
+};
