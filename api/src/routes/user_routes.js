@@ -28,7 +28,7 @@ router.put("/:id", verifyBelongsToUser, updateUser);
 router.delete("/:id", verifyBelongsToUser, deleteUser);
 router.put("/changeStatus/:id", verifyBelongsToUser, updateUserStatus);
 router.put("/changePassword/:id", verifyBelongsToUser, updatePassword);
-router.post("/resetPasswordEmail/:id/", resetPasswordEmail);
+router.post("/resetPasswordEmail", resetPasswordEmail);
 router.put("/resetPassword/:token", passwordAccess, resetPassword);
 
 export default router;

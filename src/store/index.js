@@ -8,6 +8,7 @@ const initialState = {
     firstName: "",
     typeUser: "",
     id: "",
+    userStatus: true,
   },
 };
 
@@ -20,6 +21,7 @@ const authReducer = (state = initialState, action) => {
         firstName: action.firstName,
         typeUser: action.typeUser,
         id: action.id,
+        userStatus: action.userStatus,
       };
       localStorage.setItem("user", JSON.stringify(data));
       return {
@@ -34,6 +36,7 @@ const authReducer = (state = initialState, action) => {
           firstName: "",
           typeUser: "",
           id: "",
+          userStatus: true,
         },
       };
     default:
