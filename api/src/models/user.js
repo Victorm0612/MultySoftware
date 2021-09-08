@@ -4,20 +4,39 @@ import bcrypt from "bcryptjs";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      this.hasMany(models.Sale, {
-        foreignKey: "docId",
-        sourceKey: "document_id",
-      });
+      /**
+       * @as Way to access in backend
+       * @foreignKey The name of the column that haves the foreignKey
+       * @targetKey The source value for foreignKey - default: id
+       * @through The model that contains the many to many relationship
+       * @belongsTo is the model that have the column with the foreignKey
+       * @hasOne or @hasMany is the model that have the source value for the foreignKey
+       */
+
+      //========== User - Sale ==========
+      //User have many sales
+      models.User.hasMany(models.Sale, { as: "SaleUser", foreignKey: "docId" });
+
+      //Sales belongs to one user.
       models.Sale.belongsTo(models.User, {
+        as: "SaleUser",
         foreignKey: "docId",
-        sourceKey: "document_id",
+        targetKey: "document_id",
+      });
+
+      //========== User - Card ==========
+      //User have many cards
+      models.User.hasMany(models.Card, {
+        as: "CardUser",
+        foreignKey: "owner_id",
+      });
+
+      //Cards belongs to one user
+      models.Card.belongsTo(models.User, {
+        as: "CardUser",
+        foreignKey: "owner_id",
+        targetKey: "document_id",
       });
     }
   }

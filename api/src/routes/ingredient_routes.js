@@ -9,3 +9,5 @@ router.get('/:id', getOneIngredient);
 router.post('/', verifyAccess, create);
 router.put('/:id', verifyAccess, updateIngredient);
 router.delete('/:id', verifyAccess, deleteIngredient);
+
+export default router;

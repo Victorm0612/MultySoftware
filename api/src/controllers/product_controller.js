@@ -2,7 +2,30 @@ const models = require("../models/index");
 
 export async function getProducts(req, res) {
   try {
-    const products = await models.Product.findAll();
+    const products = await models.Product.findAll({
+      include: [
+        {
+          model: models.Category,
+          as: "ProductCategory",
+          attributes: ["id", "cat_name"],
+        },
+        {
+          model: models.Discount,
+          as: "ProductDiscount",
+          attributes: ["id", "title", "dis_value"],
+        },
+        {
+          model: models.Ingredient,
+          as: "IngredientProduct",
+          attributes: ["id", "ingredient_name", "price"],
+        },
+        {
+          model: models.Promo,
+          as: "ProductPromo",
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+    });
     res.json({
       data: products,
     });
