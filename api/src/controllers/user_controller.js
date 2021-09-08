@@ -91,7 +91,7 @@ function errors(error) {
 }*/
 
 export async function getUsers(req, res) {
-  const users = await models.User.findAll({});
+  const users = await models.User.findAll();
 
   if (users.length > 0) {
     res.json({
@@ -347,34 +347,24 @@ export const updatePassword = async (req, res) => {
 };
 
 export const resetPasswordEmail = async (req, res) => {
-  const { id } = req.params;
-
   const { email } = req.body;
-
   const userFound = await models.User.findOne({
-    attributes: ["email"],
     where: {
-      id: id,
+      email: email,
     },
   });
-
   if (userFound) {
-    if (userFound.email == email) {
-      const token = jwt.sign({ id: id }, config.SECRET, {
-        expiresIn: 86400, // 2 Hours
-      });
-      const link = `${process.env.Base_URL}/users/resetPassword/${token}`;
-      await sendEmail(
-        userFound.email,
-        "Password Reset - Chicks Restaurant",
-        link,
-        res
-      );
-    } else {
-      res.status(403).json({
-        message: "The email does not match the user",
-      });
-    }
+    const id = userFound.id;
+    const token = jwt.sign({ id: id }, config.SECRET, {
+      expiresIn: 86400, // 2 Hours
+    });
+    const link = `${process.env.front_URL}/reset-password/${token}`;
+    await sendEmail(
+      userFound.email,
+      "Password Reset - Chicks Restaurant",
+      link,
+      res
+    );
   } else {
     res.status(403).json({
       message: "That user does not exist",
@@ -384,7 +374,7 @@ export const resetPasswordEmail = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
-  const { old_password, new_password } = req.body;
+  const { new_password } = req.body;
 
   const decoded = jwt.verify(token, config.SECRET);
   const userFound = await models.User.findOne({
@@ -394,35 +384,24 @@ export const resetPassword = async (req, res) => {
   });
 
   if (userFound) {
-    const matchPassword = await models.User.comparePassword(
-      old_password,
-      userFound.password
+    const updated = models.User.update(
+      {
+        password: await models.User.encryptPassword(new_password),
+      },
+      {
+        where: {
+          id: decoded.id,
+        },
+      }
     );
 
-    if (matchPassword) {
-      const updated = models.User.update(
-        {
-          password: await models.User.encryptPassword(new_password),
-        },
-        {
-          where: {
-            id: decoded.id,
-          },
-        }
-      );
-
-      if (updated) {
-        res.json({
-          message: "Updated password successfully",
-        });
-      } else {
-        res.status(403).json({
-          message: "There was a problem updating your password",
-        });
-      }
+    if (updated) {
+      res.json({
+        message: "Updated password successfully",
+      });
     } else {
       res.status(403).json({
-        message: "The password you entered is incorrect",
+        message: "There was a problem updating your password",
       });
     }
   } else {

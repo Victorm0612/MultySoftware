@@ -79,13 +79,13 @@ const ProductsPage = () => {
         );
         setMessage({
           isError: false,
-          message: "¡Se ha creado el descuento con éxito!",
+          message: "¡Se ha creado el producto con éxito!",
         });
       } catch (error) {
         console.log(error.response);
         setMessage({
           isError: true,
-          message: "¡No se ha creado el descuento!",
+          message: "¡No se ha creado el producto!",
         });
       } finally {
         setAction("get");
@@ -138,13 +138,13 @@ const ProductsPage = () => {
         });
         setMessage({
           isError: false,
-          message: "¡Se ha eliminado el descuento de forma exitosa!",
+          message: "¡Se ha eliminado el producto de forma exitosa!",
         });
       } catch (error) {
         console.log(error.response);
         setMessage({
           isError: true,
-          message: "!Ha ocurrido un error al eliminar el descuento!",
+          message: "!Ha ocurrido un error al eliminar el producto!",
         });
       } finally {
         setAction("get");

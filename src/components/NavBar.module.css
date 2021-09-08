@@ -109,6 +109,7 @@
 
 .mobile_nav li {
   margin: 0.2rem 0;
+  cursor: pointer;
 }
 
 .mobile_nav a {
@@ -116,7 +117,8 @@
   color: black;
 }
 
-.mobile_nav a:hover {
+.mobile_nav a:hover,
+.mobile_nav li:hover {
   color: #ff4e00;
 }
 

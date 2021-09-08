@@ -64,11 +64,15 @@ const LoginPage = () => {
           type: actionTypes.SET_USER,
           isLogged: true,
           token: data.token,
-          firstName: "",
+          firstName: response.data.first_name,
           id: data.id,
           typeUser: response.data.user_type,
+          userStatus: response.data.user_status,
         });
-        history.replace("/");
+        if (response.data.user_status) {
+          history.replace("/");
+        }
+        history.replace("/account-disabled");
       } catch (error) {
         console.log(error.response);
         setMessage({
