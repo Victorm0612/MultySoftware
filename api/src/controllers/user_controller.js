@@ -117,11 +117,13 @@ export async function getOneUser(req, res) {
 }
 
 export async function getBirthdayUser(req, res) {
+  const actualMonth = new Date(Date.now()).getMonth() +1
+
   const user = await models.User.findAll({
     where: {
       birthday: sequelize.where(
         sequelize.literal("extract(MONTH FROM birthday)"),
-        "01"
+        actualMonth,
       ),
     },
   });

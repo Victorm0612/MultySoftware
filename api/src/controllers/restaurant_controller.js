@@ -125,3 +125,25 @@ export async function deleteRestaurant(req, res) {
     });
   }
 }
+
+export async function mostSeller(req,res) {
+  const mostSeller = await models.Sale.findAll({
+    attributes: ['restaurant_id', [sequelize.fn('count', sequelize.col('restaurant_id')), 'sells']],
+    group: 'restaurant_id',
+    order: sequelize.literal('sells DESC'),
+    limit: 1
+  })
+
+  res.json({
+    data: mostSeller
+  })
+}
+
+export async function lessSeller(req,res) {
+  const lestSeller = await models.Sale.findAll({
+    attributes: ['restaurant_id', [sequelize.fn('count', sequelize.col('restaurant_id')), 'sells']],
+    group: 'restaurant_id',
+    order: sequelize.literal('sells ASC'),
+    limit: 1
+  })
+}

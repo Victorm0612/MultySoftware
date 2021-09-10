@@ -2,6 +2,7 @@ import { sequelize } from "../models/index";
 
 const models = require("../models/index");
 const { QueryTypes } = require("sequelize");
+const { Op } = require("sequelize");
 
 export async function getProducts(req, res) {
   try {
@@ -183,12 +184,31 @@ export async function deleteProduct(req, res) {
 }
 
 export async function getTop20(req, res) {
-  const allTopProducts = await sequelize.query(
-    `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo DESC LIMIT 20 ;`,
-    {
-      type: QueryTypes.SELECT,
-    }
-  );
+  const allTopProducts = await models.Product.findAll({
+    group: ["Product.id"],
+    includeIgnoreAttributes: false,
+    include: [
+      {
+        model: models.Sale,
+      },
+    ],
+    attributes: [
+      "id",
+      [
+        sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
+        "sells",
+      ],
+      "pro_description",
+      "pro_image",
+      "price",
+      "category_id",
+      "discount_id",
+      "pro_status",
+      "percentage_tax",
+    ],
+    order: sequelize.literal('sells DSC'),
+    limit: 20
+  })  
 
   if (allTopProducts.length > 0) {
     res.json({
@@ -202,12 +222,31 @@ export async function getTop20(req, res) {
 }
 
 export async function getBottom20(req, res) {
-  const allBottomProducts = await sequelize.query(
-    `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo ASC LIMIT 20 ;`,
-    {
-      type: QueryTypes.SELECT,
-    }
-  );
+  const allBottomProducts = await models.Product.findAll({
+    group: ["Product.id"],
+    includeIgnoreAttributes: false,
+    include: [
+      {
+        model: models.Sale,
+      },
+    ],
+    attributes: [
+      "id",
+      [
+        sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
+        "sells",
+      ],
+      "pro_description",
+      "pro_image",
+      "price",
+      "category_id",
+      "discount_id",
+      "pro_status",
+      "percentage_tax",
+    ],
+    order: sequelize.literal('sells ASC'),
+    limit: 20
+  });
 
   if (allBottomProducts.length > 0) {
     res.json({
@@ -216,6 +255,40 @@ export async function getBottom20(req, res) {
   } else {
     res.status(404).json({
       message: "There was an error with your request",
+    });
+  }
+}
+
+export async function last6Months(req, res) {
+  const { id } = req.params;
+  const actualMonth = new Date(Date.now());
+
+  const last6Months = new Date(Date.now());
+  last6Months.setMonth(actualMonth.getMonth() - 6);
+
+  const allSells = await models.SaleItem.count({
+    where: {
+      product_id: id,
+    },
+    include: [
+      {
+        model: models.Sale,
+        where: {
+          sale_date: {
+            [Op.between]: [last6Months, actualMonth],
+          },
+        },
+      },
+    ],
+  });
+
+  if (allSells > 0) {
+    res.json({
+      message: `For the product with the id ${id} were ${allSells} sells in the last 6 months.`,
+    });
+  } else {
+    res.json({
+      message: "No sells in the last 6 months.",
     });
   }
 }

@@ -1,4 +1,5 @@
 const models = require("../models/index");
+const { Op } = require("sequelize")
 
 export async function getSales(req, res) {
   try {
@@ -21,7 +22,6 @@ export async function getSales(req, res) {
         },
         {
           model: models.SaleItem,
-          as: "SaleItems",
           attributes: [
             "product_id",
             "amount",
@@ -137,7 +137,7 @@ export async function deleteSale(req, res) {
       },
     });
     res.json({
-      mesage: "sale deleted succesfuly",
+      mesage: "sale deleted succesfully",
       count: deleteRowCount,
     });
   } catch (error) {
@@ -146,4 +146,27 @@ export async function deleteSale(req, res) {
       data: {},
     });
   }
+}
+
+export async function getSalesDateRange(req, res){
+  const { initial_date, end_date } = req.body;
+  
+  const saleList = await models.Sale.findAll({
+    where: {
+      sale_date: {
+        [Op.between] : [initial_date, end_date]
+      }
+    }
+  })
+  if(saleList.length > 0){
+    res.json({
+      data: saleList
+    })
+  }else {
+    res.status(404).json({
+      message: "Not sales found in that range"
+    })
+  }
+  
+
 }
