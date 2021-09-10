@@ -1,4 +1,7 @@
+import { sequelize } from "../models/index";
+
 const models = require("../models/index");
+const { QueryTypes } = require("sequelize");
 
 export async function getProducts(req, res) {
   try {
@@ -175,6 +178,44 @@ export async function deleteProduct(req, res) {
     res.status(500).json({
       message: "Something goes wrong " + error,
       data: {},
+    });
+  }
+}
+
+export async function getTop20(req, res) {
+  const allTopProducts = await sequelize.query(
+    `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo DESC LIMIT 20 ;`,
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (allTopProducts.length > 0) {
+    res.json({
+      data: allTopProducts,
+    });
+  } else {
+    res.status(404).json({
+      message: "There was an error with your request",
+    });
+  }
+}
+
+export async function getBottom20(req, res) {
+  const allBottomProducts = await sequelize.query(
+    `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".discount_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo ASC LIMIT 20 ;`,
+    {
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  if (allBottomProducts.length > 0) {
+    res.json({
+      data: allBottomProducts,
+    });
+  } else {
+    res.status(404).json({
+      message: "There was an error with your request",
     });
   }
 }
