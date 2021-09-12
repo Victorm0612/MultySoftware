@@ -18,6 +18,7 @@ npx sequelize-cli model:generate --name Credit_pay --attributes approval_number:
 npx sequelize-cli model:generate --name Debit_pay --attributes debit_type:string,card_number:integer,payment_id:integer
 npx sequelize-cli model:generate --name Cash_pay --attributes payment_id:integer,payer_id:integer
 npx sequelize-cli model:generate --name Card --attributes card_number:integer,owner_id:integer,exp_date:date,bank:integer
+npx sequelize-cli model:generate --name ProductDiscount --attributes discount_id:integer,produt_id:integer
 
 #Crear bd
 npx sequelize-cli db:create

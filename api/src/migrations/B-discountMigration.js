@@ -8,10 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      title: {
+      discount_name: {
         type: Sequelize.STRING
       },
-      dis_description: {
+      discount_description: {
         type: Sequelize.TEXT
       },
       ini_date: {
@@ -20,11 +20,11 @@ module.exports = {
       final_date: {
         type: Sequelize.DATE
       },
+      discount_value: {
+        type: Sequelize.DOUBLE
+      },
       discount_status: {
         type: Sequelize.BOOLEAN
-      },
-      dis_value: {
-        type: Sequelize.DOUBLE
       },
       createdAt: {
         allowNull: false,

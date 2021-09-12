@@ -2,7 +2,7 @@ import { verifyToken, verifyAccess } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
-import { getPromoItems, getOnePromoItem, create, updatePromoItem, deletePromoItem } from '../controllers/promoitem_controller'
+import { getPromoItems, getOnePromoItem, create, updatePromoItem, deletePromoItem } from '../controllers/productdiscount_controller'
 
 router.get('/', getPromoItems);
 router.get('/:id', getOnePromoItem);

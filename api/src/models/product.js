@@ -15,62 +15,44 @@ module.exports = (sequelize, DataTypes) => {
       //========== Product - Ingredient ==========
       //Product have many ingredients
       models.Product.belongsToMany(models.Ingredient, {
-        as: "IngredientProduct",
         foreignKey: "product_id",
         through: models.IngredientItem,
       });
 
       //Ingredients can be in many Products
       models.Ingredient.belongsToMany(models.Product, {
-        as: "IngredientProduct",
         foreignKey: "ingredient_id",
         through: models.IngredientItem,
-      });
-
-      //========== Product - Promo ==========
-      //Product have Many Promo
-      models.Product.belongsToMany(models.Promo, {
-        as: "ProductPromo",
-        foreignKey: "product_id",
-        through: models.PromoItem,
-      });
-
-      //Promo have many Products
-      models.Promo.belongsToMany(models.Product, {
-        as: "ProductPromo",
-        foreignKey: "promo_id",
-        through: models.PromoItem,
       });
 
       //========== Product - Category ==========
       //Product have one Category
       models.Product.belongsTo(models.Category, {
-        as: "ProductCategory",
         foreignKey: "category_id",
       });
 
       //Category have many Products
       models.Category.hasMany(models.Product, {
-        as: "ProductCategory",
         foreignKey: "category_id",
       });
 
       //========== Product - Discount ==========
-      //Product have one Discount
-      models.Product.belongsTo(models.Discount, {
-        as: "ProductDiscount",
-        foreignKey: "discount_id",
+      //Product have many Discount
+      models.Product.belongsToMany(models.Discount, {
+        foreignKey: "product_id",
+        through: models.ProductDiscount
       });
 
       //Discount have many Product
-      models.Discount.hasMany(models.Product, {
-        as: "ProductDiscount",
+      models.Discount.belongsToMany(models.Product, {
         foreignKey: "discount_id",
+        through: models.ProductDiscount
       });
     }
   }
   Product.init(
     {
+      pro_name: DataTypes.STRING,
       pro_description: DataTypes.TEXT,
       pro_image: DataTypes.STRING,
       price: DataTypes.INTEGER,

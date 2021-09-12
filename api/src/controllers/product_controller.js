@@ -10,23 +10,15 @@ export async function getProducts(req, res) {
       include: [
         {
           model: models.Category,
-          as: "ProductCategory",
           attributes: ["id", "cat_name"],
         },
         {
           model: models.Discount,
-          as: "ProductDiscount",
-          attributes: ["id", "title", "dis_value"],
+          attributes: ["id", "discount_name", "discount_value"],
         },
         {
           model: models.Ingredient,
-          as: "IngredientProduct",
           attributes: ["id", "ingredient_name", "price"],
-        },
-        {
-          model: models.Promo,
-          as: "ProductPromo",
-          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
     });
@@ -80,6 +72,7 @@ export async function getOneProduct(req, res) {
 
 export async function create(req, res) {
   const {
+    pro_name,
     pro_description,
     pro_image,
     price,
@@ -90,6 +83,7 @@ export async function create(req, res) {
   } = req.body;
   try {
     let newProduct = await models.Product.create({
+      pro_name,
       pro_description,
       pro_image,
       price,
@@ -115,6 +109,7 @@ export async function create(req, res) {
 export async function updateProduct(req, res) {
   const { id } = req.params;
   const {
+    pro_name,
     pro_description,
     pro_image,
     price,
@@ -126,6 +121,7 @@ export async function updateProduct(req, res) {
 
   const productFound = await models.Product.findAll({
     attributes: [
+      "pro_name",
       "pro_description",
       "pro_image",
       "price",
@@ -142,6 +138,7 @@ export async function updateProduct(req, res) {
     productFound.forEach(async (productFound) => {
       await models.Product.update(
         {
+          pro_name,
           pro_description,
           pro_image,
           price,
@@ -198,6 +195,7 @@ export async function getTop20(req, res) {
         sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
         "sells",
       ],
+      "pro_name",
       "pro_description",
       "pro_image",
       "price",
@@ -236,6 +234,7 @@ export async function getBottom20(req, res) {
         sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
         "sells",
       ],
+      "pro_name",
       "pro_description",
       "pro_image",
       "price",
