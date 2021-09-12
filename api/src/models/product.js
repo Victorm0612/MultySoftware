@@ -52,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init(
     {
+      pro_name: DataTypes.STRING,
       pro_description: DataTypes.TEXT,
       pro_image: DataTypes.STRING,
       price: DataTypes.INTEGER,

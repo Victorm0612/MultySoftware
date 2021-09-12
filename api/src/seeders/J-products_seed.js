@@ -4,6 +4,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('Products',[
       {
+        pro_name: "ElPo llAsado",
         pro_description: "Almuerzo de Pollo asado",
         pro_image: "UnPolloasado",
         price: 18500,
@@ -13,6 +14,7 @@ module.exports = {
         percentage_tax: 19,
       },
       {
+        pro_name: "LasPa pitas",
         pro_description: "Porcion de papas",
         pro_image: "UnasPapas",
         price: 10000,
@@ -22,6 +24,7 @@ module.exports = {
         percentage_tax: 19,
       },
       {
+        pro_name: "ElCal Culeitor",
         pro_description: "Coca cola litro",
         pro_image: "UnaCocaCola",
         price: 3500,

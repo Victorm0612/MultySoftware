@@ -56,8 +56,8 @@ export async function create(req, res) {
 }
 
 export async function updateDiscount(req, res) {
-  const { id } = req.body;
-  const [discount_name, discount_description, ini_date, discount_value, discount_status] = req.body;
+  const { id } = req.params;
+  const { discount_name, discount_description, ini_date, discount_value, discount_status } = req.body;
   const discountFound = await models.Discount.findOne({
     attributes: ["discount_name", "discount_description", "ini_date", "discount_value", "discount_status"],
     where: {
