@@ -19,14 +19,6 @@ module.exports = {
           key: 'id'
         }
       },
-      payment_id: {
-        type: Sequelize.INTEGER,
-        foreignKey: true,
-        references: {
-          model: 'Payments',
-          key: 'id'
-        }
-      },
       bill_time: {
         type: Sequelize.TIME
       },

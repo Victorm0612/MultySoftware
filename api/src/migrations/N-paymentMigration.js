@@ -26,6 +26,14 @@ module.exports = {
       pay_status: {
         type: Sequelize.BOOLEAN
       },
+      bill_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Bills',
+          key: 'id'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
