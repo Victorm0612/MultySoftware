@@ -7,25 +7,28 @@ module.exports = {
         pay_description: "1 Pernil pollo asado, 1 cocacola litro",
         pay_date: "28/04/2021",
         pay_time: "17:45",
-        pay_type: "Credito",
+        pay_type: "Completo",
         amount: 18500,
-        pay_status: true
+        pay_status: true,
+        bill_id: 1
       },
       {
         pay_description: "1 Porcion Papas",
         pay_date: "29/04/2021",
         pay_time: "10:30",
-        pay_type: "Debito",
+        pay_type: "Dividido",
         amount: 10000,
-        pay_status: true
+        pay_status: true,
+        bill_id: 2
       },
       {
         pay_description: "1 cocacola litro",
         pay_date: "29/04/2021",
         pay_time: "10:30",
-        pay_type: "Efectivo",
+        pay_type: "Dividido",
         amount: 3500,
-        pay_status: true
+        pay_status: true,
+        bill_id: 3
       }
     ])
   },

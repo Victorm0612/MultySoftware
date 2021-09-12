@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       category_id: DataTypes.INTEGER,
       discount_id: DataTypes.INTEGER,
       pro_status: DataTypes.BOOLEAN,
-      percentage_tax: DataTypes.DOUBLE,
+      percentage_tax: DataTypes.DOUBLE
     },
     {
       sequelize,

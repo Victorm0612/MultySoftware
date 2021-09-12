@@ -13,43 +13,51 @@ module.exports = (sequelize, DataTypes) => {
        */
 
       //========== Payment - Credit_Pay ==========
-      //Credit_Pay have one Payment
+      //Credit_Pay belongs to Payment
       models.Credit_Pay.belongsTo(models.Payment, {
         as: "CreditPayment",
         foreignKey: "payment_id",
       });
 
-      //Payment belongs to one Credit_Pay
+      //Payment have Credit_Pay
       models.Payment.hasOne(models.Credit_Pay, {
         as: "CreditPayment",
         foreignKey: "payment_id",
       });
 
       //========== Payment - Cash_Pay ==========
-      //Cash_pay have one Payment
+      //Cash_pay belongs to one Payment
       models.Cash_Pay.belongsTo(models.Payment, {
         as: "CashPayment",
         foreignKey: "payment_id",
       });
 
-      //Payment belongs to one Cash_Pay
+      //Payment have one Cash_Pay
       models.Payment.hasOne(models.Cash_Pay, {
         as: "CashPayment",
         foreignKey: "payment_id",
       });
 
       //========== Payment - Debit_Pay ==========
-      //Debit_Pay have one Payment
+      //Debit_Pay belongs to one Payment
       models.Debit_Pay.belongsTo(models.Payment, {
         as: "DebitPayment",
         foreignKey: "payment_id",
       });
 
-      //Payment belongs to one Debit_Pay
+      //Payment have one Debit_Pay
       models.Payment.hasOne(models.Debit_Pay, {
         as: "DebitPayment",
         foreignKey: "payment_id",
       });
+
+      //========== Payment - Bill ==========
+      //Bill belongs to Payment
+      models.Bill.hasOne(models.Payment, { foreignKey: "bill_id"})
+
+      //Payment have one Bill
+      models.Payment.belongsTo(models.Bill, { foreignKey: "bill_id"})
+
     }
   }
   Payment.init(
@@ -60,6 +68,7 @@ module.exports = (sequelize, DataTypes) => {
       pay_type: DataTypes.STRING,
       amount: DataTypes.INTEGER,
       pay_status: DataTypes.BOOLEAN,
+      bill_id: DataTypes.INTEGER,
     },
     {
       sequelize,

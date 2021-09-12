@@ -10,6 +10,10 @@ export async function getBills(req, res) {
           as: "SaleBill",
           attributes: { exclude: ["createdAt", "updatedAt"] },
         },
+        {
+          model: models.Payment,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        }
       ],
     });
     res.json({

@@ -6,7 +6,6 @@ module.exports = {
       {
         nit: 33333345,
         sale_id: 1,
-        payment_id: 1,
         bill_time: "18:05",
         bill_date: "28/04/2021",
         subtotal: 18500,
@@ -18,7 +17,6 @@ module.exports = {
       {
         nit: 33333346,
         sale_id: 2,
-        payment_id: 2,
         bill_time: "13:21",
         bill_date: "29/04/2021",
         subtotal: 10000,
@@ -30,7 +28,6 @@ module.exports = {
       {
         nit: 33333346,
         sale_id: 3,
-        payment_id: 3,
         bill_time: "16:33",
         bill_date: "27/04/2021",
         subtotal: 3500,

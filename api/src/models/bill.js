@@ -24,26 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         as: "SaleBill",
         foreignKey: "sale_id",
       });
-
-      //========== Bill - Payment ==========
-      //Bill have one Payment
-      models.Bill.belongsTo(models.Payment, {
-        as: "BillPayment",
-        foreignKey: "payment_id",
-      });
-
-      //Payment belongs to one Bill
-      models.Payment.hasOne(models.Bill, {
-        as: "BillPayment",
-        foreignKey: "payment_id",
-      });
     }
   }
   Bill.init(
     {
       nit: DataTypes.INTEGER,
       sale_id: DataTypes.INTEGER,
-      payment_id: DataTypes.INTEGER,
       bill_time: DataTypes.TIME,
       bill_date: DataTypes.DATE,
       subtotal: DataTypes.DOUBLE,
