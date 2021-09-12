@@ -1,24 +1,28 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Promos', {
+    await queryInterface.createTable('ProductDiscounts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      ini_date: {
-        type: Sequelize.DATE
+      discount_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Discounts',
+          key: 'id'
+        }
       },
-      final_date: {
-        type: Sequelize.DATE
-      },
-      promo_name: {
-        type: Sequelize.STRING
-      },
-      promo_description: {
-        type: Sequelize.TEXT
+      product_id: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'Products',
+          key: 'id'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -33,6 +37,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Promos');
+    await queryInterface.dropTable('ProductDiscounts');
   }
 };

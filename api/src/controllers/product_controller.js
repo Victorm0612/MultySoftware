@@ -10,23 +10,15 @@ export async function getProducts(req, res) {
       include: [
         {
           model: models.Category,
-          as: "ProductCategory",
           attributes: ["id", "cat_name"],
         },
         {
           model: models.Discount,
-          as: "ProductDiscount",
-          attributes: ["id", "title", "dis_value"],
+          attributes: ["id", "discount_name", "discount_value"],
         },
         {
           model: models.Ingredient,
-          as: "IngredientProduct",
           attributes: ["id", "ingredient_name", "price"],
-        },
-        {
-          model: models.Promo,
-          as: "ProductPromo",
-          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
     });

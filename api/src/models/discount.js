@@ -6,12 +6,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   Discount.init(
     {
-      title: DataTypes.STRING,
-      dis_description: DataTypes.TEXT,
+      discount_name: DataTypes.STRING,
+      discount_description: DataTypes.TEXT,
       ini_date: DataTypes.DATE,
       final_date: DataTypes.DATE,
-      discount_status: DataTypes.BOOLEAN,
-      dis_value: DataTypes.DOUBLE,
+      discount_value: DataTypes.DOUBLE,
+      discount_status: DataTypes.BOOLEAN      
     },
     {
       sequelize,

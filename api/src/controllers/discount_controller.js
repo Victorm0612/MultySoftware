@@ -8,8 +8,7 @@ export async function getDiscounts(req, res) {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
-      data: {},
+      message: "Something goes wrong" + error,
     });
   }
 }
@@ -27,90 +26,76 @@ export async function getOneDiscount(req, res) {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
-      data: {},
+      message: "Something goes wrong" + error,
     });
   }
 }
 
 export async function create(req, res) {
-  const {
-    title,
-    dis_description,
-    ini_date,
-    final_date,
-    discount_status,
-    dis_value,
-  } = req.body;
+  const { discount_name, discount_description, ini_date, discount_value, discount_status } = req.body;
   try {
     let newDiscount = await models.Discount.create({
-      title,
-      dis_description,
+      discount_name,
+      discount_description,
       ini_date,
-      final_date,
-      discount_status,
-      dis_value,
+      discount_value,
+      discount_status
     });
     if (newDiscount) {
       res.json({
-        message: "SUCCESS!!",
+        mesagge: "SUCCESS!!",
         data: newDiscount,
       });
     }
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
+      mesagge: "Something goes wrong" + error,
       data: {},
     });
   }
 }
 
 export async function updateDiscount(req, res) {
-  const { id } = req.params;
-  const {
-    title,
-    dis_description,
-    ini_date,
-    final_date,
-    discount_status,
-    dis_value,
-  } = req.body;
-
-  const discountFound = await models.Discount.findAll({
-    attributes: [
-      "title",
-      "dis_description",
-      "ini_date",
-      "final_date",
-      "discount_status",
-      "dis_value",
-    ],
+  const { id } = req.body;
+  const [discount_name, discount_description, ini_date, discount_value, discount_status] = req.body;
+  const discountFound = await models.Discount.findOne({
+    attributes: ["discount_name", "discount_description", "ini_date", "discount_value", "discount_status"],
     where: {
       id: id,
     },
   });
-  if (discountFound.length > 0) {
-    discountFound.forEach(async (discountFound) => {
-      await models.Discount.update(
-        {
-          title,
-          dis_description,
-          ini_date,
-          final_date,
-          discount_status,
-          dis_value,
-        },
-        {
-          where: {
-            id: id,
-          },
+  if(discountFound){
+    const update = await models.Discount.update(
+      {
+        discount_name,
+        discount_description,
+        ini_date,
+        discount_value,
+        discount_status
+      },
+      {
+        where: {
+          id: id
         }
-      );
-    });
+      })
+
+      if (update) {
+        res.json({
+          message: "Discount updated successfully",
+        });
+      } else {
+        res.status(403).json({
+          message: "There was an error updating the discount",
+        });
+      }
+
+  }else{
+    res.status(404).json({
+      message: "Discount not found",
+    })
   }
-  return res.json({
-    message: "discount updated succesfully",
-  });
+
+  
 }
 
 export async function deleteDiscount(req, res) {
@@ -122,12 +107,12 @@ export async function deleteDiscount(req, res) {
       },
     });
     res.json({
-      message: "Discount deleted successfully",
+      message: "Discount deleted succesfully",
       count: deleteRowCount,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
+      message: "Error deleting Promo",
     });
   }
 }
