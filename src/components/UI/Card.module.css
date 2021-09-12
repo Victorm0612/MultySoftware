@@ -1,9 +1,17 @@
 .card {
   width: 32rem;
-  height: auto;
   background-color: white;
   border-radius: 10px;
   padding: 1.5rem 2rem;
+}
+
+.big_card {
+  height: 80vh;
+  overflow-y: auto;
+}
+
+.small_card {
+  height: auto;
 }
 
 .card_error {

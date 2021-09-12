@@ -87,7 +87,7 @@ const DiscountsPage = () => {
     };
     const updateDiscounts = async () => {
       try {
-        const response = await axios.put(
+        await axios.put(
           `discount/${discountId}`,
           {
             title: discountName,
@@ -121,7 +121,7 @@ const DiscountsPage = () => {
     };
     const deleteDiscounts = async () => {
       try {
-        const response = await axios.delete(`discount/${discountId}`, {
+        await axios.delete(`discount/${discountId}`, {
           headers: {
             Authorization: token,
           },

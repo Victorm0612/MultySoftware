@@ -14,7 +14,7 @@ const InputForm = (props) => {
   };
 
   const validInputClasses = (hasError) => {
-    return hasError ? classes.error_input : classes["form-control_input"];
+    return hasError ? classes.error_input : classes.form_control__input;
   };
 
   let date = new Date();
@@ -26,12 +26,17 @@ const InputForm = (props) => {
       : null;
   return (
     <Fragment>
-      <label className={classes["form-control_label"]} htmlFor={props.id}>
+      <label
+        className={`${classes.form_control__label} ${props.labelClass}`}
+        htmlFor={props.id}
+      >
         {props.labelMessage}
       </label>
       <input
         defaultValue={props.onlyValue}
-        className={validInputClasses(props.inputHasError)}
+        className={`${validInputClasses(props.inputHasError)} ${
+          props.inputClass
+        }`}
         onChange={props.change}
         onBlur={props.blur}
         value={props.value}

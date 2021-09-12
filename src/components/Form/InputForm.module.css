@@ -1,10 +1,11 @@
-.form-control_label {
+.form_control__label {
   font-weight: 700;
+  margin: 0rem 0.5rem;
 }
 
-.form-control_input {
+.form_control__input {
   font-family: inherit;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0.5rem;
   border-radius: 10px;
   outline: none !important;
   border: 2px solid rgb(230, 155, 17);
