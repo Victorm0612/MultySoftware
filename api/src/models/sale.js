@@ -28,27 +28,23 @@ module.exports = (sequelize, DataTypes) => {
       //========== SaleItem - Sale ==========
       //SaleItems belongs to one Sale
       models.SaleItem.belongsTo(models.Sale, {
-        as: "SaleItems",
         foreignKey: "sale_id",
       });
 
       //Sale have many SaleItems
       models.Sale.hasMany(models.SaleItem, {
-        as: "SaleItems",
         foreignKey: "sale_id",
       });
 
       //========== Sale - Product ==========
       //Sale have many Product
       models.Sale.belongsToMany(models.Product, {
-        as: "SaleProduct",
         foreignKey: "sale_id",
         through: models.SaleItem,
       });
 
       //Product have many Sale
       models.Product.belongsToMany(models.Sale, {
-        as: "SaleProduct",
         foreignKey: "product_id",
         through: models.SaleItem,
       });
