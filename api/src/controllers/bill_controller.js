@@ -49,7 +49,6 @@ export async function create(req, res) {
   const {
     nit,
     sale_id,
-    payment_id,
     bill_time,
     bill_date,
     subtotal,
@@ -62,7 +61,6 @@ export async function create(req, res) {
     let newBill = await models.bill.create({
       nit,
       sale_id,
-      payment_id,
       bill_time,
       bill_date,
       subtotal,
@@ -90,7 +88,6 @@ export async function updateBill(req, res) {
   const {
     nit,
     sale_id,
-    payment_id,
     bill_time,
     bill_date,
     subtotal,
@@ -104,7 +101,6 @@ export async function updateBill(req, res) {
     attributes: [
       "nit",
       "sale_id",
-      "payment_id",
       "bill_time",
       "bill_date",
       "subtotal",
@@ -123,7 +119,6 @@ export async function updateBill(req, res) {
         {
           nit,
           sale_id,
-          payment_id,
           bill_time,
           bill_date,
           subtotal,
