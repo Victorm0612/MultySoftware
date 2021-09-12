@@ -131,6 +131,10 @@
     justify-content: center;
     align-items: center;
   }
+  .main_nav a {
+    margin: 0 0.3rem;
+  }
+
   .mobile_icon {
     display: none;
   }

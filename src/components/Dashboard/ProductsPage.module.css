@@ -1,0 +1,26 @@
+.ingredient_list,
+.promo_list {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0.5rem;
+}
+
+.ingredient_list label,
+.promo_list label {
+  margin: 0.3rem 0;
+}
+
+.ingredient_list label input,
+.promo_list label input {
+  margin-right: 0.4rem;
+}
+
+.ingredient_buttons,
+.promo_buttons {
+  text-align: center;
+}
+
+.ingredient_buttons button,
+.promo_buttons button {
+  margin: 1rem 0.5rem;
+}

@@ -9,6 +9,11 @@ import Modal from "../UI/Modal";
 import SpinnerLoading from "../UI/SpinnerLoading";
 import { axiosInstance as axios } from "../../config/axiosConfig";
 import classes from "./shared.module.css";
+import productClasses from "./ProductsPage.module.css";
+import IconEdit from "../UI/Icons/IconEdit";
+import IconTrash from "../UI/Icons/IconTrash";
+import IconDetails from "../UI/Icons/IconDetails";
+import Ingredients from "../Ingredients/Ingredients";
 
 const ProductsPage = () => {
   const TITLES = [
@@ -23,39 +28,43 @@ const ProductsPage = () => {
   const [products, setProducts] = useState(null);
   const [categories, setCategories] = useState(null);
   const [discounts, setDiscounts] = useState(null);
+  const [ingredients, setIngredients] = useState(null);
+  const [keyWordIngredient, setKeyWordIngredient] = useState("");
+  const [keyWordProduct, setKeyWordProduct] = useState("");
   const [action, setAction] = useState("get");
   const [productForm, setProductForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showIngredientsList, setShowIngredientsList] = useState(false);
   const { token } = useSelector((state) => state.userData);
   const [message, setMessage] = useState({
     isError: false,
     message: "",
   });
+  const resetInputs = () => {
+    resetProductId();
+    /* resetProductName(); */
+    resetProductDescription();
+    resetProductPrice();
+    resetProductStatus();
+    resetProductCategories();
+    resetIngredientProduct();
+    resetProductDiscounts();
+    resetProductTax();
+  };
 
   useEffect(() => {
-    const resetInputs = () => {
-      resetProductId();
-      resetProductName();
-      resetProductDescription();
-      resetProductPrice();
-      resetProductStatus();
-      resetProductCategories();
-      resetProductDiscounts();
-      resetProductTax();
-    };
     const getProducts = async () => {
       try {
         const { data: discountResponse } = await axios.get("discount/");
         const { data: categoryResponse } = await axios.get("category/");
+        const { data: ingredientsResponse } = await axios.get("ingredient/");
         const { data: response } = await axios.get("product/");
         setDiscounts(discountResponse.data);
         setCategories(categoryResponse.data);
+        setIngredients(ingredientsResponse.data);
         setProducts(response.data);
         setProductDiscounts(discountResponse.data[0].id);
         setProductCategories(categoryResponse.data[0].id);
-        console.log(categoryResponse.data);
-        console.log(discountResponse.data);
-        console.log(response.data);
       } catch (error) {
         console.log(error.response);
       } finally {
@@ -131,7 +140,7 @@ const ProductsPage = () => {
     };
     const deleteProducts = async () => {
       try {
-        const response = await axios.delete(`product/${productId}`, {
+        await axios.delete(`product/${productId}`, {
           headers: {
             Authorization: token,
           },
@@ -182,34 +191,32 @@ const ProductsPage = () => {
     create: "Crear",
     update: "Actualizar",
     delete: "Eliminar",
+    details: "Detalles del",
   };
 
   const {
     value: productId,
     isValid: productIdIsValid,
-    hasError: productIdHasError,
-    changeInputValueHandler: changeProductId,
-    /*     setInputValue: setProductId, */
-    inputBlurHandler: productIdBlurHandler,
+    setInputValue: setProductId,
     reset: resetProductId,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
 
-  const {
+  /*   const {
     value: productName,
     isValid: productNameIsValid,
     hasError: productNameHasError,
     changeInputValueHandler: changeProductName,
-    /* setInputValue: setProductName, */
+    setInputValue: setProductName,
     inputBlurHandler: productNameBlurHandler,
     reset: resetProductName,
-  } = useForm((value) => value.trim().length > 0);
+  } = useForm((value) => value.trim().length > 0); */
 
   const {
     value: productDescription,
     isValid: productDescriptionIsValid,
     hasError: productDescriptionHasError,
     changeInputValueHandler: changeProductDescription,
-    /* setInputValue: setProductDescription, */
+    setInputValue: setProductDescription,
     inputBlurHandler: productDescriptionBlurHandler,
     reset: resetProductDescription,
   } = useForm((value) => value.trim().length > 0);
@@ -219,7 +226,7 @@ const ProductsPage = () => {
     isValid: productStatusIsValid,
     hasError: productStatusHasError,
     changeInputValueHandler: changeProductStatus,
-    /* setInputValue: setProductStatus, */
+    setInputValue: setProductStatus,
     inputBlurHandler: productStatusBlurHandler,
     reset: resetProductStatus,
   } = useForm((value) => +value === 0 || +value === 1);
@@ -229,7 +236,7 @@ const ProductsPage = () => {
     isValid: productPriceIsValid,
     hasError: productPriceHasError,
     changeInputValueHandler: changeProductPrice,
-    /* setInputValue: setProductValue, */
+    setInputValue: setProductValue,
     inputBlurHandler: productPriceBlurHandler,
     reset: resetProductPrice,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
@@ -239,7 +246,7 @@ const ProductsPage = () => {
     isValid: productTaxIsValid,
     hasError: productTaxHasError,
     changeInputValueHandler: changeProductTax,
-    /* setInputValue: setProductTax, */
+    setInputValue: setProductTax,
     inputBlurHandler: productTaxBlurHandler,
     reset: resetProductTax,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
@@ -252,7 +259,7 @@ const ProductsPage = () => {
     setInputValue: setProductCategories,
     inputBlurHandler: productCategoriesBlurHandler,
     reset: resetProductCategories,
-  } = useForm((value) => /^[0-9\b]+$/.test(value), "");
+  } = useForm((value) => /^[0-9\b]+$/.test(+value), 1);
 
   const {
     value: productDiscounts,
@@ -262,19 +269,82 @@ const ProductsPage = () => {
     setInputValue: setProductDiscounts,
     inputBlurHandler: productDiscountsBlurHandler,
     reset: resetProductDiscounts,
-  } = useForm((value) => /^[0-9\b]+$/.test(value), "");
+  } = useForm((value) => /^[0-9\b]+$/.test(+value), 1);
+
+  const {
+    value: ingredientProduct,
+    isValid: ingredientProductIsValid,
+    setInputValue: setIngredientProduct,
+    reset: resetIngredientProduct,
+  } = useForm((value) => value.length > 0, []);
 
   let formIsValid =
     action === "delete"
       ? productStatusIsValid
-      : productNameIsValid &&
+      : /* productNameIsValid && */
         productDescriptionIsValid &&
         productPriceIsValid &&
+        ingredientProductIsValid &&
         productCategoriesIsValid &&
         productTaxIsValid &&
         productDiscountsIsValid &&
         productStatusIsValid &&
         (action === "update" ? productIdIsValid : true);
+
+  const setInputsForm = (product) => {
+    setProductId(product.id);
+    /* setProductName(product.) */
+    setProductDescription(product.pro_description);
+    setProductStatus(product.pro_status);
+    setProductCategories(product.ProductCategory.id);
+    setProductDiscounts(product.ProductDiscount.id);
+    setIngredientProduct(product.IngredientProduct);
+    setProductValue(product.price);
+    setProductTax(product.percentage_tax);
+  };
+
+  const onSetKeyWordProduct = (e) => {
+    setKeyWordProduct(e.target.value);
+  };
+
+  const onSetKeyWordIngredient = (e) => {
+    setKeyWordIngredient(e.target.value);
+  };
+
+  const openIngredientList = () => {
+    setShowIngredientsList(true);
+  };
+
+  const closeIngredientList = () => {
+    setShowIngredientsList(false);
+  };
+
+  const addIngredientsToProduct = (e) => {
+    e.preventDefault();
+    let arrIngredients = [];
+    for (let input of e.target) {
+      input.type === "checkbox" &&
+        input.checked &&
+        arrIngredients.push({ ingredient_name: input.name });
+    }
+    setIngredientProduct(arrIngredients);
+    setShowIngredientsList(false);
+  };
+
+  const actionUpdate = () => {
+    setAction("update");
+    setProductForm(true);
+  };
+
+  const actionDelete = () => {
+    setAction("delete");
+    setProductForm(true);
+  };
+
+  const showDetails = () => {
+    setAction("details");
+    setProductForm(true);
+  };
 
   const submitDiscount = (e) => {
     e.preventDefault();
@@ -287,25 +357,61 @@ const ProductsPage = () => {
         <SpinnerLoading />
       ) : (
         <Fragment>
-          <Modal show={productForm} closeModal={closeProductForm}>
-            <h1>{optionsAction[action]} Producto</h1>
-            <form onSubmit={submitDiscount} className={classes.form_control}>
-              {action !== "create" && (
-                <InputForm
-                  id="id__input"
-                  labelMessage="Id del descuento"
-                  change={changeProductId}
-                  value={productId}
-                  blur={productIdBlurHandler}
-                  typeInput="text"
-                  inputHasError={productIdHasError}
-                  errorMessage="Ingrese un id válido."
-                  keyPress={true}
+          {showIngredientsList ? (
+            <Modal show={showIngredientsList}>
+              <h1>Ingredientes</h1>
+              <form onSubmit={addIngredientsToProduct}>
+                <input
+                  value={keyWordIngredient}
+                  onChange={onSetKeyWordIngredient}
+                  className={classes.search_item}
+                  placeholder="Buscar"
                 />
-              )}
-              {action !== "delete" && (
-                <Fragment>
-                  <InputForm
+                <div className={productClasses.ingredient_list}>
+                  {ingredients
+                    .filter((ingredient) =>
+                      ingredient.ingredient_name
+                        .toLowerCase()
+                        .trim()
+                        .includes(keyWordIngredient.trim().toLowerCase())
+                    )
+                    .map((ingredient, index) => (
+                      <label key={index}>
+                        <input
+                          type="checkbox"
+                          name={ingredient.ingredient_name}
+                        />
+                        {ingredient.ingredient_name}
+                      </label>
+                    ))}
+                  <div className={productClasses.ingredient_buttons}>
+                    <Button>Agregar Ingredientes</Button>
+                    <Button action={closeIngredientList}>Cancelar</Button>
+                  </div>
+                </div>
+              </form>
+            </Modal>
+          ) : (
+            <Modal show={productForm} closeModal={closeProductForm}>
+              <h1>{optionsAction[action]} Producto</h1>
+              <form
+                onSubmit={submitDiscount}
+                className={
+                  action === "details"
+                    ? classes.form_details
+                    : classes.form_control
+                }
+              >
+                {action === "delete" && (
+                  <div>
+                    <h5 style={{ textAlign: "center" }}>
+                      ¿Está seguro que desea eliminar {productDescription}?
+                    </h5>
+                  </div>
+                )}
+                {action !== "delete" && (
+                  <Fragment>
+                    {/*                   <InputForm
                     id="name__input"
                     labelMessage="Nombre"
                     change={changeProductName}
@@ -314,126 +420,167 @@ const ProductsPage = () => {
                     typeInput="text"
                     inputHasError={productNameHasError}
                     errorMessage="Ingresa un nombre válido."
-                  />
-                  <InputForm
-                    id="description__input"
-                    labelMessage="Descripción"
-                    change={changeProductDescription}
-                    value={productDescription}
-                    blur={productDescriptionBlurHandler}
-                    typeInput="text"
-                    inputHasError={productDescriptionHasError}
-                    errorMessage="Ingresa una descripción válida."
-                  />
-                  <InputForm
-                    id="value__input"
-                    labelMessage="Valor"
-                    change={changeProductPrice}
-                    value={productPrice}
-                    blur={productPriceBlurHandler}
-                    typeInput="text"
-                    keyPress={true}
-                    inputHasError={productPriceHasError}
-                    errorMessage="Ingresa un valor válido."
-                  />
-                  <InputForm
-                    id="tax__input"
-                    labelMessage="IVA"
-                    change={changeProductTax}
-                    value={productTax}
-                    blur={productTaxBlurHandler}
-                    typeInput="text"
-                    keyPress={true}
-                    inputHasError={productTaxHasError}
-                    errorMessage="Ingresa un valor válido."
-                  />
-                  <label htmlFor="categories__input">Categorías</label>
-                  <select
-                    onChange={changeProductCategories}
-                    onBlur={productCategoriesBlurHandler}
-                    value={productCategories}
-                    onClick={() => {
-                      console.log("ID Product:", productCategories);
-                    }}
-                    required
-                    id="categories__input"
-                  >
-                    {categories.length === 0 ? (
-                      <option value="0">No hay categorias</option>
-                    ) : (
-                      categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.cat_name}
-                        </option>
-                      ))
+                  /> */}
+                    <InputForm
+                      inputClass={classes.input_details}
+                      labelClass={classes.label_details}
+                      id="description__input"
+                      labelMessage="Descripción"
+                      change={changeProductDescription}
+                      value={productDescription}
+                      blur={productDescriptionBlurHandler}
+                      typeInput="text"
+                      inputHasError={productDescriptionHasError}
+                      errorMessage="Ingresa una descripción válida."
+                      disabled={action === "details"}
+                    />
+                    <InputForm
+                      id="value__input"
+                      labelMessage="Valor"
+                      change={changeProductPrice}
+                      value={productPrice}
+                      blur={productPriceBlurHandler}
+                      typeInput="text"
+                      keyPress={true}
+                      inputHasError={productPriceHasError}
+                      errorMessage="Ingresa un valor válido."
+                      disabled={action === "details"}
+                    />
+                    <InputForm
+                      inputClass={classes.input_details_two}
+                      id="tax__input"
+                      labelMessage="IVA"
+                      change={changeProductTax}
+                      value={productTax}
+                      blur={productTaxBlurHandler}
+                      typeInput="text"
+                      keyPress={true}
+                      inputHasError={productTaxHasError}
+                      errorMessage="Ingresa un valor válido."
+                      disabled={action === "details"}
+                    />
+                    <label htmlFor="categories__input">Categorías</label>
+                    <select
+                      onChange={changeProductCategories}
+                      onBlur={productCategoriesBlurHandler}
+                      value={productCategories}
+                      required
+                      id="categories__input"
+                      disabled={action === "details"}
+                    >
+                      {categories.length === 0 ? (
+                        <option value="0">No hay categorias</option>
+                      ) : (
+                        categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.cat_name}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    {productCategoriesHasError && (
+                      <p className={classes.error_message}>
+                        Seleccione una opción válida.
+                      </p>
                     )}
-                  </select>
-                  {productCategoriesHasError && (
-                    <p className={classes.error_message}>
-                      Seleccione una opción válida.
-                    </p>
-                  )}
-                  <label htmlFor="discounts__input">Descuentos</label>
-                  <select
-                    onChange={changeProductDiscounts}
-                    onBlur={productDiscountsBlurHandler}
-                    value={productDiscounts}
-                    onClick={() => {
-                      console.log("ID Discount:", productCategories);
-                    }}
-                    required
-                    id="discounts__input"
-                  >
-                    {discounts.length === 0 ? (
-                      <option value="0">No hay descuentos</option>
-                    ) : (
-                      discounts.map((discount) => (
-                        <option key={discount.id} value={discount.id}>
-                          {discount.title}
-                        </option>
-                      ))
+                    <label htmlFor="discounts__input">Descuentos</label>
+                    <select
+                      className={classes.input_details_three}
+                      onChange={changeProductDiscounts}
+                      onBlur={productDiscountsBlurHandler}
+                      value={productDiscounts}
+                      required
+                      id="discounts__input"
+                      disabled={action === "details"}
+                    >
+                      {discounts.length === 0 ? (
+                        <option value="0">No hay descuentos</option>
+                      ) : (
+                        discounts.map((discount) => (
+                          <option key={discount.id} value={discount.id}>
+                            {discount.title}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    {productDiscountsHasError && (
+                      <p className={classes.error_message}>
+                        Seleccione una opción válida.
+                      </p>
                     )}
-                  </select>
-                  {productDiscountsHasError && (
-                    <p className={classes.error_message}>
-                      Seleccione una opción válida.
-                    </p>
+                    <label htmlFor="status__input">Estado</label>
+                    <select
+                      onChange={changeProductStatus}
+                      onBlur={productStatusBlurHandler}
+                      value={productStatus}
+                      required
+                      id="status__input"
+                      disabled={action === "details"}
+                    >
+                      <option value={0}>Hay stock</option>
+                      <option value={1}>No hay</option>
+                    </select>
+                    {productStatusHasError && (
+                      <p className={classes.error_message}>
+                        Seleccione una opción válida.
+                      </p>
+                    )}
+                    <label className={classes.label_title__ingredients}>
+                      Ingredientes
+                    </label>
+                    {ingredientProduct.length > 0 && (
+                      <Ingredients list={ingredientProduct} />
+                    )}
+                    {action === "create" ||
+                      (action === "update" && (
+                        <Button submitFor="button" action={openIngredientList}>
+                          Agregar Ingredientes
+                        </Button>
+                      ))}
+                    <label className={classes.label_title__ingredients}>
+                      Promos asociadas
+                    </label>
+                  </Fragment>
+                )}
+                <div
+                  className={
+                    action === "details"
+                      ? classes.form_details__buttons
+                      : classes.form_control__buttons
+                  }
+                >
+                  {action !== "details" && (
+                    <Button isInvalid={!formIsValid} submitFor="submit">
+                      {optionsAction[action]}
+                    </Button>
                   )}
-                  <label htmlFor="status__input">Estado</label>
-                  <select
-                    onChange={changeProductStatus}
-                    onBlur={productStatusBlurHandler}
-                    value={productStatus}
-                    required
-                    id="status__input"
-                  >
-                    <option value={0}>Activo</option>
-                    <option value={1}>Inactivo</option>
-                  </select>
-                  {productStatusHasError && (
-                    <p className={classes.error_message}>
-                      Seleccione una opción válida.
-                    </p>
-                  )}
-                </Fragment>
-              )}
-              <div className={classes.form_control__buttons}>
-                <Button isInvalid={!formIsValid} submitFor="submit">
-                  {optionsAction[action]}
-                </Button>
-                <Button submitFor="button" action={closeProductForm}>
-                  Cancelar
-                </Button>
-              </div>
-              <MessageBox isError={message.isError} message={message.message} />
-            </form>
-          </Modal>
+                  <Button submitFor="button" action={closeProductForm}>
+                    {action === "details" ? "Cerrar" : "Cancelar"}
+                  </Button>
+                </div>
+                {message.message.length > 0 && (
+                  <MessageBox
+                    isError={message.isError}
+                    message={message.message}
+                  />
+                )}
+              </form>
+            </Modal>
+          )}
           <h1>Productos Disponibles</h1>
+
           <div className={classes.product_list__header}>
+            <input
+              value={keyWordProduct}
+              onChange={onSetKeyWordProduct}
+              className={classes.search_item}
+              placeholder="Buscar"
+            />
             <Button
               submitFor="button"
               action={(e) => {
                 setAction("create");
+                resetInputs();
                 openProductForm(e);
               }}
             >
@@ -444,59 +591,56 @@ const ProductsPage = () => {
             {products.length === 0 ? (
               <tr></tr>
             ) : (
-              products.map((product, index) => (
-                <tr key={index}>
-                  <td>{product.id}</td>
-                  <td>{product.pro_description}</td>
-                  <td>
-                    {categories.length === 0
-                      ? "No tiene"
-                      : categories.filter(
-                          (category, index) =>
-                            category.id === product.category_id
-                        )[0].cat_name}
-                  </td>
-                  <td>{product.price}</td>
-                  <td>
-                    {discounts.length === 0
-                      ? "No tiene"
-                      : discounts.filter(
-                          (discount, index) =>
-                            discount.id === product.discount_id
-                        )[0].title}
-                  </td>
-                  <td>{product.pro_status ? "Sí" : "No"}</td>
-                  <td className={classes.product_list__table__edit}>
-                    <svg
-                      onClick={() => {
-                        setAction("update");
-                        setProductForm(true);
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                      <path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                    </svg>
-                    <svg
-                      onClick={() => {
-                        setAction("delete");
-                        setProductForm(true);
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                    </svg>
-                  </td>
-                </tr>
-              ))
+              products
+                .filter((product) =>
+                  product.pro_description
+                    .toLowerCase()
+                    .trim()
+                    .includes(keyWordProduct.trim().toLowerCase())
+                )
+                .map((product, index) => (
+                  <tr key={index}>
+                    <td>{product.id}</td>
+                    <td>{product.pro_description}</td>
+                    <td>
+                      {categories.length === 0
+                        ? "No tiene"
+                        : product.ProductCategory.cat_name}
+                    </td>
+                    <td>
+                      $
+                      {new Intl.NumberFormat("es-CO", {
+                        maximumSignificantDigits: 3,
+                      }).format(product.price)}
+                    </td>
+                    <td>
+                      {discounts.length === 0
+                        ? "No tiene"
+                        : product.ProductDiscount.title}
+                    </td>
+                    <td>{product.pro_status ? "Sí" : "No"}</td>
+                    <td className={classes.product_list__table__edit}>
+                      <IconEdit
+                        action={() => {
+                          setInputsForm(product);
+                          actionUpdate();
+                        }}
+                      />
+                      <IconTrash
+                        action={() => {
+                          setInputsForm(product);
+                          actionDelete();
+                        }}
+                      />
+                      <IconDetails
+                        action={() => {
+                          setInputsForm(product);
+                          showDetails();
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
             )}
           </InventoryTable>
         </Fragment>

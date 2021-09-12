@@ -1,6 +1,7 @@
 .categories,
 .product_list,
-.discount_page {
+.discount_page,
+.users {
   height: 100vh;
   width: 100%;
   display: flex;
@@ -12,15 +13,18 @@
 
 .categories__header,
 .product_list__header,
-.discount_page__header {
+.discount_page__header,
+.users__header {
   width: 100%;
   display: flex;
+  align-items: center;
   justify-content: flex-end;
 }
 
 .categories h1,
 .product_list h1,
-.discount_page h1 {
+.discount_page h1,
+.users h1 {
   color: white;
   font-weight: 700;
   margin: 3rem 0;
@@ -29,15 +33,29 @@
 
 .categories__header button,
 .product_list__header button,
-.discount_page__header button {
+.discount_page__header button,
+.users__header button {
   margin: 1.2rem 0;
 }
 
 .product_list__table__edit svg,
 .categories__table__edit svg,
-.discount_page__table__edit svg {
+.discount_page__table__edit svg,
+.users__table__edit svg {
   cursor: pointer;
   margin: 0 0.3rem;
+}
+
+.search_item {
+  font-family: inherit;
+  margin: 0.5rem 0.5rem;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+  width: 80%;
+  height: 2rem;
+  display: block;
+  margin: 0 auto;
 }
 
 .form_control {
@@ -45,6 +63,40 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.form_control svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.form_details {
+  margin: 1rem 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 1.4rem 3rem 1.4rem 3rem 1.4rem 3rem;
+}
+
+.input_details {
+  grid-row-start: 1;
+  grid-row-start: 2;
+}
+
+.input_details_two {
+  grid-row-start: 3;
+  grid-row-start: 4;
+}
+
+.input_details_three {
+  grid-row-start: 5;
+  grid-row-start: 6;
+}
+
+.form_details__buttons {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  text-align: center;
 }
 
 .form_control__buttons {
@@ -56,12 +108,34 @@
   margin: 0 1rem;
   margin-top: 1rem;
 }
-.form_control label {
+.form_control label,
+.form_details label {
   font-weight: 700;
+  margin: 0 0.5rem;
 }
-.form_control select {
+
+.label_title__ingredients {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  text-align: center;
+  margin-top: 1rem !important;
+  font-size: 1.1rem;
+}
+.form_control_check__label,
+.form_details_check__label {
+  font-weight: 400 !important;
+}
+
+.form_control_check__input,
+.form_details_check__input {
+  display: inline-block;
+  margin: auto;
+}
+
+.form_control select,
+.form_details select {
   font-family: inherit;
-  margin: 0.5rem 0;
+  margin: 0.5rem 0.5rem;
   border-radius: 10px;
   outline: none !important;
   border: 2px solid rgb(230, 155, 17);
@@ -83,12 +157,14 @@
   }
   .categories__header,
   .product_list__header,
-  .discount_page__header {
+  .discount_page__header,
+  .users__header {
     width: 80%;
   }
   .categories__header button,
   .product_list__header button,
-  .discount_page__header button {
+  .discount_page__header button,
+  .users__header button {
     margin: 1.2rem 1.2rem;
   }
 }

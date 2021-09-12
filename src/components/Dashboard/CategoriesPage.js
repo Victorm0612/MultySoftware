@@ -9,11 +9,15 @@ import useForm from "../../hooks/useForm";
 import MessageBox from "../UI/MessageBox";
 import SpinnerLoading from "../UI/SpinnerLoading";
 import { useSelector } from "react-redux";
+import IconTrash from "../UI/Icons/IconTrash";
+import IconEdit from "../UI/Icons/IconEdit";
+import IconDetails from "../UI/Icons/IconDetails";
 
 const CategoriesPage = () => {
   const TITLES = ["#", "Nombre", "Descripción", "Estado", "Opciones"];
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState(null);
+  const [keyWord, setKeyWord] = useState("");
   const [categoryForm, setCategoryForm] = useState(false);
   const [action, setAction] = useState("get");
   const { token } = useSelector((state) => state.userData);
@@ -21,6 +25,13 @@ const CategoriesPage = () => {
     isError: false,
     message: "",
   });
+
+  const resetForm = () => {
+    resetCategoryId();
+    resetCategoryName();
+    resetCategoryDescription();
+    resetCategoryStatus();
+  };
 
   useEffect(() => {
     const createCategories = async () => {
@@ -53,9 +64,7 @@ const CategoriesPage = () => {
       } finally {
         setAction("get");
         setIsLoading(false);
-        resetCategoryName();
-        resetCategoryDescription();
-        resetCategoryStatus();
+        resetForm();
         setMessage({ isError: false, message: "" });
       }
     };
@@ -102,10 +111,7 @@ const CategoriesPage = () => {
       } finally {
         setAction("get");
         setIsLoading(false);
-        resetCategoryId();
-        resetCategoryName();
-        resetCategoryDescription();
-        resetCategoryStatus();
+        resetForm();
         setMessage({ isError: false, message: "" });
       }
     };
@@ -132,10 +138,7 @@ const CategoriesPage = () => {
       } finally {
         setAction("get");
         setIsLoading(false);
-        resetCategoryId();
-        resetCategoryName();
-        resetCategoryDescription();
-        resetCategoryStatus();
+        resetForm();
         setMessage({ isError: false, message: "" });
       }
     };
@@ -154,6 +157,10 @@ const CategoriesPage = () => {
     }
   }, [action, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const changeKeyWord = (e) => {
+    setKeyWord(e.target.value);
+  };
+
   const openCategoryForm = (e) => {
     e.preventDefault();
     setCategoryForm(true);
@@ -162,15 +169,13 @@ const CategoriesPage = () => {
   const closeCategoryForm = (e) => {
     e.preventDefault();
     setCategoryForm(false);
+    resetForm();
   };
 
   const {
     value: categoryId,
     isValid: categoryIdIsValid,
-    hasError: categoryIdHasError,
-    changeInputValueHandler: changeCategoryId,
-    /* setInputValue: setCategoryId, */
-    inputBlurHandler: categoryIdBlurHandler,
+    setInputValue: setCategoryId,
     reset: resetCategoryId,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
 
@@ -179,7 +184,7 @@ const CategoriesPage = () => {
     isValid: categoryNameIsValid,
     hasError: categoryNameHasError,
     changeInputValueHandler: changeCategoryName,
-    /* setInputValue: setCategoryName, */
+    setInputValue: setCategoryName,
     inputBlurHandler: categoryNameBlurHandler,
     reset: resetCategoryName,
   } = useForm((value) => value.trim().length > 0);
@@ -189,7 +194,7 @@ const CategoriesPage = () => {
     isValid: categoryDescriptionIsValid,
     hasError: categoryDescriptionHasError,
     changeInputValueHandler: changeCategoryDescription,
-    /* setInputValue: setCategoryDescription, */
+    setInputValue: setCategoryDescription,
     inputBlurHandler: categoryDescriptionBlurHandler,
     reset: resetCategoryDescription,
   } = useForm((value) => value.trim().length > 0);
@@ -199,7 +204,7 @@ const CategoriesPage = () => {
     isValid: categoryStatusIsValid,
     hasError: categoryStatusHasError,
     changeInputValueHandler: changeCategoryStatus,
-    /* setInputValue: setCategoryStatus, */
+    setInputValue: setCategoryStatus,
     inputBlurHandler: categoryStatusBlurHandler,
     reset: resetCategoryStatus,
   } = useForm((value) => +value === 0 || +value === 1);
@@ -217,7 +222,16 @@ const CategoriesPage = () => {
     create: "Crear",
     update: "Actualizar",
     delete: "Eliminar",
+    details: "Detalles de",
   };
+
+  const setInputsForm = (category) => {
+    setCategoryId(category.id);
+    setCategoryName(category.cat_name);
+    setCategoryDescription(category.cat_description);
+    setCategoryStatus(category.cat_status);
+  };
+
   const submitCreateCategory = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -234,18 +248,12 @@ const CategoriesPage = () => {
               onSubmit={submitCreateCategory}
               className={classes.form_control}
             >
-              {action !== "create" && (
-                <InputForm
-                  id="id__input"
-                  labelMessage="Id de la categoría"
-                  change={changeCategoryId}
-                  value={categoryId}
-                  blur={categoryIdBlurHandler}
-                  typeInput="text"
-                  inputHasError={categoryIdHasError}
-                  errorMessage="Ingrese un id válido."
-                  keyPress={true}
-                />
+              {action === "delete" && (
+                <div>
+                  <h5 style={{ textAlign: "center" }}>
+                    ¿Está seguro que desea eliminar {categoryName}?
+                  </h5>
+                </div>
               )}
               {action !== "delete" && (
                 <Fragment>
@@ -258,6 +266,7 @@ const CategoriesPage = () => {
                     typeInput="text"
                     inputHasError={categoryNameHasError}
                     errorMessage="Ingresa un nombre válido."
+                    disabled={action === "details"}
                   />
                   <InputForm
                     id="description__input"
@@ -268,6 +277,7 @@ const CategoriesPage = () => {
                     typeInput="text"
                     inputHasError={categoryDescriptionHasError}
                     errorMessage="Ingresa una descripción válida."
+                    disabled={action === "details"}
                   />
                   <label htmlFor="status__input">Estado</label>
                   <select
@@ -276,6 +286,7 @@ const CategoriesPage = () => {
                     value={categoryStatus}
                     required
                     id="status__input"
+                    disabled={action === "details"}
                   >
                     <option value={0}>Activo</option>
                     <option value={1}>Inactivo</option>
@@ -288,9 +299,11 @@ const CategoriesPage = () => {
                 </Fragment>
               )}
               <div className={classes.form_control__buttons}>
-                <Button isInvalid={!formIsValid} submitFor="submit">
-                  {optionsAction[action]}
-                </Button>
+                {action !== "details" && (
+                  <Button isInvalid={!formIsValid} submitFor="submit">
+                    {optionsAction[action]}
+                  </Button>
+                )}
                 <Button submitFor="button" action={closeCategoryForm}>
                   Cancelar
                 </Button>
@@ -300,6 +313,12 @@ const CategoriesPage = () => {
           </Modal>
           <h1>Categorías</h1>
           <div className={classes.categories__header}>
+            <input
+              value={keyWord}
+              onChange={changeKeyWord}
+              className={classes.search_item}
+              placeholder="Buscar"
+            />
             <Button
               submitFor="button"
               action={(e) => {
@@ -314,43 +333,44 @@ const CategoriesPage = () => {
             {categories.length === 0 ? (
               <tr></tr>
             ) : (
-              categories.map((category, index) => (
-                <tr key={index}>
-                  <td>{category.id}</td>
-                  <td>{category.cat_name}</td>
-                  <td>{category.cat_description}</td>
-                  <td>{category.cat_status ? "Activo" : "Inactivo"}</td>
-                  <td className={classes.product_list__table__edit}>
-                    <svg
-                      onClick={() => {
-                        setAction("update");
-                        setCategoryForm(true);
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                      <path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                    </svg>
-                    <svg
-                      onClick={() => {
-                        setAction("delete");
-                        setCategoryForm(true);
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                    </svg>
-                  </td>
-                </tr>
-              ))
+              categories
+                .filter((category) =>
+                  category.cat_name
+                    .trim()
+                    .toLowerCase()
+                    .includes(keyWord.trim().toLowerCase())
+                )
+                .map((category, index) => (
+                  <tr key={index}>
+                    <td>{category.id}</td>
+                    <td>{category.cat_name}</td>
+                    <td>{category.cat_description}</td>
+                    <td>{category.cat_status ? "Activo" : "Inactivo"}</td>
+                    <td className={classes.product_list__table__edit}>
+                      <IconEdit
+                        action={() => {
+                          setAction("update");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                      <IconTrash
+                        action={() => {
+                          setAction("delete");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                      <IconDetails
+                        action={() => {
+                          setAction("details");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
             )}
           </InventoryTable>
         </Fragment>

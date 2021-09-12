@@ -1,0 +1,17 @@
+.error_message {
+  color: #cc0000;
+  font-weight: 700;
+}
+
+.form_control_label {
+  font-weight: 700;
+  margin: 0 0.5rem;
+}
+
+.form_control_select {
+  font-family: inherit;
+  margin: 0.5rem 0.5rem;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+}
