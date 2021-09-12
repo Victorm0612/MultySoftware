@@ -1,11 +1,11 @@
 import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
 import ProductsPage from "./Dashboard/ProductsPage";
 import CategoriesPage from "./Dashboard/CategoriesPage";
-import CustomersPage from "./Dashboard/CustomersPage";
 import OrdersPage from "./Dashboard/OrdersPage";
 import RestaurantsPage from "./Dashboard/RestaurantsPage";
 import classes from "./DashboardPage.module.css";
 import DiscountsPage from "./Dashboard/DiscountsPage";
+import UsersPage from "./Dashboard/UsersPage";
 const DashboardPage = () => {
   let { path, url } = useRouteMatch();
   const ROUTES = [
@@ -25,8 +25,8 @@ const DashboardPage = () => {
       access: true,
     },
     {
-      path: `${url}/customers`,
-      pathName: "Clientes",
+      path: `${url}/users`,
+      pathName: "Usuarios",
       access: true,
     },
     { path: `${url}/orders`, pathName: "Ordenes", access: true },
@@ -68,8 +68,8 @@ const DashboardPage = () => {
         <Route path={`${path}/discounts`}>
           <DiscountsPage />
         </Route>
-        <Route path={`${path}/customers`}>
-          <CustomersPage />
+        <Route path={`${path}/users`}>
+          <UsersPage />
         </Route>
         <Route path={`${path}/orders`}>
           <OrdersPage />

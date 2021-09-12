@@ -175,10 +175,7 @@ const CategoriesPage = () => {
   const {
     value: categoryId,
     isValid: categoryIdIsValid,
-    hasError: categoryIdHasError,
-    changeInputValueHandler: changeCategoryId,
     setInputValue: setCategoryId,
-    inputBlurHandler: categoryIdBlurHandler,
     reset: resetCategoryId,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
 

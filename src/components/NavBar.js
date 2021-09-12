@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import actionTypes from "../store/actionsType";
+import Button from "./UI/Button";
 import classes from "./NavBar.module.css";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
@@ -45,9 +46,9 @@ const NavBar = (props) => {
           {ROUTES.map(
             (route, index) =>
               route.access && (
-                <li key={index} className={classes.links}>
-                  <Link to={route.path}>{route.namePath}</Link>
-                </li>
+                <Link key={index} to={route.path}>
+                  <Button>{route.namePath}</Button>
+                </Link>
               )
           )}
           {isLogged && (
