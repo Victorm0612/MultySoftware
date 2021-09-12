@@ -17,6 +17,7 @@ const CategoriesPage = () => {
   const TITLES = ["#", "Nombre", "Descripción", "Estado", "Opciones"];
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState(null);
+  const [keyWord, setKeyWord] = useState("");
   const [categoryForm, setCategoryForm] = useState(false);
   const [action, setAction] = useState("get");
   const { token } = useSelector((state) => state.userData);
@@ -155,6 +156,10 @@ const CategoriesPage = () => {
       deleteCategories();
     }
   }, [action, isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const changeKeyWord = (e) => {
+    setKeyWord(e.target.value);
+  };
 
   const openCategoryForm = (e) => {
     e.preventDefault();
@@ -311,6 +316,12 @@ const CategoriesPage = () => {
           </Modal>
           <h1>Categorías</h1>
           <div className={classes.categories__header}>
+            <input
+              value={keyWord}
+              onChange={changeKeyWord}
+              className={classes.search_item}
+              placeholder="Buscar"
+            />
             <Button
               submitFor="button"
               action={(e) => {
@@ -325,37 +336,44 @@ const CategoriesPage = () => {
             {categories.length === 0 ? (
               <tr></tr>
             ) : (
-              categories.map((category, index) => (
-                <tr key={index}>
-                  <td>{category.id}</td>
-                  <td>{category.cat_name}</td>
-                  <td>{category.cat_description}</td>
-                  <td>{category.cat_status ? "Activo" : "Inactivo"}</td>
-                  <td className={classes.product_list__table__edit}>
-                    <IconEdit
-                      action={() => {
-                        setAction("update");
-                        setInputsForm(category);
-                        setCategoryForm(true);
-                      }}
-                    />
-                    <IconTrash
-                      action={() => {
-                        setAction("delete");
-                        setInputsForm(category);
-                        setCategoryForm(true);
-                      }}
-                    />
-                    <IconDetails
-                      action={() => {
-                        setAction("details");
-                        setInputsForm(category);
-                        setCategoryForm(true);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))
+              categories
+                .filter((category) =>
+                  category.cat_name
+                    .trim()
+                    .toLowerCase()
+                    .includes(keyWord.trim().toLowerCase())
+                )
+                .map((category, index) => (
+                  <tr key={index}>
+                    <td>{category.id}</td>
+                    <td>{category.cat_name}</td>
+                    <td>{category.cat_description}</td>
+                    <td>{category.cat_status ? "Activo" : "Inactivo"}</td>
+                    <td className={classes.product_list__table__edit}>
+                      <IconEdit
+                        action={() => {
+                          setAction("update");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                      <IconTrash
+                        action={() => {
+                          setAction("delete");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                      <IconDetails
+                        action={() => {
+                          setAction("details");
+                          setInputsForm(category);
+                          setCategoryForm(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
             )}
           </InventoryTable>
         </Fragment>

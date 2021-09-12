@@ -29,7 +29,8 @@ const ProductsPage = () => {
   const [categories, setCategories] = useState(null);
   const [discounts, setDiscounts] = useState(null);
   const [ingredients, setIngredients] = useState(null);
-  const [keyWord, setKeyWord] = useState("");
+  const [keyWordIngredient, setKeyWordIngredient] = useState("");
+  const [keyWordProduct, setKeyWordProduct] = useState("");
   const [action, setAction] = useState("get");
   const [productForm, setProductForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -302,8 +303,12 @@ const ProductsPage = () => {
     setProductTax(product.percentage_tax);
   };
 
-  const onSetKeyWord = (e) => {
-    setKeyWord(e.target.value);
+  const onSetKeyWordProduct = (e) => {
+    setKeyWordProduct(e.target.value);
+  };
+
+  const onSetKeyWordIngredient = (e) => {
+    setKeyWordIngredient(e.target.value);
   };
 
   const openIngredientList = () => {
@@ -357,9 +362,9 @@ const ProductsPage = () => {
               <h1>Ingredientes</h1>
               <form onSubmit={addIngredientsToProduct}>
                 <input
-                  value={keyWord}
-                  onChange={onSetKeyWord}
-                  className={productClasses.search_item}
+                  value={keyWordIngredient}
+                  onChange={onSetKeyWordIngredient}
+                  className={classes.search_item}
                   placeholder="Buscar"
                 />
                 <div className={productClasses.ingredient_list}>
@@ -368,7 +373,7 @@ const ProductsPage = () => {
                       ingredient.ingredient_name
                         .toLowerCase()
                         .trim()
-                        .includes(keyWord)
+                        .includes(keyWordIngredient.trim().toLowerCase())
                     )
                     .map((ingredient, index) => (
                       <label key={index}>
@@ -526,11 +531,12 @@ const ProductsPage = () => {
                     {ingredientProduct.length > 0 && (
                       <Ingredients list={ingredientProduct} />
                     )}
-                    {action === "create" && (
-                      <Button submitFor="button" action={openIngredientList}>
-                        Agregar Ingredientes
-                      </Button>
-                    )}
+                    {action === "create" ||
+                      (action === "update" && (
+                        <Button submitFor="button" action={openIngredientList}>
+                          Agregar Ingredientes
+                        </Button>
+                      ))}
                     <label className={classes.label_title__ingredients}>
                       Promos asociadas
                     </label>
@@ -562,7 +568,14 @@ const ProductsPage = () => {
             </Modal>
           )}
           <h1>Productos Disponibles</h1>
+
           <div className={classes.product_list__header}>
+            <input
+              value={keyWordProduct}
+              onChange={onSetKeyWordProduct}
+              className={classes.search_item}
+              placeholder="Buscar"
+            />
             <Button
               submitFor="button"
               action={(e) => {
@@ -578,49 +591,56 @@ const ProductsPage = () => {
             {products.length === 0 ? (
               <tr></tr>
             ) : (
-              products.map((product, index) => (
-                <tr key={index}>
-                  <td>{product.id}</td>
-                  <td>{product.pro_description}</td>
-                  <td>
-                    {categories.length === 0
-                      ? "No tiene"
-                      : product.ProductCategory.cat_name}
-                  </td>
-                  <td>
-                    $
-                    {new Intl.NumberFormat("es-CO", {
-                      maximumSignificantDigits: 3,
-                    }).format(product.price)}
-                  </td>
-                  <td>
-                    {discounts.length === 0
-                      ? "No tiene"
-                      : product.ProductDiscount.title}
-                  </td>
-                  <td>{product.pro_status ? "Sí" : "No"}</td>
-                  <td className={classes.product_list__table__edit}>
-                    <IconEdit
-                      action={() => {
-                        setInputsForm(product);
-                        actionUpdate();
-                      }}
-                    />
-                    <IconTrash
-                      action={() => {
-                        setInputsForm(product);
-                        actionDelete();
-                      }}
-                    />
-                    <IconDetails
-                      action={() => {
-                        setInputsForm(product);
-                        showDetails();
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))
+              products
+                .filter((product) =>
+                  product.pro_description
+                    .toLowerCase()
+                    .trim()
+                    .includes(keyWordProduct.trim().toLowerCase())
+                )
+                .map((product, index) => (
+                  <tr key={index}>
+                    <td>{product.id}</td>
+                    <td>{product.pro_description}</td>
+                    <td>
+                      {categories.length === 0
+                        ? "No tiene"
+                        : product.ProductCategory.cat_name}
+                    </td>
+                    <td>
+                      $
+                      {new Intl.NumberFormat("es-CO", {
+                        maximumSignificantDigits: 3,
+                      }).format(product.price)}
+                    </td>
+                    <td>
+                      {discounts.length === 0
+                        ? "No tiene"
+                        : product.ProductDiscount.title}
+                    </td>
+                    <td>{product.pro_status ? "Sí" : "No"}</td>
+                    <td className={classes.product_list__table__edit}>
+                      <IconEdit
+                        action={() => {
+                          setInputsForm(product);
+                          actionUpdate();
+                        }}
+                      />
+                      <IconTrash
+                        action={() => {
+                          setInputsForm(product);
+                          actionDelete();
+                        }}
+                      />
+                      <IconDetails
+                        action={() => {
+                          setInputsForm(product);
+                          showDetails();
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
             )}
           </InventoryTable>
         </Fragment>
