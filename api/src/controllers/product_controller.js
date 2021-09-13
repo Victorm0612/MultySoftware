@@ -86,61 +86,96 @@ export async function create(req, res) {
   //Errors handling
   let { ingredientError, discountError } = false;
 
+  //Arrays for handling errors
+  let ingredientsOk = new Array();
+  let discountsOk = new Array();
+
   try {
-    let newProduct = await models.Product.create({
-      pro_name,
-      pro_description,
-      pro_image,
-      price,
-      category_id,
-      pro_status,
-      percentage_tax,
-    });
-    if (newProduct) {
-      for (const oneDiscount of discounts) {
-        const discount = await models.Discount.findOne({
-          where: {
-            id: oneDiscount.discount_id,
-          },
-        });
+    /**
+     * This for is in order to validate that the discounts are valid
+     * if they're valid, then they're introduced on the @discountsOk array
+     * if not, @discountError will be true, in order to send an appropiate error message
+     */
+    for (const oneDiscount of discounts) {
+      const discount = await models.Discount.findOne({
+        where: {
+          id: oneDiscount.discount_id,
+        },
+      });
 
-        if (discount) {
-          newProduct.addDiscounts(discount);
-        } else {
-          discountError = true;
-          break;
-        }
-      }
-
-      for (const oneIngredient of ingredients) {
-        const ingredient = await models.Ingredient.findOne({
-          where: {
-            id: oneIngredient.ingredient_id,
-          },
-        });
-
-        if (ingredient) {
-          newProduct.addIngredients(ingredient, {
-            through: { amount: oneIngredient.amount },
-          });
-        } else {
-          ingredientError = true;
-          break;
-        }
-      }
-
-      if (ingredientError && discountError) {
-        res.json({ message: "There is an error with all the product" });
-      } else if (ingredientError) {
-        res.json({ message: "There is an error with the ingredient" });
-      } else if (discountError) {
-        res.json({ message: "There is an error with the discount" });
+      if (discount) {
+        discountsOk.push({discount: discount});
+        
       } else {
-        res.json({
-          data: newProduct,
-        });
+        discountError = true;
+        break;
       }
     }
+
+    /**
+     * This for is in order to validate that the ingredients are valid
+     * if they're valid, then they're introduced on the @ingredientsOk array
+     * if not, @ingredientError will be true, in order to send an appropiate error message
+     */
+    for (const oneIngredient of ingredients) {
+      const ingredient = await models.Ingredient.findOne({
+        where: {
+          id: oneIngredient.ingredient_id,
+        },
+      });
+
+      if (ingredient) {
+        ingredientsOk.push({ ingredient, amount: oneIngredient.amount });
+      } else {
+        ingredientError = true;
+        break;
+      }
+    }
+
+    if (!(ingredientError && discountError)) {
+      if (!ingredientError) {
+        if (!discountError) {
+          let newProduct = await models.Product.create({
+            pro_name,
+            pro_description,
+            pro_image,
+            price,
+            category_id,
+            pro_status,
+            percentage_tax,
+          });
+          if (newProduct) {
+            for (const oneIngredient of ingredientsOk) {
+              newProduct.addIngredients(oneIngredient.ingredient, {
+                through: { amount: oneIngredient.amount },
+              });
+            }
+
+            for (const oneDiscount of discountsOk) {
+              newProduct.addDiscounts(oneDiscount.discount);
+            }
+
+            res.json({
+              message: "Product created successfully",
+              data: newProduct,
+            });
+          }
+        } else {
+          res.json({
+            message: "There was an error with the discounts",
+          });
+        }
+      } else {
+        res.json({
+          message: "There was an error with the ingredients",
+        });
+      }
+    } else {
+      res.json({
+        message: "There was an error with ingredients and discounts",
+      });
+    }
+
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
