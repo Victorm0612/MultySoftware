@@ -47,7 +47,6 @@ const DiscountsPage = () => {
             Authorization: token,
           },
         });
-        console.log(response.data);
         setDiscounts(response.data);
       } catch (error) {
         console.log(error.response);
@@ -385,8 +384,8 @@ const DiscountsPage = () => {
               discounts.map((discount, index) => (
                 <tr key={index}>
                   <td>{discount.id}</td>
-                  <td>{discount.title}</td>
-                  <td>{discount.dis_description}</td>
+                  <td>{discount.discount_name}</td>
+                  <td>{discount.discount_description}</td>
                   <td>{discount.ini_date.split("T")[0]}</td>
                   <td>{discount.final_date.split("T")[0]}</td>
                   <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>

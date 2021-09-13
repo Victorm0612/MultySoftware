@@ -71,7 +71,6 @@ const CategoriesPage = () => {
     const getCategories = async () => {
       try {
         const { data: response } = await axios.get("category/");
-        console.log(response.data);
         setCategories(response.data);
       } catch (error) {
         console.log(error.response);
