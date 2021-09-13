@@ -57,7 +57,6 @@ module.exports = (sequelize, DataTypes) => {
       pro_image: DataTypes.STRING,
       price: DataTypes.INTEGER,
       category_id: DataTypes.INTEGER,
-      discount_id: DataTypes.INTEGER,
       pro_status: DataTypes.BOOLEAN,
       percentage_tax: DataTypes.DOUBLE
     },

@@ -28,14 +28,6 @@ module.exports = {
           key: 'id'
         }
       },
-      discount_id: {
-        type: Sequelize.INTEGER,
-        foreignKey: true,
-        references: {
-          model: 'Discounts',
-          key: 'id'
-        }
-      },
       pro_status: {
         type: Sequelize.BOOLEAN
       },
