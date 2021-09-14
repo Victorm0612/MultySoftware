@@ -77,27 +77,105 @@ export async function create(req, res) {
     pro_image,
     price,
     category_id,
-    discount_id,
     pro_status,
     percentage_tax,
+    discounts,
+    ingredients,
   } = req.body;
+
+  //Errors handling
+  let { ingredientError, discountError } = false;
+
+  //Arrays for handling errors
+  let ingredientsOk = new Array();
+  let discountsOk = new Array();
+
   try {
-    let newProduct = await models.Product.create({
-      pro_name,
-      pro_description,
-      pro_image,
-      price,
-      category_id,
-      discount_id,
-      pro_status,
-      percentage_tax,
-    });
-    if (newProduct) {
+    /**
+     * This for is in order to validate that the discounts are valid
+     * if they're valid, then they're introduced on the @discountsOk array
+     * if not, @discountError will be true, in order to send an appropiate error message
+     */
+    for (const oneDiscount of discounts) {
+      const discount = await models.Discount.findOne({
+        where: {
+          id: oneDiscount.discount_id,
+        },
+      });
+
+      if (discount) {
+        discountsOk.push({discount: discount});
+        
+      } else {
+        discountError = true;
+        break;
+      }
+    }
+
+    /**
+     * This for is in order to validate that the ingredients are valid
+     * if they're valid, then they're introduced on the @ingredientsOk array
+     * if not, @ingredientError will be true, in order to send an appropiate error message
+     */
+    for (const oneIngredient of ingredients) {
+      const ingredient = await models.Ingredient.findOne({
+        where: {
+          id: oneIngredient.ingredient_id,
+        },
+      });
+
+      if (ingredient) {
+        ingredientsOk.push({ ingredient, amount: oneIngredient.amount });
+      } else {
+        ingredientError = true;
+        break;
+      }
+    }
+
+    if (!(ingredientError && discountError)) {
+      if (!ingredientError) {
+        if (!discountError) {
+          let newProduct = await models.Product.create({
+            pro_name,
+            pro_description,
+            pro_image,
+            price,
+            category_id,
+            pro_status,
+            percentage_tax,
+          });
+          if (newProduct) {
+            for (const oneIngredient of ingredientsOk) {
+              newProduct.addIngredients(oneIngredient.ingredient, {
+                through: { amount: oneIngredient.amount },
+              });
+            }
+
+            for (const oneDiscount of discountsOk) {
+              newProduct.addDiscounts(oneDiscount.discount);
+            }
+
+            res.json({
+              message: "Product created successfully",
+              data: newProduct,
+            });
+          }
+        } else {
+          res.json({
+            message: "There was an error with the discounts",
+          });
+        }
+      } else {
+        res.json({
+          message: "There was an error with the ingredients",
+        });
+      }
+    } else {
       res.json({
-        message: "SUCCESS",
-        data: newProduct,
+        message: "There was an error with ingredients and discounts",
       });
     }
+
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
@@ -114,19 +192,17 @@ export async function updateProduct(req, res) {
     pro_image,
     price,
     category_id,
-    discount_id,
     pro_status,
     percentage_tax,
   } = req.body;
 
-  const productFound = await models.Product.findAll({
+  const productFound = await models.Product.findOne({
     attributes: [
       "pro_name",
       "pro_description",
       "pro_image",
       "price",
       "category_id",
-      "discount_id",
       "pro_status",
       "percentage_tax",
     ],
@@ -134,30 +210,38 @@ export async function updateProduct(req, res) {
       id: id,
     },
   });
-  if (productFound.length > 0) {
-    productFound.forEach(async (productFound) => {
-      await models.Product.update(
-        {
-          pro_name,
-          pro_description,
-          pro_image,
-          price,
-          category_id,
-          discount_id,
-          pro_status,
-          percentage_tax,
+  if (productFound) {
+    const update = await models.Product.update(
+      {
+        pro_name,
+        pro_description,
+        pro_image,
+        price,
+        category_id,
+        pro_status,
+        percentage_tax,
+      },
+      {
+        where: {
+          id: id,
         },
-        {
-          where: {
-            id: id,
-          },
-        }
-      );
+      }
+    );
+
+    if (update) {
+      res.json({
+        message: "Product updated successfully",
+      });
+    } else {
+      res.status(404).json({
+        message: "There was an error updating the product",
+      });
+    }
+  } else {
+    res.json({
+      message: "Product not found",
     });
   }
-  return res.json({
-    message: "product updated succesfully",
-  });
 }
 
 export async function deleteProduct(req, res) {
@@ -168,13 +252,15 @@ export async function deleteProduct(req, res) {
         id: id,
       },
     });
-    res.json({
-      message: "product delected succesfully",
-      count: deleteRowCount,
-    });
+    if (deleteRowCount > 0) {
+      res.json({
+        message: "product delected succesfully",
+        count: deleteRowCount,
+      });
+    }
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
+      message: "Error deleting Product " + error,
       data: {},
     });
   }
@@ -200,13 +286,12 @@ export async function getTop20(req, res) {
       "pro_image",
       "price",
       "category_id",
-      "discount_id",
       "pro_status",
       "percentage_tax",
     ],
-    order: sequelize.literal('sells DSC'),
-    limit: 20
-  })  
+    order: sequelize.literal("sells DSC"),
+    limit: 20,
+  });
 
   if (allTopProducts.length > 0) {
     res.json({
@@ -239,12 +324,11 @@ export async function getBottom20(req, res) {
       "pro_image",
       "price",
       "category_id",
-      "discount_id",
       "pro_status",
       "percentage_tax",
     ],
-    order: sequelize.literal('sells ASC'),
-    limit: 20
+    order: sequelize.literal("sells ASC"),
+    limit: 20,
   });
 
   if (allBottomProducts.length > 0) {

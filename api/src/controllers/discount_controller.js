@@ -32,14 +32,20 @@ export async function getOneDiscount(req, res) {
 }
 
 export async function create(req, res) {
-  const { discount_name, discount_description, ini_date, discount_value, discount_status } = req.body;
+  const {
+    discount_name,
+    discount_description,
+    ini_date,
+    discount_value,
+    discount_status,
+  } = req.body;
   try {
     let newDiscount = await models.Discount.create({
       discount_name,
       discount_description,
       ini_date,
       discount_value,
-      discount_status
+      discount_status,
     });
     if (newDiscount) {
       res.json({
@@ -57,45 +63,55 @@ export async function create(req, res) {
 
 export async function updateDiscount(req, res) {
   const { id } = req.params;
-  const { discount_name, discount_description, ini_date, discount_value, discount_status } = req.body;
+  const {
+    discount_name,
+    discount_description,
+    ini_date,
+    discount_value,
+    discount_status,
+  } = req.body;
   const discountFound = await models.Discount.findOne({
-    attributes: ["discount_name", "discount_description", "ini_date", "discount_value", "discount_status"],
+    attributes: [
+      "discount_name",
+      "discount_description",
+      "ini_date",
+      "discount_value",
+      "discount_status",
+    ],
     where: {
       id: id,
     },
   });
-  if(discountFound){
+  if (discountFound) {
     const update = await models.Discount.update(
       {
         discount_name,
         discount_description,
         ini_date,
         discount_value,
-        discount_status
+        discount_status,
       },
       {
         where: {
-          id: id
-        }
-      })
-
-      if (update) {
-        res.json({
-          message: "Discount updated successfully",
-        });
-      } else {
-        res.status(403).json({
-          message: "There was an error updating the discount",
-        });
+          id: id,
+        },
       }
+    );
 
-  }else{
+    if (update) {
+      res.json({
+        message: "Discount updated successfully",
+      });
+    } else {
+      res.status(403).json({
+        message: "There was an error updating the discount",
+      });
+    }
+  } else {
     res.status(404).json({
       message: "Discount not found",
-    })
+    });
   }
-
-  
 }
 
 export async function deleteDiscount(req, res) {
@@ -106,10 +122,11 @@ export async function deleteDiscount(req, res) {
         id: id,
       },
     });
-    res.json({
-      message: "Discount deleted succesfully",
-      count: deleteRowCount,
-    });
+    if(deleteRowCount > 0) {
+      res.json({
+        message: "Discount deleted successfully",
+      })
+    }
   } catch (error) {
     res.status(500).json({
       message: "Error deleting Promo",
