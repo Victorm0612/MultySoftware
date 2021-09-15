@@ -1,10 +1,11 @@
 import { useState } from "react";
+import React from "react";
 import { Fragment } from "react/cjs/react.production.min";
 import Button from "../UI/Button";
 import IngredientItem from "./IngredientItem";
 import classes from "./shared.module.css";
 const Ingredients = (props) => {
-  const [ingredientsList, setIngredientsList] = useState([]);
+  const [ingredientsList, setIngredientsList] = React.useState([]);
 
   const addToList = (newIngredient) => {
     let oldArr = props.ingredientsToAdd;
@@ -36,7 +37,7 @@ const Ingredients = (props) => {
   };
   return (
     <Fragment>
-      <ul className={classes.list}>
+      <ul data-test="ingredients-component" className={classes.list}>
         {props.list.length === 0 ? (
           <IngredientItem ingName="" onAdd={addToList} />
         ) : (
@@ -51,13 +52,16 @@ const Ingredients = (props) => {
       </ul>
       <div className={classes.ingredient_buttons}>
         <Button
+          data-test="button-add"
           action={() => {
             props.onAdd(ingredientsList);
           }}
         >
           Agregar Ingredientes
         </Button>
-        <Button action={props.closeList}>Cancelar</Button>
+        <Button data-test="button-cancel" action={props.closeList}>
+          Cancelar
+        </Button>
       </div>
     </Fragment>
   );
