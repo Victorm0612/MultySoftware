@@ -1,7 +1,6 @@
 import { sequelize } from "../models/index";
 
 const models = require("../models/index");
-const { QueryTypes } = require("sequelize");
 const { Op } = require("sequelize");
 
 export async function getProducts(req, res) {
@@ -84,7 +83,8 @@ export async function create(req, res) {
   } = req.body;
 
   //Errors handling
-  let { ingredientError, discountError } = false;
+  let ingredientError = false;
+  let discountError = false;
 
   //Arrays for handling errors
   let ingredientsOk = new Array();

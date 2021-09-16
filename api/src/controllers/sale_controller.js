@@ -1,5 +1,5 @@
 const models = require("../models/index");
-const { Op } = require("sequelize")
+const { Op, json } = require("sequelize");
 
 export async function getSales(req, res) {
   try {
@@ -7,7 +7,6 @@ export async function getSales(req, res) {
       include: [
         {
           model: models.User,
-          as: "SaleUser",
           attributes: [
             "document_type",
             "document_id",
@@ -17,7 +16,6 @@ export async function getSales(req, res) {
         },
         {
           model: models.Restaurant,
-          as: "RestaurantSales",
           attributes: ["id", "restaurant_name", "restaurant_address"],
         },
         {
@@ -32,6 +30,7 @@ export async function getSales(req, res) {
           ],
         },
       ],
+      order: [['id', 'DESC']],
     });
     res.json({
       data: sales,
@@ -64,21 +63,101 @@ export async function getOneSale(req, res) {
 }
 
 export async function create(req, res) {
-  const { id, sale_date, sale_time, docId, domicile_id, sale_status } =
-    req.body;
+  const {
+    id,
+    sale_date,
+    sale_time,
+    docId,
+    restaurant_id,
+    sale_status,
+    products,
+  } = req.body;
+
+  let productError = false;
+
+  let productsOk = new Array();
+
   try {
-    let newSale = await models.Sale.create({
-      id,
-      sale_date,
-      sale_time,
-      docId,
-      domicile_id,
-      sale_status,
-    });
-    if (newSale) {
-      res.json({
-        message: "SUCCESS!!",
-        data: newSale,
+    for (const oneProduct of products) {
+      const product = await models.Product.findOne({
+        where: {
+          id: oneProduct.product_id,
+        },
+      });
+
+      if (product) {
+        productsOk.push({ product: product, amount: oneProduct.amount });
+      } else {
+        productError = true;
+        break;
+      }
+    }
+
+    if (!productError) {
+      let newSale = await models.Sale.create({
+        id,
+        sale_date,
+        sale_time,
+        docId,
+        restaurant_id,
+        sale_status,
+      });
+
+      if (newSale) {
+        for (const oneProduct of productsOk) {
+          const today = new Date(Date.now());
+
+          const discount = await oneProduct.product.getDiscounts({
+            where: {
+              [Op.and]: [
+                { ini_date: { [Op.gte]: today } },
+                { final_date: { [Op.lte]: today } },
+              ],
+            },
+          });
+
+          let discount_value;
+
+          if (discount.length > 0) {
+            const higher = 0;
+            for (const oneDiscount of discount) {
+              higher =
+                oneDiscount.discount_value >= higher
+                  ? oneDiscount.discount_value
+                  : higher;
+            }
+            discount_value = higher;
+          } else if (discount.length == 1) {
+            discount_value = discount.discount_value;
+          } else {
+            discount_value = 0;
+          }
+
+          const amount = oneProduct.amount;
+          let totalIva = oneProduct.product.price * 0.19 * amount;
+          let item_total = oneProduct.product.price * amount;
+          let total_discount =
+            oneProduct.product.price * discount_value * amount;
+          let subtotal = item_total - (totalIva + total_discount);
+
+          newSale.addProducts(oneProduct.product, {
+            through: {
+              amount: amount,
+              totalIva: totalIva,
+              subtotal: subtotal,
+              item_total: item_total,
+              total_discount: total_discount,
+            },
+          });
+        }
+        res.json({
+          message: "SUCCESS!!",
+          data: newSale,
+        });
+      }
+    } else {
+      res.status(404).json({
+        message: "Product not found",
       });
     }
   } catch (error) {
@@ -148,25 +227,23 @@ export async function deleteSale(req, res) {
   }
 }
 
-export async function getSalesDateRange(req, res){
+export async function getSalesDateRange(req, res) {
   const { initial_date, end_date } = req.body;
-  
+
   const saleList = await models.Sale.findAll({
     where: {
       sale_date: {
-        [Op.between] : [initial_date, end_date]
-      }
-    }
-  })
-  if(saleList.length > 0){
+        [Op.between]: [initial_date, end_date],
+      },
+    },
+  });
+  if (saleList.length > 0) {
     res.json({
-      data: saleList
-    })
-  }else {
+      data: saleList,
+    });
+  } else {
     res.status(404).json({
-      message: "Not sales found in that range"
-    })
+      message: "Not sales found in that range",
+    });
   }
-  
-
 }
