@@ -1,39 +1,38 @@
 import { useState } from "react";
-import React from "react";
 import { Fragment } from "react/cjs/react.production.min";
 import Button from "../UI/Button";
 import IngredientItem from "./IngredientItem";
 import classes from "./shared.module.css";
-const Ingredients = (props) => {
-  const [ingredientsList, setIngredientsList] = React.useState([]);
+import { mergeArrs } from "../../helper/mergeArrs";
+import { addItem } from "../../helper/addItemToList";
 
-  const addToList = (newIngredient) => {
-    let oldArr = props.ingredientsToAdd;
-    let newArr;
-    const itemId = props.list.find(
-      (ing) => ing.ingredient_name === newIngredient.ingredient_name
-    ).id;
-    let tmp = {
-      ingredient_name: newIngredient.ingredient_name,
-      ingredient_id: itemId,
-      amount: newIngredient.amount,
-    };
-    if (oldArr.length === 0) {
-      return setIngredientsList([...oldArr, tmp]);
+const Ingredients = (props) => {
+  const [ingredientsList, setIngredientsList] = useState([]);
+
+  let allIngredientsFixed = props.list.map((element) => {
+    element.amount = 0;
+    if (props.ingredientsToAdd.length === 0) {
+      return element;
     }
-    const found = oldArr.find(
-      (element) => element.ingredient_id === tmp.ingredient_id
+    const found = props.ingredientsToAdd.find(
+      (ingredient) => ingredient.ingredient_id === element.id
     );
     if (!!found) {
-      newArr = oldArr.map((element) => {
-        if (element.ingredient_id === tmp.ingredient_id) {
-          element.amount = tmp.amount;
-        }
-        return element;
-      });
-      return setIngredientsList(newArr);
+      element.amount = found.amount;
     }
-    return setIngredientsList([...oldArr, tmp]);
+    return element;
+  });
+
+  const addToList = (newIngredient) => {
+    addItem(props.list, ingredientsList, newIngredient, setIngredientsList);
+  };
+
+  const sendIngredients = (e) => {
+    e.preventDefault();
+    let currentArr = props.ingredientsToAdd;
+    let totalArr;
+    totalArr = mergeArrs(ingredientsList, currentArr);
+    props.onAdd(totalArr);
   };
   return (
     <Fragment>
@@ -41,22 +40,18 @@ const Ingredients = (props) => {
         {props.list.length === 0 ? (
           <IngredientItem ingName="" onAdd={addToList} />
         ) : (
-          props.list.map((item, index) => (
+          allIngredientsFixed.map((item, index) => (
             <IngredientItem
               key={index}
               onAdd={addToList}
               ingName={item.ingredient_name}
+              amount={item.amount}
             />
           ))
         )}
       </ul>
       <div className={classes.ingredient_buttons}>
-        <Button
-          data-test="button-add"
-          action={() => {
-            props.onAdd(ingredientsList);
-          }}
-        >
+        <Button data-test="button-add" action={sendIngredients}>
           Agregar Ingredientes
         </Button>
         <Button data-test="button-cancel" action={props.closeList}>

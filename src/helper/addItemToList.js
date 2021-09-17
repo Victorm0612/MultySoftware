@@ -1,12 +1,10 @@
-export function addToList(
-  newIngredient,
-  ingredientsToAdd,
-  allIngredients,
-  callback
-) {
-  let oldArr = ingredientsToAdd;
+export const addItem = (list, ingredientsList, newIngredient, callback) => {
+  // OldArr: contains all ingredients that I want to add to my product
+  let oldArr = ingredientsList;
   let newArr;
-  const itemId = allIngredients.find(
+
+  //Add id to newIngredient that I want to add to ingredientsList
+  const itemId = list.find(
     (ing) => ing.ingredient_name === newIngredient.ingredient_name
   ).id;
   let tmp = {
@@ -14,8 +12,9 @@ export function addToList(
     ingredient_id: itemId,
     amount: newIngredient.amount,
   };
+
   if (oldArr.length === 0) {
-    return callback([...oldArr, tmp]);
+    return callback((prevState) => [...prevState, tmp]);
   }
   const found = oldArr.find(
     (element) => element.ingredient_id === tmp.ingredient_id
@@ -23,11 +22,11 @@ export function addToList(
   if (!!found) {
     newArr = oldArr.map((element) => {
       if (element.ingredient_id === tmp.ingredient_id) {
-        element.amount = element.amount + tmp.amount;
+        element.amount = tmp.amount;
       }
       return element;
     });
     return callback(newArr);
   }
   return callback([...oldArr, tmp]);
-}
+};

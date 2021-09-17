@@ -80,6 +80,7 @@ const ProductsPage = () => {
         await axios.post(
           "product/",
           {
+            pro_name: productName,
             pro_description: productDescription,
             pro_image: null,
             price: productPrice,
@@ -87,6 +88,8 @@ const ProductsPage = () => {
             discount_id: +productDiscounts,
             pro_status: +productStatus === 0 ? true : false,
             percentage_tax: productTax,
+            discounts: productDiscounts,
+            ingredients: ingredientProduct,
           },
           { headers: { Authorization: token } }
         );
@@ -111,6 +114,7 @@ const ProductsPage = () => {
         const response = await axios.put(
           `product/${productId}`,
           {
+            pro_name: productName,
             pro_description: productDescription,
             pro_image: null,
             price: productPrice,
@@ -118,6 +122,8 @@ const ProductsPage = () => {
             discount_id: +productDiscounts,
             pro_status: +productStatus === 0 ? true : false,
             percentage_tax: productTax,
+            discounts: productDiscounts,
+            ingredients: ingredientProduct,
           },
           {
             headers: {
@@ -270,7 +276,7 @@ const ProductsPage = () => {
     isValid: productDiscountsIsValid,
     setInputValue: setProductDiscounts,
     reset: resetProductDiscounts,
-  } = useForm((value) => /^[0-9\b]+$/.test(+value), 1);
+  } = useForm((value) => value.length > 0, []);
 
   const {
     value: ingredientProduct,
@@ -357,7 +363,7 @@ const ProductsPage = () => {
           discount_name: input.name.split("-")[0],
         });
     }
-    setProductDiscounts(arrDiscounts);
+    setProductDiscounts((prevState) => [...prevState, ...arrDiscounts]);
     setShowDiscountsList(false);
   };
 
@@ -376,7 +382,7 @@ const ProductsPage = () => {
     setProductForm(true);
   };
 
-  const submitDiscount = (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     setIsLoading(true);
   };
@@ -444,7 +450,7 @@ const ProductsPage = () => {
           ) : (
             <Modal show={productForm} closeModal={closeProductForm}>
               <h1>{optionsAction[action]} Producto</h1>
-              <form onSubmit={submitDiscount} className={classes.form_control}>
+              <form onSubmit={submitHandler} className={classes.form_control}>
                 {action === "delete" && (
                   <div>
                     <h5 style={{ textAlign: "center" }}>
