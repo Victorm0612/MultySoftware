@@ -50,6 +50,32 @@ export async function getOneSale(req, res) {
       where: {
         id: id,
       },
+      include: [
+        {
+          model: models.User,
+          attributes: [
+            "document_type",
+            "document_id",
+            "first_name",
+            "last_name",
+          ],
+        },
+        {
+          model: models.Restaurant,
+          attributes: ["id", "restaurant_name", "restaurant_address"],
+        },
+        {
+          model: models.SaleItem,
+          attributes: [
+            "product_id",
+            "amount",
+            "totalIva",
+            "subtotal",
+            "item_total",
+            "total_discount",
+          ],
+        },
+      ],
     });
     res.json({
       data: sale,
@@ -95,7 +121,6 @@ export async function create(req, res) {
 
     if (!productError) {
       let newSale = await models.Sale.create({
-        id,
         sale_date,
         sale_time,
         docId,
