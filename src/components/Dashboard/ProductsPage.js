@@ -299,13 +299,18 @@ const ProductsPage = () => {
         (action === "update" ? productIdIsValid : true);
 
   const setInputsForm = (product) => {
+    let ingredientsFixed = product.Ingredients.map((element) => ({
+      ingredient_id: element.id,
+      ingredient_name: element.ingredient_name,
+      amount: element.IngredientItem.amount,
+    }));
     setProductId(product.id);
     setProductName(product.pro_name);
     setProductDescription(product.pro_description);
     setProductStatus(product.pro_status);
     setProductCategories(product.Category.id);
     setProductDiscounts(product.Discounts);
-    setIngredientProduct(product.Ingredients);
+    setIngredientProduct(ingredientsFixed);
     setProductValue(product.price);
     setProductTax(product.percentage_tax);
   };
@@ -363,7 +368,7 @@ const ProductsPage = () => {
           discount_name: input.name.split("-")[0],
         });
     }
-    setProductDiscounts((prevState) => [...prevState, ...arrDiscounts]);
+    setProductDiscounts([...arrDiscounts]);
     setShowDiscountsList(false);
   };
 
