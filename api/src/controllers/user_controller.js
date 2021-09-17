@@ -117,13 +117,13 @@ export async function getOneUser(req, res) {
 }
 
 export async function getBirthdayUser(req, res) {
-  const actualMonth = new Date(Date.now()).getMonth() +1
+  const actualMonth = new Date(Date.now()).getMonth() + 1;
 
   const user = await models.User.findAll({
     where: {
       birthday: sequelize.where(
         sequelize.literal("extract(MONTH FROM birthday)"),
-        actualMonth,
+        actualMonth
       ),
     },
   });
@@ -242,16 +242,21 @@ export async function updateUser(req, res) {
 
 export async function deleteUser(req, res) {
   const { id } = req.params;
-
-  const deleteRowCount = models.User.destroy({
-    where: {
-      id: id,
-    },
-  });
-  res.json({
-    message: "User deleted successfully",
-    count: deleteRowCount,
-  });
+  try {
+    const deleteRowCount = await models.User.destroy({
+      where: {
+        id: id,
+      },
+    });
+    res.json({
+      message: "User deleted successfully",
+      count: deleteRowCount,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: "Error " + error,
+    });
+  }
 }
 
 export async function updateUserStatus(req, res) {

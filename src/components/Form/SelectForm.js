@@ -19,7 +19,7 @@ const SelectForm = (props) => {
         {props.list.map((item, index) => {
           return (
             <option key={index} value={props.expression(item, index)}>
-              {item}
+              {props.accesKey ? item[props.accesKey] : item}
             </option>
           );
         })}
