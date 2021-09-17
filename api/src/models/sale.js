@@ -15,13 +15,11 @@ module.exports = (sequelize, DataTypes) => {
       //========== Restaurant - Sale ==========
       //Sale have one restaurant
       models.Sale.belongsTo(models.Restaurant, {
-        as: "RestaurantSales",
         foreignKey: "restaurant_id",
       });
 
       //Restaurant have many Sale
       models.Restaurant.hasMany(models.Sale, {
-        as: "RestaurantSales",
         foreignKey: "restaurant_id",
       });
 

@@ -50,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+  
   Product.init(
     {
       pro_name: DataTypes.STRING,
