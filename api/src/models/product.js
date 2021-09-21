@@ -15,13 +15,16 @@ module.exports = (sequelize, DataTypes) => {
       //========== Product - Ingredient ==========
       //Product have many ingredients
       models.Product.belongsToMany(models.Ingredient, {
+        onDELETE: 'CASCADE',
         foreignKey: "product_id",
+        allowNull: false,
+        hooks: true,
         through: models.IngredientItem,
       });
 
       //Ingredients can be in many Products
       models.Ingredient.belongsToMany(models.Product, {
-        foreignKey: "ingredient_id",
+        foreignKey: "ingredient_id",        
         through: models.IngredientItem,
       });
 

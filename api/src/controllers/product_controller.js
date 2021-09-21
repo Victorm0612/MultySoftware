@@ -339,7 +339,7 @@ export async function updateProduct(req, res) {
 export async function deleteProduct(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Product.destroy({
+    const deleteRowCount = await models.Product.destroy({
       where: {
         id: id,
       },
