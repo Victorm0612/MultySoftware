@@ -85,7 +85,6 @@ const ProductsPage = () => {
             pro_image: null,
             price: productPrice,
             category_id: +productCategories,
-            discount_id: +productDiscounts,
             pro_status: +productStatus === 0 ? true : false,
             percentage_tax: productTax,
             discounts: productDiscounts,
@@ -110,8 +109,12 @@ const ProductsPage = () => {
       }
     };
     const updateProducts = async () => {
+      let discountsFixed = productDiscounts.map((disc) => ({
+        discount_id: disc.id ? disc.id : disc.discount_id,
+      }));
+      console.log(productStatus);
       try {
-        const response = await axios.put(
+        await axios.put(
           `product/${productId}`,
           {
             pro_name: productName,
@@ -119,10 +122,14 @@ const ProductsPage = () => {
             pro_image: null,
             price: productPrice,
             category_id: +productCategories,
-            discount_id: +productDiscounts,
-            pro_status: +productStatus === 0 ? true : false,
+            pro_status:
+              typeof productStatus === "boolean"
+                ? productStatus
+                : +productStatus === 0
+                ? true
+                : false,
             percentage_tax: productTax,
-            discounts: productDiscounts,
+            discounts: discountsFixed,
             ingredients: ingredientProduct,
           },
           {
@@ -131,7 +138,6 @@ const ProductsPage = () => {
             },
           }
         );
-        console.log(response);
         setMessage({
           isError: false,
           message: "¡Se ha actualizado la información correctamente!",
