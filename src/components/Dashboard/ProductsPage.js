@@ -85,7 +85,6 @@ const ProductsPage = () => {
             pro_image: null,
             price: productPrice,
             category_id: +productCategories,
-            discount_id: +productDiscounts,
             pro_status: +productStatus === 0 ? true : false,
             percentage_tax: productTax,
             discounts: productDiscounts,
@@ -110,8 +109,12 @@ const ProductsPage = () => {
       }
     };
     const updateProducts = async () => {
+      let discountsFixed = productDiscounts.map((disc) => ({
+        discount_id: disc.id ? disc.id : disc.discount_id,
+      }));
+      console.log(productStatus);
       try {
-        const response = await axios.put(
+        await axios.put(
           `product/${productId}`,
           {
             pro_name: productName,
@@ -119,10 +122,14 @@ const ProductsPage = () => {
             pro_image: null,
             price: productPrice,
             category_id: +productCategories,
-            discount_id: +productDiscounts,
-            pro_status: +productStatus === 0 ? true : false,
+            pro_status:
+              typeof productStatus === "boolean"
+                ? productStatus
+                : +productStatus === 0
+                ? true
+                : false,
             percentage_tax: productTax,
-            discounts: productDiscounts,
+            discounts: discountsFixed,
             ingredients: ingredientProduct,
           },
           {
@@ -131,7 +138,6 @@ const ProductsPage = () => {
             },
           }
         );
-        console.log(response);
         setMessage({
           isError: false,
           message: "¡Se ha actualizado la información correctamente!",
@@ -299,13 +305,18 @@ const ProductsPage = () => {
         (action === "update" ? productIdIsValid : true);
 
   const setInputsForm = (product) => {
+    let ingredientsFixed = product.Ingredients.map((element) => ({
+      ingredient_id: element.id,
+      ingredient_name: element.ingredient_name,
+      amount: element.IngredientItem.amount,
+    }));
     setProductId(product.id);
     setProductName(product.pro_name);
     setProductDescription(product.pro_description);
     setProductStatus(product.pro_status);
     setProductCategories(product.Category.id);
     setProductDiscounts(product.Discounts);
-    setIngredientProduct(product.Ingredients);
+    setIngredientProduct(ingredientsFixed);
     setProductValue(product.price);
     setProductTax(product.percentage_tax);
   };
@@ -363,7 +374,7 @@ const ProductsPage = () => {
           discount_name: input.name.split("-")[0],
         });
     }
-    setProductDiscounts((prevState) => [...prevState, ...arrDiscounts]);
+    setProductDiscounts([...arrDiscounts]);
     setShowDiscountsList(false);
   };
 
@@ -454,7 +465,7 @@ const ProductsPage = () => {
                 {action === "delete" && (
                   <div>
                     <h5 style={{ textAlign: "center" }}>
-                      ¿Está seguro que desea eliminar {productDescription}?
+                      ¿Está seguro que desea eliminar {productName}?
                     </h5>
                   </div>
                 )}

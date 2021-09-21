@@ -38,6 +38,20 @@ export async function getProductsByName(req, res) {
       where: {
         pro_description: "Un producto",
       },
+      include: [
+        {
+          model: models.Category,
+          attributes: ["id", "cat_name"],
+        },
+        {
+          model: models.Discount,
+          attributes: ["id", "discount_name", "discount_value"],
+        },
+        {
+          model: models.Ingredient,
+          attributes: ["id", "ingredient_name", "price"],
+        },
+      ],
     });
     res.json({
       data: products,
@@ -104,8 +118,7 @@ export async function create(req, res) {
       });
 
       if (discount) {
-        discountsOk.push({discount: discount});
-        
+        discountsOk.push({ discount: discount });
       } else {
         discountError = true;
         break;
@@ -175,7 +188,6 @@ export async function create(req, res) {
         message: "There was an error with ingredients and discounts",
       });
     }
-
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
@@ -194,52 +206,132 @@ export async function updateProduct(req, res) {
     category_id,
     pro_status,
     percentage_tax,
+    discounts,
+    ingredients,
   } = req.body;
 
-  const productFound = await models.Product.findOne({
-    attributes: [
-      "pro_name",
-      "pro_description",
-      "pro_image",
-      "price",
-      "category_id",
-      "pro_status",
-      "percentage_tax",
-    ],
-    where: {
-      id: id,
-    },
-  });
-  if (productFound) {
-    const update = await models.Product.update(
-      {
-        pro_name,
-        pro_description,
-        pro_image,
-        price,
-        category_id,
-        pro_status,
-        percentage_tax,
-      },
-      {
-        where: {
-          id: id,
-        },
-      }
-    );
+  //Errors handling
+  let ingredientError = false;
+  let discountError = false;
 
-    if (update) {
-      res.json({
-        message: "Product updated successfully",
+  //Arrays for handling errors
+  let ingredientsOk = new Array();
+  let discountsOk = new Array();
+
+  try {
+    /**
+     * This for is in order to validate that the discounts are valid
+     * if they're valid, then they're introduced on the @discountsOk array
+     * if not, @discountError will be true, in order to send an appropiate error message
+     */
+    for (const oneDiscount of discounts) {
+      const discount = await models.Discount.findOne({
+        where: {
+          id: oneDiscount.discount_id,
+        },
       });
+
+      if (discount) {
+        discountsOk.push( discount.id );
+      } else {
+        discountError = true;
+        break;
+      }
+    }
+
+    /**
+     * This for is in order to validate that the ingredients are valid
+     * if they're valid, then they're introduced on the @ingredientsOk array
+     * if not, @ingredientError will be true, in order to send an appropiate error message
+     */
+    for (const oneIngredient of ingredients) {
+      const ingredient = await models.Ingredient.findOne({
+        where: {
+          id: oneIngredient.ingredient_id,
+        },
+      });
+
+      if (ingredient) {
+        ingredientsOk.push({
+          ingredient: ingredient,
+          amount: oneIngredient.amount,
+        });
+      } else {
+        ingredientError = true;
+        break;
+      }
+    }
+
+    if (!(ingredientError && discountError)) {
+      if (!ingredientError) {
+        if (!discountError) {
+          const productFound = await models.Product.findOne({
+            where: {
+              id: id,
+            },
+          });
+          if (productFound) {
+
+            const oldIngredients = await productFound.getIngredients()
+            for(const ingredient of oldIngredients) {
+              productFound.removeIngredient(ingredient)
+            }
+
+            for(const ingredient of ingredientsOk) {
+              productFound.addIngredients(ingredient.ingredient, { through: { amount: ingredient.amount}})
+            }
+
+            const update = await models.Product.update(
+              {
+                pro_name,
+                pro_description,
+                pro_image,
+                price,
+                category_id,
+                pro_status,
+                percentage_tax,
+              },
+              {
+                where: {
+                  id: id,
+                },
+              }
+            );
+
+            productFound.setDiscounts(discountsOk)
+
+            if (update) {
+              res.json({
+                message: "Product updated successfully",
+              });
+            } else {
+              res.status(404).json({
+                message: "There was an error updating the product",
+              });
+            }
+          } else {
+            res.status(404).json({
+              message: "Product not found",
+            });
+          }
+        } else {
+          res.json({
+            message: "There was an error with the discounts",
+          });
+        }
+      } else {
+        res.json({
+          message: "There was an error with the ingredients",
+        });
+      }
     } else {
-      res.status(404).json({
-        message: "There was an error updating the product",
+      res.json({
+        message: "There was an error with ingredients and discounts",
       });
     }
-  } else {
-    res.json({
-      message: "Product not found",
+  } catch (error) {
+    res.status(404).json({
+      message: "There was an error updating the product " + error.message,
     });
   }
 }
@@ -247,7 +339,7 @@ export async function updateProduct(req, res) {
 export async function deleteProduct(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Product.destroy({
+    const deleteRowCount = await models.Product.destroy({
       where: {
         id: id,
       },
