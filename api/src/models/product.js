@@ -42,7 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       //========== Product - Discount ==========
       //Product have many Discount
       models.Product.belongsToMany(models.Discount, {
+        onDELETE: 'CASCADE',
         foreignKey: "product_id",
+        allowNull: false,
+        hooks: true,
         through: models.ProductDiscount
       });
 
