@@ -465,7 +465,7 @@ const ProductsPage = () => {
                 {action === "delete" && (
                   <div>
                     <h5 style={{ textAlign: "center" }}>
-                      ¿Está seguro que desea eliminar {productDescription}?
+                      ¿Está seguro que desea eliminar {productName}?
                     </h5>
                   </div>
                 )}
