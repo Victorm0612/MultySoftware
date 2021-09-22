@@ -1,7 +1,7 @@
 const models = require("../models/index");
 import sequelize from "sequelize";
 
-export async function getRestaurants(res) {
+export async function getRestaurants(req, res) {
   try {
     const restaurants = await models.Restaurant.findAll();
     res.json({
@@ -126,24 +126,30 @@ export async function deleteRestaurant(req, res) {
   }
 }
 
-export async function mostSeller(req,res) {
+export async function mostSeller(req, res) {
   const mostSeller = await models.Sale.findAll({
-    attributes: ['restaurant_id', [sequelize.fn('count', sequelize.col('restaurant_id')), 'sells']],
-    group: 'restaurant_id',
-    order: sequelize.literal('sells DESC'),
-    limit: 1
-  })
+    attributes: [
+      "restaurant_id",
+      [sequelize.fn("count", sequelize.col("restaurant_id")), "sells"],
+    ],
+    group: "restaurant_id",
+    order: sequelize.literal("sells DESC"),
+    limit: 1,
+  });
 
   res.json({
-    data: mostSeller
-  })
+    data: mostSeller,
+  });
 }
 
-export async function lessSeller(req,res) {
+export async function lessSeller(req, res) {
   const lestSeller = await models.Sale.findAll({
-    attributes: ['restaurant_id', [sequelize.fn('count', sequelize.col('restaurant_id')), 'sells']],
-    group: 'restaurant_id',
-    order: sequelize.literal('sells ASC'),
-    limit: 1
-  })
+    attributes: [
+      "restaurant_id",
+      [sequelize.fn("count", sequelize.col("restaurant_id")), "sells"],
+    ],
+    group: "restaurant_id",
+    order: sequelize.literal("sells ASC"),
+    limit: 1,
+  });
 }
