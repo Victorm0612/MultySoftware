@@ -1,4 +1,4 @@
-/* export const validateUser = async (user) => {
+export const validateUser = async (user) => {
   if (emailValid()) {
     const message = verifyPassword(user.password);
 
@@ -19,9 +19,9 @@ export const emailValid = async (email) => {
   if (!re.exec(email)) {
     return true;
   }
-}; */
+};
 
-export function verifyPassword(password) {
+export const verifyPassword = async (password) => {
   const medium = /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/;
   const strong =
     /^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/;
@@ -33,4 +33,4 @@ export function verifyPassword(password) {
   } else if (strong.exec(password)) {
     return "That password security level is STRONG";
   }
-}
+};
