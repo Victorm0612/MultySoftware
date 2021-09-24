@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       debit_type: DataTypes.STRING,
       card_number: DataTypes.STRING,
+      amount: DataTypes.INTEGER,
       payment_id: DataTypes.INTEGER,
     },
     {

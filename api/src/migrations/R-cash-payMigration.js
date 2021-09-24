@@ -16,6 +16,9 @@ module.exports = {
           key: 'id'
         }
       },
+      amount: {
+        type: Sequelize.INTEGER,
+      },
       payer_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,

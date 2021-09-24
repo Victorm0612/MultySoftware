@@ -6,6 +6,7 @@ module.exports = {
       {
         debit_type: "Cuenta Ahorros",
         card_number: "2442 1881 4334 4554",
+        amount: 8000,
         payment_id: 2
       }
     ])

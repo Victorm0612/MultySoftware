@@ -5,6 +5,7 @@ module.exports = {
     await queryInterface.bulkInsert('Cash_Pays',[
       {        
         payment_id: 3,
+        amount: 3500,
         payer_id: "1118960875"
       }
     ])

@@ -19,6 +19,9 @@ module.exports = {
           key: 'card_number',
         }
       },
+      amount: {
+        type: Sequelize.INTEGER,
+      },
       payment_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
