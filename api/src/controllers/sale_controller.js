@@ -30,7 +30,7 @@ export async function getSales(req, res) {
           ],
         },
       ],
-      order: [['id', 'DESC']],
+      order: [["id", "DESC"]],
     });
     res.json({
       data: sales,
@@ -100,6 +100,7 @@ export async function create(req, res) {
   } = req.body;
 
   let productError = false;
+  let ingredientError = false;
 
   let productsOk = new Array();
 
@@ -112,6 +113,20 @@ export async function create(req, res) {
       });
 
       if (product) {
+        const ingredients = await product.getIngredients({
+          joinTableAttributes: ["amount"],
+        });
+        for (const oneIngredient of ingredients) {
+          const finalAmount =
+            oneIngredient.amount -
+            oneProduct.amount * oneIngredient.IngredientItem.amount;
+
+          if (finalAmount < 0) {
+            ingredientError = true;
+            break;
+          }
+        }
+
         productsOk.push({ product: product, amount: oneProduct.amount });
       } else {
         productError = true;
@@ -120,64 +135,92 @@ export async function create(req, res) {
     }
 
     if (!productError) {
-      let newSale = await models.Sale.create({
-        sale_date,
-        sale_time,
-        docId,
-        restaurant_id,
-        sale_status,
-      });
+      if (!ingredientError) {
+        let newSale = await models.Sale.create({
+          sale_date,
+          sale_time,
+          docId,
+          restaurant_id,
+          sale_status,
+        });
 
-      if (newSale) {
-        for (const oneProduct of productsOk) {
-          const today = new Date(Date.now());
+        if (newSale) {
+          for (const oneProduct of productsOk) {
+            const today = new Date(Date.now());
 
-          const discount = await oneProduct.product.getDiscounts({
-            where: {
-              [Op.and]: [
-                { ini_date: { [Op.gte]: today } },
-                { final_date: { [Op.lte]: today } },
-              ],
-            },
-          });
+            //Getting discounts of the product that applies for today's date
+            const discount = await oneProduct.product.getDiscounts({
+              where: {
+                [Op.and]: [
+                  { ini_date: { [Op.gte]: today } },
+                  { final_date: { [Op.lte]: today } },
+                ],
+              },
+            });
 
-          let discount_value;
-
-          if (discount.length > 0) {
-            const higher = 0;
-            for (const oneDiscount of discount) {
-              higher =
-                oneDiscount.discount_value >= higher
-                  ? oneDiscount.discount_value
-                  : higher;
+            let discount_value;
+            //If there are more than one valid discount, determine the discount to use depending on the higher discount
+            if (discount.length > 0) {
+              const higher = 0;
+              for (const oneDiscount of discount) {
+                higher =
+                  oneDiscount.discount_value >= higher
+                    ? oneDiscount.discount_value
+                    : higher;
+              }
+              discount_value = higher;
+            } else if (discount.length == 1) {
+              discount_value = discount.discount_value;
+            } else {
+              discount_value = 0;
             }
-            discount_value = higher;
-          } else if (discount.length == 1) {
-            discount_value = discount.discount_value;
-          } else {
-            discount_value = 0;
+
+            const ingredients = await oneProduct.product.getIngredients({
+              joinTableAttributes: ["amount"],
+            }); //FUNCTION TO GET THE AMOUNT OF INGREDIENTS IN THAT PRODUCT
+
+            //Executing the logic of sustracting amount of the ingredients in the product and updating it
+            for (const oneIngredient of ingredients) {              
+              await models.Ingredient.update(
+                {
+                  amount:
+                    oneIngredient.amount -
+                    oneProduct.amount * oneIngredient.IngredientItem.amount,
+                },
+                {
+                  where: {
+                    id: oneIngredient.id,
+                  },
+                }
+              );
+            }
+
+            //Executing operations in order to get the values for the join table
+            const amount = oneProduct.amount;
+            let totalIva = oneProduct.product.price * 0.19 * amount;
+            let item_total = oneProduct.product.price * amount;
+            let total_discount =
+              oneProduct.product.price * discount_value * amount;
+            let subtotal = item_total - (totalIva + total_discount);
+
+            newSale.addProducts(oneProduct.product, {
+              through: {
+                amount: amount,
+                totalIva: totalIva,
+                subtotal: subtotal,
+                item_total: item_total,
+                total_discount: total_discount,
+              },
+            });
           }
-
-          const amount = oneProduct.amount;
-          let totalIva = oneProduct.product.price * 0.19 * amount;
-          let item_total = oneProduct.product.price * amount;
-          let total_discount =
-            oneProduct.product.price * discount_value * amount;
-          let subtotal = item_total - (totalIva + total_discount);
-
-          newSale.addProducts(oneProduct.product, {
-            through: {
-              amount: amount,
-              totalIva: totalIva,
-              subtotal: subtotal,
-              item_total: item_total,
-              total_discount: total_discount,
-            },
+          res.json({
+            message: "SUCCESS!!",
+            data: newSale,
           });
         }
-        res.json({
-          message: "SUCCESS!!",
-          data: newSale,
+      } else {
+        res.status(404).json({
+          message: "There's not enought ingredients",
         });
       }
     } else {
