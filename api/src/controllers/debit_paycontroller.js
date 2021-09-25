@@ -52,18 +52,107 @@ export async function getOneDebit_Pay(req, res) {
 }
 
 export async function create(req, res) {
-  const { debit_type, card_number, payment_id } = req.body;
+  const { debit_type, card_number, amount, onePay, payment_id } = req.body;
   try {
-    let newDebitPay = await models.Debit_Pay.create({
-      debit_type: debit_type,
-      card_number: card_number,
-      payment_id: payment_id,
+    const debitExist = await models.Debit_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
     });
-    if (newDebitPay) {
-      res.json({
-        message: "SUCCESS",
-        data: newDebitPay,
+
+    const cashExist = await models.Cash_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
+    });
+
+    const creditExist = await models.Credit_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
+    });
+
+    const paymentExist = await models.Payment.findOne({
+      where: {
+        id: payment_id,
+      },
+    });
+
+    if (onePay && !cashExist) {
+      if (amount < paymentExist.amount) {
+        return res.status(500).json({
+          message:
+            "The amount to pay can't be less that the total amount of the payment",
+        });
+      }
+      let newDebitPay = await models.Debit_Pay.create({
+        debit_type: debit_type,
+        card_number: card_number,
+        amount: amount,
+        payment_id: payment_id,
       });
+      if (newDebitPay) {
+        res.json({
+          message: "SUCCESS",
+          data: newDebitPay,
+        });
+      }
+      return res.status(500).json({
+        message: "You have already made one pay with Debit to that Payment",
+      });
+    } else {
+      if (cashExist && creditExist) {
+        return res.status(500).json({
+          message: "That pay has already been paid",
+        });
+      } else if (cashExist) {
+        if (cashExist.amount < paymentExist.amount) {
+          return res.status(500).json({
+            message: "You have already paid one part of the payment with Debit",
+          });
+        } else {
+          return res.status(500).json({
+            message: "You have already paid the payment with Debit",
+          });
+        }
+      } else if (debitExist || creditExist) {
+        const amountLeft = debitExist
+          ? paymentExist.amount - cashExist.amount
+          : paymentExist.amount - creditExist.amount;
+
+        if (amount < amountLeft) {
+          res.status(500).json({
+            message:
+              "The amount to pay can't be less than the amount left to pay",
+          });
+        } else {
+          let newDebitPay = await models.Debit_Pay.create({
+            debit_type: debit_type,
+            card_number: card_number,
+            amount: amount,
+            payment_id: payment_id,
+          });
+          if (newDebitPay) {
+            res.json({
+              message: "SUCCESS",
+              data: newDebitPay,
+            });
+          }
+        }
+      } else if (!(debitExist && creditExist)) {
+        let newDebitPay = await models.Debit_Pay.create({
+          debit_type: debit_type,
+          card_number: card_number,
+          amount: amount,
+          payment_id: payment_id,
+        });
+        if (newDebitPay) {
+          res.json({
+            message: "SUCCESS",
+            data: newDebitPay,
+          });
+        }
+      }
     }
   } catch (error) {
     res.status(500).json({

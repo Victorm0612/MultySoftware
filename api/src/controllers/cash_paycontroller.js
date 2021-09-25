@@ -47,18 +47,93 @@ export async function getOneCash_Pay(req, res) {
 }
 
 export async function create(req, res) {
-  const { payment_id, payer_id } = req.body;
+  const { payment_id, amount, onePay, payer_id } = req.body;
   try {
-    let newCashPay = await models.Cash_Pay.create({
-      payment_id: payment_id,
-      payer_id: payer_id,
+
+    const debitExist = await models.Debit_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
     });
-    if (newCashPay) {
-      res.json({
-        message: "SUCCESS",
-        data: newCashPay,
+
+    const cashExist = await models.Cash_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
+    });
+
+    const creditExist = await models.Credit_Pay.findOne({
+      where: {
+        payment_id: payment_id,
+      },
+    });
+
+    const paymentExist = await models.Payment.findOne({
+      where: {
+        id: payment_id,
+      },
+    });
+
+    if(onePay && !cashExist) {
+      if(amount < paymentExist.amount) {
+        return res.status(500).json({
+          message: "The amount to pay can't be less that the total amount of the payment",
+        })
+      }
+      let newCashPay = await models.Cash_Pay.create({
+        payment_id: payment_id,
+        amount: amuount,
+        payer_id: payer_id,
       });
-    }
+      if (newCashPay) {
+        res.json({
+          message: "SUCCESS",
+          data: newCashPay,
+        });
+      }
+      return res.status(500).json({
+        message: "You have already made one pay with Cash to that Payment"
+      })
+    } else {
+
+      if(debitExist && creditExist) {
+        return res.satus(500).json({
+          message: "That pay has already been paid"
+        })
+      } else if (cashExist){
+        if(cashExist.amount < paymentExist.amount) {
+          return res.status(500).json({
+            message: "You have already paid one part of the payment with Cash",
+          })
+        } else {
+          return res.status(500).json({
+            message: "You have already paid the payment with Cash",
+          })
+        }
+      } else if (debitExist || creditExist) {
+        const amountLeft = debitExist
+        ? paymentExist.amount - debitExist.amount
+        : paymentExist.amount - creditExist.amount
+
+        if(amount < amountLeft) {
+          res.status(500).json({
+            message: "The amount to pay can't be less that the amount left to pay",
+          })
+        } else {
+          let newCashPay = await models.Cash_Pay.create({
+            payment_id: payment_id,
+            amount: amount,
+            payer_id: payer_id,
+          });
+          if (newCashPay) {
+            res.json({
+              message: "SUCCESS",
+              data: newCashPay,
+            });
+          }
+        }
+      }
+    }    
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,

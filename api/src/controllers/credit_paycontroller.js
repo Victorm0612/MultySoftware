@@ -45,32 +45,39 @@ export async function getOneCredit_Pay(req, res) {
 }
 
 export async function create(req, res) {
-  const { approval_number, fees_number, card_number, amount, onePay, payment_id } = req.body;
+  const {
+    approval_number,
+    fees_number,
+    card_number,
+    amount,
+    onePay,
+    payment_id,
+  } = req.body;
   try {
-    
     const debitExist = await models.Debit_Pay.findOne({
       where: {
-        payment_id : payment_id,
-      }
-    })
+        payment_id: payment_id,
+      },
+    });
 
     const cashExist = await models.Cash_Pay.findOne({
       where: {
-        payment_id : payment_id,
-      }
-    })
+        payment_id: payment_id,
+      },
+    });
 
     const creditExist = await models.Credit_Pay.findOne({
-      where : {
-        payment_id : payment_id,
-      }
-    })
+      where: {
+        payment_id: payment_id,
+      },
+    });
 
     const paymentExist = await models.Payment.findOne({
       where: {
         id: payment_id,
-      }
-    })
+      },
+    });
+
     if (onePay && !creditExist) {
       if (amount < paymentExist.amount) {
         return res.status(500).json({
@@ -94,37 +101,36 @@ export async function create(req, res) {
       return res.status(500).json({
         message: "You have already made one pay with Credit to that Payment",
       });
-    }
-    else{
-
-      if(debitExist && cashExist){
+    } else {
+      if (debitExist && cashExist) {
         res.status(500).json({
-          message: "That pay has already been paid"
-        })
-        return
-      }else if( creditExist ){
-
-        if( creditExist.amount < paymentExist.amount ){
+          message: "That pay has already been paid",
+        });
+        return;
+      } else if (creditExist) {
+        if (creditExist.amount < paymentExist.amount) {
           res.status(500).json({
-            message: "You have already paid one part of the payment with Credit"
-          })
-          return
-        }else {
+            message:
+              "You have already paid one part of the payment with Credit",
+          });
+          return;
+        } else {
           res.status(500).json({
-            message: "You have already paid the payment with Credit"
-          })
-          return
+            message: "You have already paid the payment with Credit",
+          });
+          return;
         }
+      } else if (debitExist || cashExist) {
+        const amountLeft = debitExist
+          ? paymentExist.amount - debitExist.amount
+          : paymentExist.amount - cashExist.amount;
 
-      }else if ( debitExist || cashExist) {
-  
-        const amountLeft = debitExist ? paymentExist.amount - debitExist.amount : paymentExist.amount - cashExist.amount
-  
-        if(amount < amountLeft){
+        if (amount < amountLeft) {
           res.status(500).json({
-            message: "The amount to pay can't be less than the amount left to pay"
-          })
-        }else{
+            message:
+              "The amount to pay can't be less than the amount left to pay",
+          });
+        } else {
           let newCreditPay = await models.Credit_Pay.create({
             approval_number: approval_number,
             fees_number: fees_number,
@@ -139,9 +145,7 @@ export async function create(req, res) {
             });
           }
         }
-  
-      }else if (!(debitExist && cashExist)) {
-        console.log("entra al AND")
+      } else if (!(debitExist && cashExist)) {
         let newCreditPay = await models.Credit_Pay.create({
           approval_number: approval_number,
           fees_number: fees_number,
@@ -155,9 +159,7 @@ export async function create(req, res) {
           });
         }
       }
-
     }
-
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
