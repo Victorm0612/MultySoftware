@@ -478,9 +478,9 @@ const ProductsPage = () => {
                 <img
                   className={productClasses.product_img}
                   src={productImage}
-                  alt="Product image"
+                  alt="Describe a visual way the product"
                   width="200"
-                  height="200"
+                  height="auto"
                 />
               )}
               <form onSubmit={submitHandler} className={classes.form_control}>

@@ -1,0 +1,35 @@
+.menu {
+  margin: 1.5rem 1rem;
+}
+.card {
+  width: 18rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.267);
+}
+
+.image_box {
+  width: 100%;
+  height: 13rem;
+  overflow: hidden;
+}
+
+.image_box img {
+  width: 100%;
+  transform: scale(126%) translateY(10%);
+}
+
+.body h5 {
+  text-align: center;
+  font-weight: 700;
+}
+
+.price {
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+}
+
+.body button {
+  display: block;
+  margin: 0 auto;
+  width: 20rem;
+}

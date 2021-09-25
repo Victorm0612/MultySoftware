@@ -10,6 +10,7 @@ const NavBar = (props) => {
     (state) => state.userData
   );
   const ROUTES = [
+    { path: "/menu", namePath: "Menú", access: true },
     { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
     { path: "/register", namePath: "Registrarse", access: !isLogged },
     {
