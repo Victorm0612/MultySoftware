@@ -478,6 +478,7 @@ const ProductsPage = () => {
                 <img
                   className={productClasses.product_img}
                   src={productImage}
+                  alt="Product image"
                   width="200"
                   height="200"
                 />
