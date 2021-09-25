@@ -47,6 +47,7 @@ const ProductsPage = () => {
   const resetInputs = () => {
     resetProductId();
     resetProductName();
+    resetProductImage();
     resetProductDescription();
     resetProductPrice();
     resetProductStatus();
@@ -82,7 +83,7 @@ const ProductsPage = () => {
           {
             pro_name: productName,
             pro_description: productDescription,
-            pro_image: null,
+            pro_image: productImage,
             price: productPrice,
             category_id: +productCategories,
             pro_status: +productStatus === 0 ? true : false,
@@ -119,7 +120,7 @@ const ProductsPage = () => {
           {
             pro_name: productName,
             pro_description: productDescription,
-            pro_image: null,
+            pro_image: productImage,
             price: productPrice,
             category_id: +productCategories,
             pro_status:
@@ -228,6 +229,16 @@ const ProductsPage = () => {
   } = useForm((value) => value.trim().length > 0);
 
   const {
+    value: productImage,
+    isValid: productImageIsValid,
+    hasError: productImageHasError,
+    changeInputValueHandler: changeProductImage,
+    setInputValue: setProductImage,
+    inputBlurHandler: productImageBlurHandler,
+    reset: resetProductImage,
+  } = useForm((value) => value.trim().length > 0);
+
+  const {
     value: productDescription,
     isValid: productDescriptionIsValid,
     hasError: productDescriptionHasError,
@@ -295,6 +306,7 @@ const ProductsPage = () => {
     action === "delete"
       ? productStatusIsValid
       : productNameIsValid &&
+        productImageIsValid &&
         productDescriptionIsValid &&
         productPriceIsValid &&
         ingredientProductIsValid &&
@@ -312,6 +324,7 @@ const ProductsPage = () => {
     }));
     setProductId(product.id);
     setProductName(product.pro_name);
+    setProductImage(product.pro_image);
     setProductDescription(product.pro_description);
     setProductStatus(product.pro_status);
     setProductCategories(product.Category.id);
@@ -461,6 +474,14 @@ const ProductsPage = () => {
           ) : (
             <Modal show={productForm} closeModal={closeProductForm}>
               <h1>{optionsAction[action]} Producto</h1>
+              {action === "details" && (
+                <img
+                  className={productClasses.product_img}
+                  src={productImage}
+                  width="200"
+                  height="200"
+                />
+              )}
               <form onSubmit={submitHandler} className={classes.form_control}>
                 {action === "delete" && (
                   <div>
@@ -493,6 +514,20 @@ const ProductsPage = () => {
                       errorMessage="Ingresa una descripción válida."
                       disabled={action === "details"}
                     />
+                    {action === "create" ||
+                      (action === "update" && (
+                        <InputForm
+                          id="image__input"
+                          labelMessage="Url imagen"
+                          change={changeProductImage}
+                          value={productImage}
+                          blur={productImageBlurHandler}
+                          typeInput="text"
+                          inputHasError={productImageHasError}
+                          errorMessage="Ingresa una url válida."
+                          disabled={action === "details"}
+                        />
+                      ))}
                     <InputForm
                       id="value__input"
                       labelMessage="Valor"
