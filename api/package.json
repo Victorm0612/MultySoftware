@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "heroku-postbuild": "cd .. && npm install && npm install --only=dev --no-shrinkwrap && npm run build",
     "build": "babel src --out-dir dist",
     "test": "mocha src/test/  --require @babel/register",
     "dev": "nodemon src/index.js --exec babel-node",
