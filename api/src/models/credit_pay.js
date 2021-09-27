@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       approval_number: DataTypes.INTEGER,
       fees_number: DataTypes.INTEGER,
       card_number: DataTypes.STRING,
+      amount: DataTypes.INTEGER,
       payment_id: DataTypes.INTEGER,
     },
     {

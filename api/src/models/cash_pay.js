@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
   Cash_Pay.init(
     {
       payment_id: DataTypes.INTEGER,
+      amount: DataTypes.INTEGER,
       payer_id: DataTypes.INTEGER,
     },
     {
