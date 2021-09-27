@@ -13,21 +13,23 @@ import Dashboard from "./pages/Dashboard";
 import AccountDisabled from "./pages/Auth/AccountDisabled";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import NewPassword from "./pages/Auth/NewPassword";
+import Menu from "./pages/Menu";
 
 const App = () => {
   const [show, setShow] = useState(false);
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const { isLogged, userStatus } = useSelector((state) => state.userData);
+  const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
+  const { totalAmount } = useSelector((state) => state.cart);
   const accountDisabled = isLogged && !userStatus;
   return (
     <Fragment>
       {show && (
-        <Modal show={show}>
+        <Modal show={show} size="small_card">
           <Cart closeModal={closeModal} />
         </Modal>
       )}
-      <NavBar openModal={openModal} />
+      <NavBar openModal={openModal} totalAmount={totalAmount} />
       <Switch>
         <Route path="/" exact>
           <Home />
@@ -60,6 +62,11 @@ const App = () => {
           {accountDisabled && <Redirect to="/account-disabled" />}
           {isLogged && <Dashboard />}
           {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/menu">
+          {accountDisabled && <Redirect to="/account-disabled" />}
+          {typeUser === 1 && <Menu />}
+          {typeUser !== 1 && <Redirect to="/" />}
         </Route>
         <Route path="/reset-password/:token">
           <NewPassword />

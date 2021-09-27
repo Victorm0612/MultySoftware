@@ -29,7 +29,7 @@ const Modal = (props) => {
               props.show ? classes.modal_open : classes.modal_closed
             }`}
           >
-            <Card classNames={props.classes}>{props.children}</Card>
+            <Card size={props.size}>{props.children}</Card>
           </div>
         </CSSTransition>,
         document.getElementById("modal")

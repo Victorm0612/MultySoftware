@@ -21,3 +21,16 @@
   height: 1rem;
   font-weight: 900;
 }
+
+.cart_buttons {
+  text-align: center;
+}
+
+.close_button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart_buttons button {
+  margin: 0 0.5rem;
+}

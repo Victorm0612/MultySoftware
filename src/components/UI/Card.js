@@ -1,7 +1,9 @@
 import classes from "./Card.module.css";
-const Card = ({ classNames = "big_card", children }) => {
+const Card = (props) => {
   return (
-    <div className={`${classes.card} ${classes[classNames]}`}>{children}</div>
+    <div className={`${classes.card} ${classes[props.size]}`}>
+      {props.children}
+    </div>
   );
 };
 

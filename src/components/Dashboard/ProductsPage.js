@@ -39,7 +39,7 @@ const ProductsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showIngredientsList, setShowIngredientsList] = useState(false);
   const [showDiscountsList, setShowDiscountsList] = useState(false);
-  const { token } = useSelector((state) => state.userData);
+  const { token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",
@@ -47,6 +47,7 @@ const ProductsPage = () => {
   const resetInputs = () => {
     resetProductId();
     resetProductName();
+    resetProductImage();
     resetProductDescription();
     resetProductPrice();
     resetProductStatus();
@@ -82,7 +83,7 @@ const ProductsPage = () => {
           {
             pro_name: productName,
             pro_description: productDescription,
-            pro_image: null,
+            pro_image: productImage,
             price: productPrice,
             category_id: +productCategories,
             pro_status: +productStatus === 0 ? true : false,
@@ -119,7 +120,7 @@ const ProductsPage = () => {
           {
             pro_name: productName,
             pro_description: productDescription,
-            pro_image: null,
+            pro_image: productImage,
             price: productPrice,
             category_id: +productCategories,
             pro_status:
@@ -228,6 +229,16 @@ const ProductsPage = () => {
   } = useForm((value) => value.trim().length > 0);
 
   const {
+    value: productImage,
+    isValid: productImageIsValid,
+    hasError: productImageHasError,
+    changeInputValueHandler: changeProductImage,
+    setInputValue: setProductImage,
+    inputBlurHandler: productImageBlurHandler,
+    reset: resetProductImage,
+  } = useForm((value) => value.trim().length > 0);
+
+  const {
     value: productDescription,
     isValid: productDescriptionIsValid,
     hasError: productDescriptionHasError,
@@ -295,6 +306,7 @@ const ProductsPage = () => {
     action === "delete"
       ? productStatusIsValid
       : productNameIsValid &&
+        productImageIsValid &&
         productDescriptionIsValid &&
         productPriceIsValid &&
         ingredientProductIsValid &&
@@ -312,8 +324,9 @@ const ProductsPage = () => {
     }));
     setProductId(product.id);
     setProductName(product.pro_name);
+    setProductImage(product.pro_image);
     setProductDescription(product.pro_description);
-    setProductStatus(product.pro_status);
+    setProductStatus(product.pro_status ? 0 : 1);
     setProductCategories(product.Category.id);
     setProductDiscounts(product.Discounts);
     setIngredientProduct(ingredientsFixed);
@@ -405,7 +418,7 @@ const ProductsPage = () => {
       ) : (
         <Fragment>
           {showIngredientsList ? (
-            <Modal show={showIngredientsList}>
+            <Modal show={showIngredientsList} size="big_card">
               <h1>Ingredientes</h1>
               <form onSubmit={addIngredientsToProduct}>
                 <input
@@ -425,7 +438,7 @@ const ProductsPage = () => {
               </form>
             </Modal>
           ) : showDiscountsList ? (
-            <Modal show={showDiscountsList}>
+            <Modal size="big_card" show={showDiscountsList}>
               <h1>Descuentos</h1>
               <form onSubmit={addDiscountsToProduct}>
                 <input
@@ -459,8 +472,21 @@ const ProductsPage = () => {
               </form>
             </Modal>
           ) : (
-            <Modal show={productForm} closeModal={closeProductForm}>
+            <Modal
+              size={action === "delete" ? "small_card" : "big_card"}
+              show={productForm}
+              closeModal={closeProductForm}
+            >
               <h1>{optionsAction[action]} Producto</h1>
+              {action === "details" && (
+                <img
+                  className={productClasses.product_img}
+                  src={productImage}
+                  alt="Describe a visual way the product"
+                  width="200"
+                  height="auto"
+                />
+              )}
               <form onSubmit={submitHandler} className={classes.form_control}>
                 {action === "delete" && (
                   <div>
@@ -493,6 +519,32 @@ const ProductsPage = () => {
                       errorMessage="Ingresa una descripción válida."
                       disabled={action === "details"}
                     />
+                    {action === "create" && (
+                      <InputForm
+                        id="image__input"
+                        labelMessage="Url imagen"
+                        change={changeProductImage}
+                        value={productImage}
+                        blur={productImageBlurHandler}
+                        typeInput="text"
+                        inputHasError={productImageHasError}
+                        errorMessage="Ingresa una url válida."
+                        disabled={action === "details"}
+                      />
+                    )}
+                    {action === "update" && (
+                      <InputForm
+                        id="image__input"
+                        labelMessage="Url imagen"
+                        change={changeProductImage}
+                        value={productImage}
+                        blur={productImageBlurHandler}
+                        typeInput="text"
+                        inputHasError={productImageHasError}
+                        errorMessage="Ingresa una url válida."
+                        disabled={action === "details"}
+                      />
+                    )}
                     <InputForm
                       id="value__input"
                       labelMessage="Valor"
