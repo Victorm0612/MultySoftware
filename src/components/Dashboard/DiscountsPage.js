@@ -24,7 +24,7 @@ const DiscountsPage = () => {
   const [action, setAction] = useState("get");
   const [discountForm, setDiscountForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { token } = useSelector((state) => state.userData);
+  const { token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",

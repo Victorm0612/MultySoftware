@@ -19,9 +19,7 @@ const App = () => {
   const [show, setShow] = useState(false);
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const { isLogged, typeUser, userStatus } = useSelector(
-    (state) => state.userData
-  );
+  const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
   const accountDisabled = isLogged && !userStatus;
   return (
     <Fragment>
@@ -67,6 +65,7 @@ const App = () => {
         <Route path="/menu">
           {accountDisabled && <Redirect to="/account-disabled" />}
           {typeUser === 1 && <Menu />}
+          {typeUser !== 1 && <Redirect to="/" />}
         </Route>
         <Route path="/reset-password/:token">
           <NewPassword />

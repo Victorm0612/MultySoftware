@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosInstance as axios } from "../../config/axiosConfig";
-import actionTypes from "../../store/actionsType";
 import Button from "../UI/Button";
 import Card from "../UI/Card";
 import MessageBox from "../UI/MessageBox";
 import SpinnerLoading from "../UI/SpinnerLoading";
 import classes from "./AccountDisabledPage.module.css";
+import { authActions } from "../../store/auth";
 
 const AccountDisabledPage = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { id, token } = useSelector((state) => state.userData);
+  const { id, token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",
@@ -30,7 +30,7 @@ const AccountDisabledPage = () => {
           }
         );
         console.log(response);
-        dispatch({ type: actionTypes.LOGOUT });
+        dispatch(authActions.logout());
       } catch (error) {
         console.log(error);
         setMessage({

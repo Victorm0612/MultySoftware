@@ -10,7 +10,7 @@ import SpinnerLoading from "../UI/SpinnerLoading";
 import MessageBox from "../UI/MessageBox";
 
 const ResetPasswordPage = () => {
-  const { token } = useSelector((state) => state.userData);
+  const { token } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({
     isError: false,

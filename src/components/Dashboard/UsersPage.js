@@ -25,7 +25,7 @@ const UsersPage = () => {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userStatus, setUserStatus] = useState(null);
-  const { token, typeUser } = useSelector((state) => state.userData);
+  const { token, typeUser } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",

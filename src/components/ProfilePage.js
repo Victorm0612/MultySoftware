@@ -7,15 +7,15 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "./UI/Button";
 import InputForm from "./Form/InputForm";
 import SpinnerLoading from "./UI/SpinnerLoading";
-import actionTypes from "../store/actionsType";
 import Modal from "./UI/Modal";
 import { useHistory } from "react-router-dom";
 import MessageBox from "./UI/MessageBox";
+import { authActions } from "../store/auth";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
   let history = useHistory();
-  const { id, token } = useSelector((state) => state.userData);
+  const { id, token } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
   const [action, setAction] = useState("get");
   const [edit, setEdit] = useState(false);
@@ -265,7 +265,7 @@ const ProfilePage = () => {
             },
           }
         );
-        dispatch({ type: actionTypes.LOGOUT });
+        dispatch(authActions.logout());
         history.replace("/");
       } catch (error) {
         errorMessage = true;

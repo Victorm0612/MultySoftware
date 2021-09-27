@@ -1,7 +1,10 @@
 import Button from "../UI/Button";
 import classes from "./ProductItem.module.css";
 import ProductItem from "./ProductItem";
-import { Fragment } from "react";
+import { Fragment, useReducer } from "react";
+import cart from "../../store/cart";
+import { useSelector } from "react-redux";
+
 const Cart = (props) => {
   return (
     <Fragment>

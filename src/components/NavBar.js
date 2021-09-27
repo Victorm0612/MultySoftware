@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import actionTypes from "../store/actionsType";
 import Button from "./UI/Button";
 import classes from "./NavBar.module.css";
+import { authActions } from "../store/auth";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
-  const { isLogged, typeUser, userStatus } = useSelector(
-    (state) => state.userData
-  );
+  const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
   const ROUTES = [
-    { path: "/menu", namePath: "Menú", access: true },
+    { path: "/menu", namePath: "Menú", access: typeUser === 1 },
     { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
     { path: "/register", namePath: "Registrarse", access: !isLogged },
     {
@@ -32,7 +30,7 @@ const NavBar = (props) => {
   const dispatch = useDispatch();
 
   const logout = () => {
-    dispatch({ type: actionTypes.LOGOUT });
+    dispatch(authActions.logout());
   };
 
   return (

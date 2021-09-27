@@ -1,7 +1,45 @@
+.column {
+  display: flex;
+  justify-content: center;
+}
+
+.navigation {
+  width: 100%;
+  height: 5rem;
+  background-color: white;
+  margin: 1rem 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.2rem 1rem;
+}
+
+.search {
+  display: flex;
+  margin: 0 1rem;
+  flex-direction: column;
+  width: 20%;
+}
+
+.navigation label {
+  font-weight: 700;
+  margin: 0rem 0.5rem;
+}
+
+.search_item {
+  font-family: inherit;
+  margin: 0.5rem 0rem;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+  width: 100%;
+  height: 2rem;
+}
+
 .menu {
   margin: 1.5rem 1rem;
 }
 .card {
+  margin: 1rem 0;
   width: 18rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.267);
 }
@@ -15,6 +53,18 @@
 .image_box img {
   width: 100%;
   transform: scale(126%) translateY(10%);
+}
+
+.text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.see_more {
+  color: rgb(224, 70, 9);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .body h5 {
@@ -32,4 +82,24 @@
   display: block;
   margin: 0 auto;
   width: 20rem;
+}
+
+.badge {
+  margin-right: 0.5rem;
+  background-color: rgb(243, 138, 1) !important;
+}
+
+.navigation .badge {
+  margin: 0.5rem 0.5rem;
+}
+
+.badge_status {
+  position: absolute;
+  width: 9rem;
+  text-align: center;
+  background-color: rgb(172, 30, 30);
+  color: white;
+  font-weight: 700;
+  transform: rotate(30deg) translate(70%, -90%);
+  z-index: 1;
 }

@@ -10,6 +10,7 @@ import SpinnerLoading from "../UI/SpinnerLoading";
 import { useDispatch } from "react-redux";
 import actionTypes from "../../store/actionsType";
 import MessageBox from "../UI/MessageBox";
+import { authActions } from "../../store/auth";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,15 +61,17 @@ const LoginPage = () => {
             Authorization: data.token,
           },
         });
-        dispatch({
-          type: actionTypes.SET_USER,
-          isLogged: true,
-          token: data.token,
-          firstName: response.data.first_name,
-          id: data.id,
-          typeUser: response.data.user_type,
-          userStatus: response.data.user_status,
-        });
+        dispatch(
+          authActions.setUser({
+            type: actionTypes.SET_USER,
+            isLogged: true,
+            token: data.token,
+            firstName: response.data.first_name,
+            id: data.id,
+            typeUser: response.data.user_type,
+            userStatus: response.data.user_status,
+          })
+        );
         if (response.data.user_status) {
           history.replace("/");
         }

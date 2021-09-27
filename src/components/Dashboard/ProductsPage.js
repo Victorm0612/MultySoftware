@@ -39,7 +39,7 @@ const ProductsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showIngredientsList, setShowIngredientsList] = useState(false);
   const [showDiscountsList, setShowDiscountsList] = useState(false);
-  const { token } = useSelector((state) => state.userData);
+  const { token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",
@@ -515,20 +515,32 @@ const ProductsPage = () => {
                       errorMessage="Ingresa una descripción válida."
                       disabled={action === "details"}
                     />
-                    {action === "create" ||
-                      (action === "update" && (
-                        <InputForm
-                          id="image__input"
-                          labelMessage="Url imagen"
-                          change={changeProductImage}
-                          value={productImage}
-                          blur={productImageBlurHandler}
-                          typeInput="text"
-                          inputHasError={productImageHasError}
-                          errorMessage="Ingresa una url válida."
-                          disabled={action === "details"}
-                        />
-                      ))}
+                    {action === "create" && (
+                      <InputForm
+                        id="image__input"
+                        labelMessage="Url imagen"
+                        change={changeProductImage}
+                        value={productImage}
+                        blur={productImageBlurHandler}
+                        typeInput="text"
+                        inputHasError={productImageHasError}
+                        errorMessage="Ingresa una url válida."
+                        disabled={action === "details"}
+                      />
+                    )}
+                    {action === "update" && (
+                      <InputForm
+                        id="image__input"
+                        labelMessage="Url imagen"
+                        change={changeProductImage}
+                        value={productImage}
+                        blur={productImageBlurHandler}
+                        typeInput="text"
+                        inputHasError={productImageHasError}
+                        errorMessage="Ingresa una url válida."
+                        disabled={action === "details"}
+                      />
+                    )}
                     <InputForm
                       id="value__input"
                       labelMessage="Valor"

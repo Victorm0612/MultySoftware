@@ -20,7 +20,7 @@ const CategoriesPage = () => {
   const [keyWord, setKeyWord] = useState("");
   const [categoryForm, setCategoryForm] = useState(false);
   const [action, setAction] = useState("get");
-  const { token } = useSelector((state) => state.userData);
+  const { token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
     message: "",
