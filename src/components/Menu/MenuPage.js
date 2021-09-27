@@ -27,8 +27,6 @@ const MenuPage = () => {
         const { data: response } = await axios.get("product/");
         const { data: discountResponse } = await axios.get("discount/");
         const { data: categoryResponse } = await axios.get("category/");
-        console.log(response.data);
-        console.log(discountResponse.data);
         setProducts(response.data);
         setOptionsDiscount(discountResponse.data);
         setOptionsCategory(categoryResponse.data);
@@ -148,6 +146,7 @@ const MenuPage = () => {
                   {arr.map((product) => (
                     <ProductMenu
                       key={product.id}
+                      id={product.id}
                       title={product.pro_name}
                       discounts={product.Discounts}
                       categories={product.Category}

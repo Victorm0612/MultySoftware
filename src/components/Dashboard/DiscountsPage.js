@@ -10,6 +10,10 @@ import SpinnerLoading from "../UI/SpinnerLoading";
 import { axiosInstance as axios } from "../../config/axiosConfig";
 
 import classes from "./shared.module.css";
+import IconEdit from "../UI/Icons/IconEdit";
+import IconTrash from "../UI/Icons/IconTrash";
+import IconDetails from "../UI/Icons/IconDetails";
+import SelectForm from "../Form/SelectForm";
 const DiscountsPage = () => {
   const TITLES = [
     "#",
@@ -171,15 +175,13 @@ const DiscountsPage = () => {
     create: "Crear",
     update: "Actualizar",
     delete: "Eliminar",
+    details: "Detalles",
   };
 
   const {
     value: discountId,
     isValid: discountIdIsValid,
-    hasError: discountIdHasError,
-    changeInputValueHandler: changeDiscountId,
-    /* setInputValue: setDiscountId, */
-    inputBlurHandler: discountIdBlurHandler,
+    setInputValue: setDiscountId,
     reset: resetDiscountId,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
 
@@ -188,7 +190,7 @@ const DiscountsPage = () => {
     isValid: discountNameIsValid,
     hasError: discountNameHasError,
     changeInputValueHandler: changeDiscountName,
-    /* setInputValue: setDiscountName, */
+    setInputValue: setDiscountName,
     inputBlurHandler: discountNameBlurHandler,
     reset: resetDiscountName,
   } = useForm((value) => value.trim().length > 0);
@@ -198,7 +200,7 @@ const DiscountsPage = () => {
     isValid: discountDescriptionIsValid,
     hasError: discountDescriptionHasError,
     changeInputValueHandler: changeDiscountDescription,
-    /* setInputValue: setDiscountDescription, */
+    setInputValue: setDiscountDescription,
     inputBlurHandler: discountDescriptionBlurHandler,
     reset: resetDiscountDescription,
   } = useForm((value) => value.trim().length > 0);
@@ -208,7 +210,7 @@ const DiscountsPage = () => {
     isValid: discountInitDateIsValid,
     hasError: discountInitDateHasError,
     changeInputValueHandler: changeDiscountInitDate,
-    /* setInputValue: setDiscountInitDate, */
+    setInputValue: setDiscountInitDate,
     inputBlurHandler: discountInitDateBlurHandler,
     reset: resetDiscountInitDate,
   } = useForm((value) => value.trim().length > 0);
@@ -218,7 +220,7 @@ const DiscountsPage = () => {
     isValid: discountEndDateIsValid,
     hasError: discountEndDateHasError,
     changeInputValueHandler: changeDiscountEndDate,
-    /* setInputValue: setDiscountEndDate, */
+    setInputValue: setDiscountEndDate,
     inputBlurHandler: discountEndDateBlurHandler,
     reset: resetDiscountEndDate,
   } = useForm((value) => value.trim().length > 0);
@@ -228,7 +230,7 @@ const DiscountsPage = () => {
     isValid: discountStatusIsValid,
     hasError: discountStatusHasError,
     changeInputValueHandler: changeDiscountStatus,
-    /* setInputValue: setDiscountStatus, */
+    setInputValue: setDiscountStatus,
     inputBlurHandler: discountStatusBlurHandler,
     reset: resetDiscountStatus,
   } = useForm((value) => +value === 0 || +value === 1);
@@ -238,7 +240,7 @@ const DiscountsPage = () => {
     isValid: discountValueIsValid,
     hasError: discountValueHasError,
     changeInputValueHandler: changeDiscountValue,
-    /* setInputValue: setDiscountValue, */
+    setInputValue: setDiscountValue,
     inputBlurHandler: discountValueBlurHandler,
     reset: resetDiscountValue,
   } = useForm((value) => /^[0-9\b]+$/.test(value));
@@ -254,6 +256,16 @@ const DiscountsPage = () => {
         discountEndDateIsValid &&
         (action === "update" ? discountIdIsValid : true);
 
+  const setDiscountData = (discount) => {
+    setDiscountId(discount.id);
+    setDiscountName(discount.discount_name);
+    setDiscountDescription(discount.discount_description);
+    setDiscountInitDate(discount.ini_date);
+    setDiscountEndDate(discount.final_date);
+    setDiscountValue(discount.discount_value);
+    setDiscountStatus(discount.discount_status ? 0 : 1);
+  };
+
   const submitDiscount = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -265,21 +277,19 @@ const DiscountsPage = () => {
         <SpinnerLoading />
       ) : (
         <Fragment>
-          <Modal show={discountForm} closeModal={closeDiscountForm}>
+          <Modal
+            size={action === "delete" ? "small_card" : "big_card"}
+            show={discountForm}
+            closeModal={closeDiscountForm}
+          >
             <h1>{optionsAction[action]} Descuento</h1>
             <form onSubmit={submitDiscount} className={classes.form_control}>
-              {action !== "create" && (
-                <InputForm
-                  id="id__input"
-                  labelMessage="Id del descuento"
-                  change={changeDiscountId}
-                  value={discountId}
-                  blur={discountIdBlurHandler}
-                  typeInput="text"
-                  inputHasError={discountIdHasError}
-                  errorMessage="Ingrese un id válido."
-                  keyPress={true}
-                />
+              {action === "delete" && (
+                <div>
+                  <h5 style={{ textAlign: "center" }}>
+                    ¿Está seguro que desea eliminar {discountName}?
+                  </h5>
+                </div>
               )}
               {action !== "delete" && (
                 <Fragment>
@@ -292,6 +302,7 @@ const DiscountsPage = () => {
                     typeInput="text"
                     inputHasError={discountNameHasError}
                     errorMessage="Ingresa un nombre válido."
+                    disabled={action === "details"}
                   />
                   <InputForm
                     id="description__input"
@@ -302,6 +313,7 @@ const DiscountsPage = () => {
                     typeInput="text"
                     inputHasError={discountDescriptionHasError}
                     errorMessage="Ingresa una descripción válida."
+                    disabled={action === "details"}
                   />
                   <InputForm
                     id="value__input"
@@ -313,6 +325,19 @@ const DiscountsPage = () => {
                     keyPress={true}
                     inputHasError={discountValueHasError}
                     errorMessage="Ingresa un valor válido."
+                    disabled={action === "details"}
+                  />
+                  <SelectForm
+                    id="status__input"
+                    change={changeDiscountStatus}
+                    blur={discountStatusBlurHandler}
+                    value={discountStatus}
+                    list={["Activo", "Inactivo"]}
+                    accesKey="cat_name"
+                    disabled={action === "details"}
+                    labelMessage="Estado"
+                    errorMessage="Seleccione una opción válida."
+                    expression={(value, index) => index}
                   />
                   <label htmlFor="status__input">Estado</label>
                   <select
@@ -321,6 +346,7 @@ const DiscountsPage = () => {
                     value={discountStatus}
                     required
                     id="status__input"
+                    disabled={action === "details"}
                   >
                     <option value={0}>Activo</option>
                     <option value={1}>Inactivo</option>
@@ -340,6 +366,7 @@ const DiscountsPage = () => {
                     minDate={true}
                     inputHasError={discountInitDateHasError}
                     errorMessage="La fecha de inicio no puede ser una fecha vencida."
+                    disabled={action === "details"}
                   />
                   <InputForm
                     id="endDate__input"
@@ -351,13 +378,16 @@ const DiscountsPage = () => {
                     minDate={true}
                     inputHasError={discountEndDateHasError}
                     errorMessage="La fecha de inicio no puede ser una fecha vencida."
+                    disabled={action === "details"}
                   />
                 </Fragment>
               )}
               <div className={classes.form_control__buttons}>
-                <Button isInvalid={!formIsValid} submitFor="submit">
-                  {optionsAction[action]}
-                </Button>
+                {action !== "details" && (
+                  <Button isInvalid={!formIsValid} submitFor="submit">
+                    {optionsAction[action]}
+                  </Button>
+                )}
                 <Button submitFor="button" action={closeDiscountForm}>
                   Cancelar
                 </Button>
@@ -390,33 +420,27 @@ const DiscountsPage = () => {
                   <td>{discount.final_date.split("T")[0]}</td>
                   <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>
                   <td className={classes.product_list__table__edit}>
-                    <svg
-                      onClick={() => {
+                    <IconEdit
+                      action={() => {
                         setAction("update");
+                        setDiscountData(discount);
                         setDiscountForm(true);
                       }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                      <path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                    </svg>
-                    <svg
-                      onClick={() => {
+                    />
+                    <IconTrash
+                      action={() => {
                         setAction("delete");
+                        setDiscountData(discount);
                         setDiscountForm(true);
                       }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                    </svg>
+                    />
+                    <IconDetails
+                      action={() => {
+                        setAction("details");
+                        setDiscountData(discount);
+                        setDiscountForm(true);
+                      }}
+                    />
                   </td>
                 </tr>
               ))

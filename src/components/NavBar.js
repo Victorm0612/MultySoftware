@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Button from "./UI/Button";
@@ -7,6 +7,19 @@ import { authActions } from "../store/auth";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
   const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
+  const [animation, setAnimation] = useState(`${classes.cart_badge}`);
+
+  useEffect(() => {
+    setAnimation((prevState) =>
+      prevState.concat(" ", `${classes.cart_badge_changed}`)
+    );
+    return () => {
+      setTimeout(() => {
+        setAnimation(`${classes.cart_badge}`);
+      }, 1000);
+    };
+  }, [props.totalAmount]);
+
   const ROUTES = [
     { path: "/menu", namePath: "Menú", access: typeUser === 1 },
     { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
@@ -58,6 +71,7 @@ const NavBar = (props) => {
           {isLogged && typeUser === 1 && userStatus && (
             <li className={classes.cart}>
               <span onClick={props.openModal}>
+                <div className={`${animation}`}>{props.totalAmount}</div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="28"

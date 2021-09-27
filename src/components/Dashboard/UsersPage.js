@@ -512,7 +512,11 @@ const UsersPage = () => {
         <SpinnerLoading />
       ) : (
         <Fragment>
-          <Modal show={showPasswordForm} closeModal={closePasswordForm}>
+          <Modal
+            size="big_card"
+            show={showPasswordForm}
+            closeModal={closePasswordForm}
+          >
             <h1>Cambiar Contraseña</h1>
             <form onSubmit={submitUser} className={classes.form_control}>
               <InputForm
@@ -563,7 +567,10 @@ const UsersPage = () => {
               <MessageBox isError={message.isError} message={message.message} />
             </form>
           </Modal>
-          <Modal show={showUserForm}>
+          <Modal
+            size={action === "delete" ? "small_card" : "big_card"}
+            show={showUserForm}
+          >
             <h1>{optionsAction[action]} Usuario</h1>
             <form onSubmit={submitUser} className={classes.form_control}>
               {action === "delete" && (

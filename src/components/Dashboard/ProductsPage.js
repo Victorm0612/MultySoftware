@@ -326,7 +326,7 @@ const ProductsPage = () => {
     setProductName(product.pro_name);
     setProductImage(product.pro_image);
     setProductDescription(product.pro_description);
-    setProductStatus(product.pro_status);
+    setProductStatus(product.pro_status ? 0 : 1);
     setProductCategories(product.Category.id);
     setProductDiscounts(product.Discounts);
     setIngredientProduct(ingredientsFixed);
@@ -418,7 +418,7 @@ const ProductsPage = () => {
       ) : (
         <Fragment>
           {showIngredientsList ? (
-            <Modal show={showIngredientsList}>
+            <Modal show={showIngredientsList} size="big_card">
               <h1>Ingredientes</h1>
               <form onSubmit={addIngredientsToProduct}>
                 <input
@@ -438,7 +438,7 @@ const ProductsPage = () => {
               </form>
             </Modal>
           ) : showDiscountsList ? (
-            <Modal show={showDiscountsList}>
+            <Modal size="big_card" show={showDiscountsList}>
               <h1>Descuentos</h1>
               <form onSubmit={addDiscountsToProduct}>
                 <input
@@ -472,7 +472,11 @@ const ProductsPage = () => {
               </form>
             </Modal>
           ) : (
-            <Modal show={productForm} closeModal={closeProductForm}>
+            <Modal
+              size={action === "delete" ? "small_card" : "big_card"}
+              show={productForm}
+              closeModal={closeProductForm}
+            >
               <h1>{optionsAction[action]} Producto</h1>
               {action === "details" && (
                 <img

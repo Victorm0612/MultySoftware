@@ -228,7 +228,7 @@ const CategoriesPage = () => {
     setCategoryId(category.id);
     setCategoryName(category.cat_name);
     setCategoryDescription(category.cat_description);
-    setCategoryStatus(category.cat_status);
+    setCategoryStatus(category.cat_status ? 0 : 1);
   };
 
   const submitCreateCategory = (e) => {
@@ -241,7 +241,11 @@ const CategoriesPage = () => {
         <SpinnerLoading />
       ) : (
         <Fragment>
-          <Modal show={categoryForm} closeModal={closeCategoryForm}>
+          <Modal
+            size={action === "delete" ? "small_card" : "big_card"}
+            show={categoryForm}
+            closeModal={closeCategoryForm}
+          >
             <h1>{optionsAction[action]} Categoría</h1>
             <form
               onSubmit={submitCreateCategory}

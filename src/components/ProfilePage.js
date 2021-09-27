@@ -11,6 +11,7 @@ import Modal from "./UI/Modal";
 import { useHistory } from "react-router-dom";
 import MessageBox from "./UI/MessageBox";
 import { authActions } from "../store/auth";
+import IconUser from "./UI/Icons/IconUser";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -387,7 +388,11 @@ const ProfilePage = () => {
         </div>
       ) : (
         <div className={classes.profile}>
-          <Modal show={showPasswordForm} closeModal={closePasswordForm}>
+          <Modal
+            size="big_card"
+            show={showPasswordForm}
+            closeModal={closePasswordForm}
+          >
             <h1>Cambiar Contraseña</h1>
             <form
               onSubmit={submitPasswordHandler}
@@ -437,18 +442,9 @@ const ProfilePage = () => {
               <MessageBox isError={message.isError} message={message.message} />
             </form>
           </Modal>
-          <Card>
+          <Card size="small_card">
             <div className={classes.profile_header}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="48"
-                height="48"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-              </svg>
+              <IconUser />
               <h1>{firstName}</h1>
             </div>
             <form onSubmit={submitHandler} className={classes.form_control}>

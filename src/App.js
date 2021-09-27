@@ -20,15 +20,16 @@ const App = () => {
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
   const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
+  const { totalAmount } = useSelector((state) => state.cart);
   const accountDisabled = isLogged && !userStatus;
   return (
     <Fragment>
       {show && (
-        <Modal show={show}>
+        <Modal show={show} size="small_card">
           <Cart closeModal={closeModal} />
         </Modal>
       )}
-      <NavBar openModal={openModal} />
+      <NavBar openModal={openModal} totalAmount={totalAmount} />
       <Switch>
         <Route path="/" exact>
           <Home />

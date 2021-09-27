@@ -6,7 +6,7 @@
 }
 
 .big_card {
-  height: 80vh;
+  height: 80vh !important;
   overflow-y: auto;
 }
 

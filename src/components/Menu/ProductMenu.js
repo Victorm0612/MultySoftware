@@ -1,12 +1,30 @@
 import classes from "./MenuPage.module.css";
 import Button from "../UI/Button";
 import { useState } from "react";
+import { cartActions } from "../../store/cart";
+import { useDispatch } from "react-redux";
+
 const ProductMenu = (props) => {
   const [seeMore, setSeeMore] = useState(false);
+  const dispatch = useDispatch();
+
   const onChangeSeeMore = (e) => {
     e.preventDefault();
     setSeeMore((prevState) => !prevState);
   };
+
+  const addProductToCart = (e) => {
+    e.preventDefault();
+    dispatch(
+      cartActions.addProduct({
+        id: props.id,
+        pro_name: props.title,
+        price: props.price,
+        amount: 1,
+      })
+    );
+  };
+
   return (
     <div className={`col-md-3 ${classes.column}`}>
       {!props.productStatus && (
@@ -41,7 +59,9 @@ const ProductMenu = (props) => {
               maximumSignificantDigits: 3,
             }).format(props.price)}
           </p>
-          <Button isInvalid={!props.productStatus}>Agregar</Button>
+          <Button action={addProductToCart} isInvalid={!props.productStatus}>
+            Agregar
+          </Button>
         </div>
       </div>
     </div>

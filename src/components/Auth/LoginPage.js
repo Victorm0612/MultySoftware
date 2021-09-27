@@ -8,9 +8,9 @@ import Card from "../UI/Card";
 import { axiosInstance as axios } from "../../config/axiosConfig";
 import SpinnerLoading from "../UI/SpinnerLoading";
 import { useDispatch } from "react-redux";
-import actionTypes from "../../store/actionsType";
 import MessageBox from "../UI/MessageBox";
 import { authActions } from "../../store/auth";
+import IconLogin from "../UI/Icons/IconLogin";
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +63,6 @@ const LoginPage = () => {
         });
         dispatch(
           authActions.setUser({
-            type: actionTypes.SET_USER,
             isLogged: true,
             token: data.token,
             firstName: response.data.first_name,
@@ -111,16 +110,7 @@ const LoginPage = () => {
       ) : (
         <Card>
           <h1>Iniciar Sesión</h1>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8.5 10c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z" />
-            <path d="M10.828.122A.5.5 0 0 1 11 .5V1h.5A1.5 1.5 0 0 1 13 2.5V15h1.5a.5.5 0 0 1 0 1h-13a.5.5 0 0 1 0-1H3V1.5a.5.5 0 0 1 .43-.495l7-1a.5.5 0 0 1 .398.117zM11.5 2H11v13h1V2.5a.5.5 0 0 0-.5-.5zM4 1.934V15h6V1.077l-6 .857z" />
-          </svg>
+          <IconLogin />
           <form onSubmit={submitHandler} className={classes["form-control"]}>
             <InputForm
               id="email-input"
