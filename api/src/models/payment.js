@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
       pay_description: DataTypes.TEXT,
       pay_date: DataTypes.DATE,
       pay_time: DataTypes.TIME,
-      pay_type: DataTypes.STRING,
+      payed_status: DataTypes.BOOLEAN,
       amount: DataTypes.INTEGER,
       pay_status: DataTypes.BOOLEAN,
       bill_id: DataTypes.INTEGER,

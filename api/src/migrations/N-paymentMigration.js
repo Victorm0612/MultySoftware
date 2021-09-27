@@ -17,8 +17,8 @@ module.exports = {
       pay_time: {
         type: Sequelize.TIME
       },
-      pay_type: {
-        type: Sequelize.STRING
+      payed_status: {
+        type: Sequelize.BOOLEAN
       },
       amount: {
         type: Sequelize.INTEGER
