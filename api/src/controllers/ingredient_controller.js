@@ -34,11 +34,12 @@ export async function getOneIngredient(req, res) {
 }
 
 export async function create(req, res) {
-  const { ingredient_name, price } = req.body;
+  const { ingredient_name, price, amount} = req.body;
   try {
     let newIngredient = await models.Ingredient.create({
       ingredient_name,
       price,
+      amount
     });
     if (newIngredient) {
       res.json({
@@ -56,7 +57,7 @@ export async function create(req, res) {
 
 export async function updateIngredient(req, res) {
   const { id } = req.params;
-  const { ingredient_name, price } = req.body;
+  const { ingredient_name, price, amount } = req.body;
 
   const ingredientFound = await models.Ingredient.findAll({
     attributes: ["ingredient_name", "price"],
@@ -70,6 +71,7 @@ export async function updateIngredient(req, res) {
         await models.Ingredient.update({
           ingredient_name,
           price,
+          amount
         });
       },
       {

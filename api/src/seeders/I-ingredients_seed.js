@@ -6,15 +6,18 @@ module.exports = {
       //Ob1
       {
         ingredient_name: "Pernil de pollo asado",
-        price: "5000"
+        price: "5000",
+        amount: 200,
       },
       {
         ingredient_name: "Gaseosa 1Lt",
-        price: "3500"
+        price: "3500",
+        amount: 350,
       },
       {
         ingredient_name: "Entrada papas",
-        price: "10000"
+        price: "10000",
+        amount: 412,
       },
     ])
   },
