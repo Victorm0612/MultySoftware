@@ -62,6 +62,18 @@ export async function create(req, res) {
 
     if (paymentExist) {
       if (paymentExist.payed_status === false) {
+        const cardExist = await models.Card.findOne({
+          where: {
+            card_number: card_number,
+          }
+        })
+
+        if(cardExist.card_type === "Credito"){
+          return res.status(500).json({
+            message: "You can't make a debit pay with a credit card"
+          })
+        }
+
         const debitExist = await models.Debit_Pay.findOne({
           where: {
             payment_id: payment_id,
@@ -273,24 +285,6 @@ export async function updateDebit_Pay(req, res) {
   return res.json({
     message: "Debit pay updated successfully",
   });
-
-  // if (debitPay) {
-  //   await models.Debit_Pay.update(
-  //     {
-  //       debit_type: debit_type,
-  //       card_number: card_number,
-  //       payment_id: payment_id,
-  //     },
-  //     {
-  //       where: {
-  //         id: id,
-  //       },
-  //     }
-  //   );
-  // }
-  // return res.json({
-  //   message: "Debit Pay updated successfully",
-  // });
 }
 
 export async function deleteDebit_Pay(req, res) {

@@ -20,7 +20,10 @@ module.exports = {
           model: 'Users',
           key: 'document_id'
         }
-      },      
+      },
+      card_type: {
+        type: Sequelize.STRING,
+      },
       exp_date: {
         type: Sequelize.DATE
       },

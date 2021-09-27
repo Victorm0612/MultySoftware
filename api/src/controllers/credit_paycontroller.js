@@ -62,6 +62,18 @@ export async function create(req, res) {
 
     if (paymentExist) {
       if (paymentExist.payed_status === false) {
+        const cardExist = await models.Card.findOne({
+          where: {
+            card_number: card_number,
+          }
+        })
+
+        if(cardExist.card_type === "Debito"){
+          return res.status(500).json({
+            message: "You can't make a credit pay with a debit card"
+          })
+        }
+
         const debitExist = await models.Debit_Pay.findOne({
           where: {
             payment_id: payment_id,

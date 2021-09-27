@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     card_number: DataTypes.STRING,
     owner_id: DataTypes.INTEGER,
     exp_date: DataTypes.DATE,
+    card_type: DataTypes.STRING,
     bank: DataTypes.INTEGER
   }, {
     sequelize,
