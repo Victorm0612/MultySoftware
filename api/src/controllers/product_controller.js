@@ -17,7 +17,7 @@ export async function getProducts(req, res) {
         },
         {
           model: models.Ingredient,
-          attributes: ["id", "ingredient_name", "price"],
+          attributes: ["id", "ingredient_name", "price", "amount"],
         },
       ],
     });
@@ -53,6 +53,27 @@ export async function getProductsByName(req, res) {
         },
       ],
     });
+
+    for(const oneProduct of products) {
+      const ingredients = await oneproduct.getIngredients()
+
+      for(const oneIngredient of ingredients) {
+        if(oneIngredient.amount == 0) {
+
+          await models.Product.update(
+            {
+              pro_status: false,
+            },
+            {
+              where: {
+                id: oneProduct.id,
+              }
+            }
+          )
+        }
+      }
+    }
+
     res.json({
       data: products,
     });
@@ -72,6 +93,24 @@ export async function getOneProduct(req, res) {
         id: id,
       },
     });
+
+    const ingredients = product.getIngredients()
+
+    for(const oneIngredient of ingredients) {
+      if(oneIngredient.amount == 0) {
+        await models.Product.update(
+          {
+            pro_status: false,
+          },
+          {
+            where: {
+              id: id,
+            }
+          }
+        )
+      }
+    }
+
     res.json({
       data: product,
     });
@@ -138,6 +177,9 @@ export async function create(req, res) {
       });
 
       if (ingredient) {
+        if(ingredient.amount == 0 ) {
+          ingredientError = true;
+        }
         ingredientsOk.push({ ingredient, amount: oneIngredient.amount });
       } else {
         ingredientError = true;
