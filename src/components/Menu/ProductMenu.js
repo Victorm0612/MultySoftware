@@ -20,6 +20,8 @@ const ProductMenu = (props) => {
         id: props.id,
         pro_name: props.title,
         price: props.price,
+        tax: props.tax,
+        discounts: props.discounts,
         amount: 1,
       })
     );

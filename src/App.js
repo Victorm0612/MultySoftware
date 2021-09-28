@@ -14,13 +14,14 @@ import AccountDisabled from "./pages/Auth/AccountDisabled";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import NewPassword from "./pages/Auth/NewPassword";
 import Menu from "./pages/Menu";
+import Order from "./pages/Order";
 
 const App = () => {
   const [show, setShow] = useState(false);
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
   const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
-  const { totalAmount } = useSelector((state) => state.cart);
+  const { totalAmount, orderRequested } = useSelector((state) => state.cart);
   const accountDisabled = isLogged && !userStatus;
   return (
     <Fragment>
@@ -67,6 +68,11 @@ const App = () => {
           {accountDisabled && <Redirect to="/account-disabled" />}
           {typeUser === 1 && <Menu />}
           {typeUser !== 1 && <Redirect to="/" />}
+        </Route>
+        <Route path="/order">
+          {accountDisabled && <Redirect to="/account-disabled" />}
+          {orderRequested && totalAmount !== 0 && <Order />}
+          {totalAmount === 0 && <Redirect to="/" />}
         </Route>
         <Route path="/reset-password/:token">
           <NewPassword />

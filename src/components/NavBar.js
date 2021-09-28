@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Button from "./UI/Button";
 import classes from "./NavBar.module.css";
 import { authActions } from "../store/auth";
+import logoImg from "../images/Logo.png";
 const NavBar = (props) => {
   const [mobileNav, setmobileNav] = useState(false);
   const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
@@ -50,7 +51,13 @@ const NavBar = (props) => {
     <header className={classes.navbar}>
       <div className={classes.navbar__logo}>
         <Link to="/">
-          <h2>ChickRest</h2>
+          <img
+            className={classes.img_logo}
+            src={logoImg}
+            width="100px"
+            height="auto"
+            alt="Logo chicks restaurants"
+          />
         </Link>
       </div>
       <nav className={classes.main_nav}>
