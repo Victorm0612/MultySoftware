@@ -83,3 +83,11 @@
   display: block;
   margin: 0 auto;
 }
+
+.method_pay {
+  display: flex;
+}
+
+.method_pay p {
+  margin: 0 0.5rem;
+}

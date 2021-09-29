@@ -22,7 +22,11 @@ const OrderPage = () => {
     (state) => state.cart
   );
   const PAY_METHODS = ["Efectivo", "Crédito", "Débito"];
+  const [action, setAction] = useState("get");
   const [isLoading, setIsLoading] = useState(true);
+  const [methodsToPay, setMethodsToPay] = useState([]);
+  const [showOptions, setShowOptions] = useState(false);
+  const [showOptionsToPay, setShowOptionsToPay] = useState(false);
   const [showFormPayMethod, setShowFormPayMethod] = useState(false);
   const [edit, setEdit] = useState(false);
   const [message, setMessage] = useState({
@@ -34,7 +38,8 @@ const OrderPage = () => {
     setEdit((prevState) => !prevState);
   };
 
-  const openFormPayMethod = () => {
+  const openFormPayMethod = (e) => {
+    e.preventDefault();
     setShowFormPayMethod(true);
   };
 
@@ -42,9 +47,35 @@ const OrderPage = () => {
     setShowFormPayMethod(false);
   };
 
+  const openOptions = () => {
+    setShowOptions(true);
+  };
+
+  const closeOptions = () => {
+    setShowOptions(false);
+  };
+
+  const openOptionsToPay = (e) => {
+    e.preventDefault();
+    closeOptions();
+    setShowOptionsToPay(true);
+  };
+
+  const closeOptionsToPay = () => {
+    setShowOptionsToPay(false);
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log("Send...");
+    if (
+      (+wayToPay === 0 && methodsToPay.length === 2) ||
+      (+wayToPay === 1 && methodsToPay.length === 1)
+    ) {
+      setAction("send");
+      setIsLoading(true);
+      return;
+    }
+    return openOptions();
   };
 
   // enteredFirstName input
@@ -108,10 +139,7 @@ const OrderPage = () => {
   const {
     value: address,
     isValid: addressIsValid,
-    hasError: addressHasError,
-    changeInputValueHandler: changeAddress,
     setInputValue: setAddress,
-    inputBlurHandler: addressBlurHandler,
   } = useForm((address) => address.label.trim().length !== 0, { label: "" });
 
   //enteredMethod
@@ -120,19 +148,8 @@ const OrderPage = () => {
     isValid: methodIsValid,
     hasError: methodHasError,
     changeInputValueHandler: changeMethod,
-    setInputValue: setMethod,
     inputBlurHandler: methodBlurHandler,
   } = useForm((method) => +method >= 0 && +method <= 2, 0);
-
-  //enteredMethod
-  const {
-    value: secondMethod,
-    isValid: secondMethodIsValid,
-    hasError: secondMethodHasError,
-    changeInputValueHandler: changeSecondMethod,
-    setInputValue: setSecondMethod,
-    inputBlurHandler: secondMethodBlurHandler,
-  } = useForm((secondMethod) => +secondMethod >= 0 && +secondMethod <= 2, 0);
 
   //enteredMethod
   const {
@@ -140,7 +157,6 @@ const OrderPage = () => {
     isValid: wayToPayIsValid,
     hasError: wayToPayHasError,
     changeInputValueHandler: changeWayToPay,
-    setInputValue: setWayToPay,
     inputBlurHandler: wayToPayBlurHandler,
   } = useForm((wayToPay) => +wayToPay >= 0 && +wayToPay <= 1, 1);
 
@@ -149,11 +165,10 @@ const OrderPage = () => {
     lastNameIsValid &&
     emailIsValid &&
     phoneIsValid &&
+    methodIsValid &&
     wayToPayIsValid &&
     documentIdIsValid &&
-    addressIsValid &&
-    methodIsValid &&
-    (+wayToPay === 0 ? secondMethodIsValid : true);
+    addressIsValid;
 
   const setInputsForm = useCallback(
     (user) => {
@@ -165,6 +180,19 @@ const OrderPage = () => {
     },
     [setFirstName, setLastName, setDocumentId, setEmail, setPhone]
   );
+
+  const onChangeMethodsToPay = (data) => {
+    setMethodsToPay((prevState) => {
+      const index = prevState.findIndex(
+        (card) => card.card_number === data.card_number
+      );
+      if (index === -1) return [...prevState, data];
+      return [
+        ...prevState.filter((card) => card.card_number === data.card_number),
+        data,
+      ];
+    });
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -190,9 +218,28 @@ const OrderPage = () => {
       }
     };
 
+    const sendData = async () => {
+      try {
+        console.log("Send...");
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const actionsObj = {
+      get: getUser,
+      send: sendData,
+    };
+
     if (!isLoading) return;
-    getUser();
-  }, [isLoading, token, id, setInputsForm]);
+    actionsObj[action]();
+  }, [isLoading, token, id, setInputsForm, action]);
+
+  let priceWithDiscountAndTax =
+    totalPrice -
+    totalPrice * mainDiscount +
+    (totalPrice - totalPrice * mainDiscount) * 0.09;
 
   return (
     <div className={orderClasses.body_page}>
@@ -201,12 +248,75 @@ const OrderPage = () => {
           <SpinnerLoading />
         ) : (
           <Fragment>
+            {showOptions && (
+              <Modal show={showOptions} size="small_card">
+                <form
+                  onSubmit={openOptionsToPay}
+                  className={classes.form_control}
+                >
+                  <h1>¿Desea dividir el pago?</h1>
+                  <SelectForm
+                    id="way_to_pay__input"
+                    change={changeWayToPay}
+                    blur={wayToPayBlurHandler}
+                    value={wayToPay}
+                    hasError={wayToPayHasError}
+                    list={["Sí", "No"]}
+                    labelMessage=""
+                    errorMessage="Seleccione una opción válida."
+                    expression={(value, index) => index}
+                  />
+                  <div className={classes.form_control__buttons}>
+                    <Button submitFor="button" action={closeOptions}>
+                      Cancelar
+                    </Button>
+                    <Button>Siguiente</Button>
+                  </div>
+                </form>
+              </Modal>
+            )}
+            {showOptionsToPay &&
+              (+wayToPay
+                ? methodsToPay.length < 1
+                : methodsToPay.length < 2) && (
+                <Modal show={showOptionsToPay} size="small_card">
+                  <form
+                    onSubmit={openFormPayMethod}
+                    className={classes.form_control}
+                  >
+                    <h2 style={{ fontWeight: "bold", textAlign: "center" }}>
+                      {`Seleccionar método de pago ${methodsToPay.length + 1}`}
+                    </h2>
+                    <SelectForm
+                      id="method__input"
+                      change={changeMethod}
+                      blur={methodBlurHandler}
+                      value={method}
+                      hasError={methodHasError}
+                      list={PAY_METHODS}
+                      labelMessage=""
+                      errorMessage="Seleccione una opción válida."
+                      expression={(value, index) => index}
+                    />
+                    <div className={classes.form_control__buttons}>
+                      <Button submitFor="button" action={closeOptionsToPay}>
+                        Cancelar
+                      </Button>
+                      <Button>Siguiente</Button>
+                    </div>
+                  </form>
+                </Modal>
+              )}
             {showFormPayMethod && (
               <Modal show={showFormPayMethod} size="big_card">
                 <h1>{PAY_METHODS[method]}</h1>
                 <PayCardForm
+                  currentMethods={methodsToPay}
+                  totalAmount={priceWithDiscountAndTax}
+                  onePay={+wayToPay === 1}
+                  onSaveInfo={onChangeMethodsToPay}
                   documentUser={documentId}
-                  isCredit={PAY_METHODS[method] === "Crédito"}
+                  type={PAY_METHODS[method]}
                   closeForm={closeFormPayMethod}
                 />
               </Modal>
@@ -222,7 +332,7 @@ const OrderPage = () => {
                 />
                 <h1>Finaliza tu pedido</h1>
               </div>
-              <form onSubmit={submitHandler} className={classes.form_control}>
+              <form className={classes.form_control}>
                 <div className={classes.form_control__body}>
                   <InputForm
                     id="name__input"
@@ -288,6 +398,7 @@ const OrderPage = () => {
                     apiOptions={{ language: "es", region: "co" }}
                     selectProps={{
                       placeholder: "Ingrese su dirección...",
+                      isSearchable: edit,
                       address,
                       onChange: setAddress,
                       styles: {
@@ -315,49 +426,6 @@ const OrderPage = () => {
                     }}
                     apiKey="AIzaSyCNSSxmXqpn8T7lKeMnwYMPu_FTcZLBWFM"
                   />
-                  <SelectForm
-                    id="method__input"
-                    change={(e) => {
-                      changeMethod(e);
-                      if (PAY_METHODS[e.target.value] !== "Efectivo")
-                        openFormPayMethod();
-                    }}
-                    blur={methodBlurHandler}
-                    value={method}
-                    hasError={methodHasError}
-                    list={PAY_METHODS}
-                    labelMessage="Seleccionar método de pago"
-                    errorMessage="Seleccione una opción válida."
-                    expression={(value, index) => index}
-                  />
-                  {+wayToPay === 0 && (
-                    <SelectForm
-                      id="method__input"
-                      change={(e) => {
-                        changeSecondMethod(e);
-                        if (PAY_METHODS[e.target.value] !== "Efectivo")
-                          openFormPayMethod();
-                      }}
-                      blur={secondMethodBlurHandler}
-                      value={secondMethod}
-                      hasError={secondMethodHasError}
-                      list={PAY_METHODS}
-                      labelMessage="Seleccionar segundo método de pago"
-                      errorMessage="Seleccione una opción válida."
-                      expression={(value, index) => index}
-                    />
-                  )}
-                  <SelectForm
-                    id="way_to_pay__input"
-                    change={changeWayToPay}
-                    blur={wayToPayBlurHandler}
-                    value={wayToPay}
-                    hasError={wayToPayHasError}
-                    list={["Sí", "No"]}
-                    labelMessage="Dividir pago en dos"
-                    errorMessage="Seleccione una opción válida."
-                    expression={(value, index) => index}
-                  />
                 </div>
                 <label className={orderClasses.label_select}>Detalles</label>
                 <textarea
@@ -366,17 +434,16 @@ const OrderPage = () => {
                   name="description"
                   rows="4"
                   cols="50"
-                  placeholder="Información del destino..."
+                  placeholder="Información adicional..."
+                  disabled={!edit}
                 ></textarea>
                 <div className={classes.form_control__buttons}>
-                  <Button action={changeEditHandler}>
+                  <Button submitFor="button" action={changeEditHandler}>
                     {edit ? "Guardar" : "Editar"}
                   </Button>
-                  <Button isInvalid={!formIsValid} submitFor="submit">
-                    Aplicar cambios
+                  <Button submitFor="button" action={changeEditHandler}>
+                    Cancelar
                   </Button>
-
-                  <Button action={changeEditHandler}>Cancelar</Button>
                 </div>
               </form>
               {message.message.length > 0 && (
@@ -401,7 +468,7 @@ const OrderPage = () => {
                   <p>
                     $
                     {new Intl.NumberFormat("es-CO", {
-                      maximumSignificantDigits: 3,
+                      maximumSignificantDigits: 6,
                     }).format(product.price)}
                   </p>
                   <p>x{product.amount}</p>
@@ -417,7 +484,7 @@ const OrderPage = () => {
             <p>
               $
               {new Intl.NumberFormat("es-CO", {
-                maximumSignificantDigits: 3,
+                maximumSignificantDigits: 6,
               }).format(totalPrice)}
             </p>
             <p>x{totalAmount}</p>
@@ -448,23 +515,51 @@ const OrderPage = () => {
           </div>
         </div>
         <hr />
+        {methodsToPay.length > 0 && (
+          <Fragment>
+            <div className={`${orderClasses.product_item}`}>
+              <h5>Métodos de Pago</h5>
+              <ul className={orderClasses.list_products}>
+                {methodsToPay.map((method, index) => (
+                  <li key={index}>
+                    <div className={orderClasses.product_item}>
+                      <div className={orderClasses.product_item__amount}>
+                        {method.type === 0 && <p>Efectivo</p>}
+                        {method.type !== 0 && (
+                          <p>{`${
+                            PAY_METHODS[method.type]
+                          } / ${method.card_number.substring(13, 16)}`}</p>
+                        )}
+                        <div className={orderClasses.method_pay}>
+                          <p>{`$
+              ${new Intl.NumberFormat("es-CO", {
+                maximumSignificantDigits: 6,
+              }).format(method.total_amount)}`}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <hr />
+          </Fragment>
+        )}
         <div className={`${orderClasses.product_item}`}>
           <h5>Total a pagar</h5>
           <div className={orderClasses.product_item__amount}>
             <p>
               $
               {new Intl.NumberFormat("es-CO", {
-                maximumSignificantDigits: 3,
-              }).format(
-                totalPrice -
-                  totalPrice * mainDiscount +
-                  (totalPrice - totalPrice * mainDiscount) * 0.09
-              )}
+                maximumSignificantDigits: 6,
+              }).format(priceWithDiscountAndTax)}
             </p>
             <p>x{totalAmount}</p>
           </div>
           <div className={orderClasses.product__button}>
-            <Button isInvalid={!formIsValid}>Pagar</Button>
+            <Button action={submitHandler} isInvalid={!formIsValid}>
+              Pagar
+            </Button>
           </div>
         </div>
       </div>

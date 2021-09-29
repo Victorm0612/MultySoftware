@@ -31,13 +31,14 @@
 }
 
 .shadow {
-  transform: skew(20deg, -150deg) scale(130%) translate(10%, -80%);
+  transform: skew(20deg, -150deg) scale(140%) translate(10%, -80%);
   height: 100%;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.096);
 }
 
 .card_info {
+  font-family: "Advent Pro", sans-serif;
   color: white;
   font-weight: 700;
   padding: 1rem 1rem;
