@@ -271,20 +271,21 @@ export async function updateCash_Pay(req, res) {
 export async function deleteCash_Pay(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = model.Cash_Pay.destroy({
+    const deleteRowCount = await model.Cash_Pay.destroy({
       where: {
         id: id,
       },
     });
     if (deleteRowCount > 0) {
-      res.json({
+      return res.json({
         message: "Cash_Pay deleted successfully",
       });
-    } else {
-      res.status(404).json({
-        message: "Couldnt delete that cash pay",
-      });
     }
+
+    res.status(404).json({
+      message: "That Cash_Pay does not exist",
+    });
+    
   } catch (error) {
     res.status(500).json({
       message: "Error deleting cash pay",

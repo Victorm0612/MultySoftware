@@ -99,10 +99,18 @@ export async function deleteCard(req, res) {
         card_number: card_number,
       },
     });
-    res.json({
-      message: "Card deleted successfully",
-      count: deleteRowCount,
-    });
+    
+    if(deleteRowCount > 0){
+      return res.json({
+        message: "Card deleted successfully",
+        count: deleteRowCount,
+      });
+    }
+
+    res.status(404).json({
+      message: "That card does not exist",
+    })
+
   } catch (error) {
     res.status(500).json({
       message: "Error deleting Card" + error,

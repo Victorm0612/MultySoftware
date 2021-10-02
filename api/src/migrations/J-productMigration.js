@@ -23,6 +23,7 @@ module.exports = {
       category_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'SET NULL',
         references: {
           model: 'Categories',
           key: 'id'

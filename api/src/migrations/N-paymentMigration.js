@@ -29,6 +29,7 @@ module.exports = {
       bill_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Bills',
           key: 'id'

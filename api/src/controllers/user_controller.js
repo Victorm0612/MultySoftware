@@ -248,10 +248,18 @@ export async function deleteUser(req, res) {
         id: id,
       },
     });
-    res.json({
-      message: "User deleted successfully",
-      count: deleteRowCount,
-    });
+    
+    if(deleteRowCount > 0){
+      return res.json({
+        message: "User deleted successfully",
+        count: deleteRowCount,
+      });
+    }
+
+    res.status(404).json({
+      message: "That user does not exist",
+    })
+
   } catch (error) {
     res.status(404).json({
       message: "Error " + error,

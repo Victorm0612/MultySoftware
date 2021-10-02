@@ -425,7 +425,7 @@ export async function updateSale(req, res) {
 export async function deleteSale(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Sale.destroy({
+    const deleteRowCount = await models.Sale.destroy({
       where: {
         id: id,
       },
