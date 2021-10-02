@@ -138,6 +138,13 @@ export async function create(req, res) {
         });
 
         if (newSale) {
+
+          //Variables for Bill
+          let totalIvaBill = 0
+          let subtotalBill = 0
+          let total_discountBill = 0
+          let item_totalBill = 0
+
           for (const oneProduct of productsOk) {
             const today = new Date(Date.now());
 
@@ -187,15 +194,22 @@ export async function create(req, res) {
                 }
               );
             }
-
             //Executing operations in order to get the values for the join table
             const amount = oneProduct.amount;
             let totalIva = oneProduct.product.price * 0.19 * amount;
-            let item_total = oneProduct.product.price * amount;
+            totalIvaBill += totalIva
+            let subtotal = oneProduct.product.price * amount;
+            subtotalBill += subtotal
             let total_discount =
               oneProduct.product.price * discount_value * amount;
-            let subtotal = item_total - (totalIva + total_discount);
+            total_discountBill += total_discount
+            let item_total = (subtotal + totalIva) - total_discount;
+            item_totalBill += item_total
 
+            console.log("totalIvaBill: " + totalIvaBill)
+            console.log("subtotalBill: " + subtotalBill)
+            console.log("total_discountBill: " + total_discountBill)
+            console.log("item_totalBill: " + item_totalBill)
             newSale.addProducts(oneProduct.product, {
               through: {
                 amount: amount,
@@ -205,10 +219,24 @@ export async function create(req, res) {
                 total_discount: total_discount,
               },
             });
+
           }
+
+          const newBill = await models.Bill.create({
+            nit: 33333346,
+            sale_id: newSale.id,
+            bill_time: newSale.sale_time,
+            bill_date: newSale.sale_date,
+            subtotal: subtotalBill,
+            totalIva: totalIvaBill,
+            total_discount: total_discountBill,
+            total_payment: item_totalBill,
+            bill_status: true,
+          })
+
           res.json({
             message: "SUCCESS!!",
-            data: newSale,
+            data: newSale, newBill
           });
         }
       } else {
@@ -237,18 +265,17 @@ export async function updateSale(req, res) {
   let productError = false;
   let ingredientError = false;
 
-  let productsOk = new Array()
+  let productsOk = new Array();
 
   try {
-
     for (const oneProduct of products) {
       const product = await models.Product.findOne({
-        where : {
+        where: {
           id: oneProduct.product_id,
-        }
-      })
+        },
+      });
 
-      if(product){
+      if (product) {
         const ingredients = await product.getIngredients({
           joinTableAttributes: ["amount"],
         });
@@ -270,22 +297,22 @@ export async function updateSale(req, res) {
         break;
       }
 
-      if(!productError){
-        if(!ingredientError){
-
+      if (!productError) {
+        if (!ingredientError) {
           const saleFound = await models.Sale.findOne({
             where: {
-              id: id
-            }
-          })
+              id: id,
+            },
+          });
 
-          if(saleFound){
-            
+          if (saleFound) {
             //Removing the change on the amount of the ingredients
             //because is changing products
-            const oldProducts = await saleFound.getProducts({ joinTableAttributes: ["amount"]});
-            for(const oneProduct of oldProducts){
-              saleFound.removeProduct(oneProduct)
+            const oldProducts = await saleFound.getProducts({
+              joinTableAttributes: ["amount"],
+            });
+            for (const oneProduct of oldProducts) {
+              saleFound.removeProduct(oneProduct);
 
               const ingredients = await oneProduct.getIngredients({
                 joinTableAttributes: ["amount"],
@@ -294,24 +321,37 @@ export async function updateSale(req, res) {
               for (const oneIngredient of ingredients) {
                 const finalAmount =
                   oneIngredient.amount +
-                  oneProduct.SaleItem.amount * oneIngredient.IngredientItem.amount;
-                  
+                  oneProduct.SaleItem.amount *
+                    oneIngredient.IngredientItem.amount;
+
                 await models.Ingredient.update(
                   {
-                    amount: finalAmount,                    
+                    amount: finalAmount,
                   },
                   {
                     where: {
                       id: oneIngredient.id,
-                    }
+                    },
                   }
                 );
               }
             }
 
+            const billFound = await models.Bill.findOne({
+              where: {
+                sale_id: id
+              }
+            })
+
+            //Variables for Bill
+            let totalIvaBill = 0
+            let subtotalBill = 0
+            let total_discountBill = 0
+            let item_totalBill = 0
+
             for (const oneProduct of productsOk) {
               const today = new Date(Date.now());
-  
+
               //Getting discounts of the product that applies for today's date
               const discount = await oneProduct.product.getDiscounts({
                 where: {
@@ -321,7 +361,7 @@ export async function updateSale(req, res) {
                   ],
                 },
               });
-  
+
               let discount_value;
               //If there are more than one valid discount, determine the discount to use depending on the higher discount
               if (discount.length > 0) {
@@ -338,11 +378,11 @@ export async function updateSale(req, res) {
               } else {
                 discount_value = 0;
               }
-  
+
               const ingredients = await oneProduct.product.getIngredients({
                 joinTableAttributes: ["amount"],
               }); //FUNCTION TO GET THE AMOUNT OF INGREDIENTS IN THAT PRODUCT
-  
+
               //Executing the logic of sustracting amount of the ingredients in the product and updating it
               for (const oneIngredient of ingredients) {
                 await models.Ingredient.update(
@@ -358,15 +398,19 @@ export async function updateSale(req, res) {
                   }
                 );
               }
-  
+
               //Executing operations in order to get the values for the join table
               const amount = oneProduct.amount;
               let totalIva = oneProduct.product.price * 0.19 * amount;
-              let item_total = oneProduct.product.price * amount;
+              totalIvaBill += totalIva
+              let subtotal = oneProduct.product.price * amount;
+              subtotalBill += subtotal
               let total_discount =
                 oneProduct.product.price * discount_value * amount;
-              let subtotal = item_total - (totalIva + total_discount);
-  
+              total_discountBill += total_discount
+              let item_total = (subtotal + totalIva) - total_discount;
+              item_totalBill += item_total
+
               saleFound.addProducts(oneProduct.product, {
                 through: {
                   amount: amount,
@@ -387,34 +431,61 @@ export async function updateSale(req, res) {
                 sale_status,
               },
               {
-                where: { 
+                where: {
                   id: id,
                 },
               }
             );
 
-            if(update){
-              res.json({
-                message: "Sale updated successfully"
+            if (update) {
+
+              if(billFound){
+                await models.Bill.update(
+                  {
+                    bill_time: sale_time,
+                    bill_date: sale_date,
+                    subtotal: subtotalBill,
+                    totalIva: totalIvaBill,
+                    total_discount: total_discountBill,
+                    total_payment: item_totalBill,
+                    bill_status: true,
+                  },
+                  {
+                    where: {
+                      id: billFound.id
+                    }
+                  }
+                  )
+              }
+
+              const newBill = await models.Bill.create({
+                nit: 33333346,
+                sale_id: saleFound.id,
+                bill_time: saleFound.sale_time,
+                bill_date: saleFound.sale_date,
+                subtotal: subtotalBill,
+                totalIva: totalIvaBill,
+                total_discount: total_discountBill,
+                total_payment: item_totalBill,
+                bill_status: true,
               })
+
+              res.json({
+                message: "Sale updated successfully",
+              });
             }
-
           }
-
-        }else{
+        } else {
           res.status(404).json({
-            message: "There's not enought ingredients for that products"
-          })
+            message: "There's not enought ingredients for that products",
+          });
         }
-      }else{
+      } else {
         res.status(404).json({
-          message: "There was a problem with the products"
-        })
+          message: "There was a problem with the products",
+        });
       }
-
-
     }
-
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
@@ -425,7 +496,7 @@ export async function updateSale(req, res) {
 export async function deleteSale(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Sale.destroy({
+    const deleteRowCount = await models.Sale.destroy({
       where: {
         id: id,
       },
