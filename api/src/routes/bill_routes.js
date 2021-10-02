@@ -4,8 +4,8 @@ const router = Router();
 
 import { getBills, getOneBill, create, updateBill, deleteBill } from '../controllers/bill_controller'
 
-router.get('/', verifyAccess, getBills);
-router.get('/:id', verifyBelongsToUser, getOneBill);
+router.get('/', verifyToken, getBills);
+router.get('/:id', verifyToken, getOneBill);
 router.post('/', verifyAccess, create);
 router.put('/:id', verifyAccess, updateBill);
 router.delete('/:id', verifyAccess, deleteBill)
