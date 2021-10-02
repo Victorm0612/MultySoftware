@@ -16,3 +16,18 @@
   cursor: not-allowed;
   background: #ccc;
 }
+
+.close_button {
+  background: white;
+  padding: 0.7rem 1rem;
+  margin-top: 1rem;
+  border-radius: 30px;
+  border: none;
+  color: black;
+  border: 2px solid orange;
+  font-weight: 700;
+  max-width: 15rem;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+}

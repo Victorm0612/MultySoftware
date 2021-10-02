@@ -1,6 +1,7 @@
 .categories,
 .product_list,
 .discount_page,
+.sales,
 .users {
   height: 100vh;
   width: 100%;
@@ -14,6 +15,7 @@
 .categories__header,
 .product_list__header,
 .discount_page__header,
+.sales__header,
 .users__header {
   width: 100%;
   display: flex;
@@ -24,6 +26,7 @@
 .categories h1,
 .product_list h1,
 .discount_page h1,
+.sales h1,
 .users h1 {
   color: white;
   font-weight: 700;
@@ -34,6 +37,7 @@
 .categories__header button,
 .product_list__header button,
 .discount_page__header button,
+.sales__header button,
 .users__header button {
   margin: 1.2rem 0;
 }
@@ -151,6 +155,37 @@
   font-weight: 700;
 }
 
+ul.pagination {
+  display: inline-block;
+  padding: 0;
+
+  background: white;
+  box-shadow: 0 0 5px black;
+}
+
+ul.pagination li {
+  display: inline;
+}
+
+ul.pagination li button {
+  color: black;
+  font-weight: bold;
+  padding: 6px 16px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul.pagination li button:hover {
+  background: orange;
+  color: white;
+}
+
+ul.pagination li button.active {
+  background: orange;
+  color: white;
+}
+
 @media (min-width: 40rem) {
   .product_list {
     padding: 0rem 1.5rem;
@@ -158,10 +193,12 @@
   .categories__header,
   .product_list__header,
   .discount_page__header,
+  .sales__header,
   .users__header {
     width: 80%;
   }
   .categories__header button,
+  .sales__header button,
   .product_list__header button,
   .discount_page__header button,
   .users__header button {

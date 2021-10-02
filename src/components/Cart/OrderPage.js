@@ -14,9 +14,21 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import logoImg from "../../images/Logo.png";
 import Modal from "../UI/Modal";
 import PayCardForm from "./PayCardForm";
+import { createSale, Sale } from "../../helper/httpHelpers/saleHttp";
+import { Bill, createBill } from "../../helper/httpHelpers/billHttp";
+import { createPayment, Payment } from "../../helper/httpHelpers/paymentHttp";
+import { createCard } from "../../helper/httpHelpers/cardHttp";
+import { CashPay, createCashPay } from "../../helper/httpHelpers/cashPayHttp";
+import {
+  createCreditPay,
+  CreditPay,
+} from "../../helper/httpHelpers/creditPayHttp";
+import {
+  createDebitPay,
+  DebitPay,
+} from "../../helper/httpHelpers/debitPayHttp";
 
 const OrderPage = () => {
-  //Primero sale después bill después payment después el tipo de pago
   const { id, token } = useSelector((state) => state.auth);
   const { products, mainDiscount, totalPrice, totalAmount } = useSelector(
     (state) => state.cart
@@ -24,6 +36,7 @@ const OrderPage = () => {
   const PAY_METHODS = ["Efectivo", "Crédito", "Débito"];
   const [action, setAction] = useState("get");
   const [isLoading, setIsLoading] = useState(true);
+  const [payDescription, setPayDescription] = useState("");
   const [methodsToPay, setMethodsToPay] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [showOptionsToPay, setShowOptionsToPay] = useState(false);
@@ -63,6 +76,10 @@ const OrderPage = () => {
 
   const closeOptionsToPay = () => {
     setShowOptionsToPay(false);
+  };
+
+  const changeDescription = (e) => {
+    setPayDescription(e.target.value);
   };
 
   const submitHandler = (e) => {
@@ -194,6 +211,11 @@ const OrderPage = () => {
     });
   };
 
+  let priceWithDiscountAndTax =
+    totalPrice -
+    totalPrice * mainDiscount +
+    (totalPrice - totalPrice * mainDiscount) * 0.09;
+
   useEffect(() => {
     const getUser = async () => {
       let boxMessage = "";
@@ -204,7 +226,6 @@ const OrderPage = () => {
             Authorization: token,
           },
         });
-        console.log(response.data);
         setInputsForm(response.data);
       } catch (error) {
         boxMessage = error.response.data.message;
@@ -219,9 +240,74 @@ const OrderPage = () => {
     };
 
     const sendData = async () => {
+      //Primero sale después bill después payment después el tipo de pag
       try {
-        console.log("Send...");
+        const dataSale = await createSale(
+          new Sale(documentId, products),
+          token
+        );
+        const dataBill = await createBill(
+          new Bill(dataSale.id, totalPrice, 0.09, mainDiscount)
+        );
+        const dataPayment = await createPayment(
+          new Payment(payDescription, totalAmount, dataBill.id),
+          token
+        );
+        for (let method of methodsToPay) {
+          if (method.type !== 0) {
+            await createCard(
+              new Card(
+                method.card_number,
+                method.owner_id,
+                method.exp_date,
+                method.type,
+                method.bank
+              ),
+              token
+            );
+          }
+        }
+        for (let method of methodsToPay) {
+          let mPay;
+          if (method.type === 0) {
+            mPay = await createCashPay(
+              new CashPay(
+                dataPayment.id,
+                method.total_amount,
+                method.one_pay,
+                method.owner_id
+              ),
+              token
+            );
+          }
+          if (method.type === 1) {
+            mPay = await createCreditPay(
+              new CreditPay(
+                method.fees_number,
+                method.card_number,
+                dataPayment.id,
+                method.total_amount,
+                method.one_pay
+              ),
+              token
+            );
+          }
+          if (method.type === 2) {
+            mPay = await createDebitPay(
+              new DebitPay(
+                "Ahorros",
+                method.card_number,
+                method.total_amount,
+                method.one_pay,
+                dataPayment.id
+              ),
+              token
+            );
+          }
+          console.log(JSON.stringify(mPay));
+        }
       } catch (error) {
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -235,11 +321,6 @@ const OrderPage = () => {
     if (!isLoading) return;
     actionsObj[action]();
   }, [isLoading, token, id, setInputsForm, action]);
-
-  let priceWithDiscountAndTax =
-    totalPrice -
-    totalPrice * mainDiscount +
-    (totalPrice - totalPrice * mainDiscount) * 0.09;
 
   return (
     <div className={orderClasses.body_page}>
@@ -267,7 +348,11 @@ const OrderPage = () => {
                     expression={(value, index) => index}
                   />
                   <div className={classes.form_control__buttons}>
-                    <Button submitFor="button" action={closeOptions}>
+                    <Button
+                      tag="close"
+                      submitFor="button"
+                      action={closeOptions}
+                    >
                       Cancelar
                     </Button>
                     <Button>Siguiente</Button>
@@ -299,7 +384,11 @@ const OrderPage = () => {
                       expression={(value, index) => index}
                     />
                     <div className={classes.form_control__buttons}>
-                      <Button submitFor="button" action={closeOptionsToPay}>
+                      <Button
+                        tag="close"
+                        submitFor="button"
+                        action={closeOptionsToPay}
+                      >
                         Cancelar
                       </Button>
                       <Button>Siguiente</Button>
@@ -429,6 +518,8 @@ const OrderPage = () => {
                 </div>
                 <label className={orderClasses.label_select}>Detalles</label>
                 <textarea
+                  value={payDescription}
+                  onChange={changeDescription}
                   className={orderClasses.textarea_order}
                   id="description"
                   name="description"
@@ -441,7 +532,11 @@ const OrderPage = () => {
                   <Button submitFor="button" action={changeEditHandler}>
                     {edit ? "Guardar" : "Editar"}
                   </Button>
-                  <Button submitFor="button" action={changeEditHandler}>
+                  <Button
+                    tag="close"
+                    submitFor="button"
+                    action={changeEditHandler}
+                  >
                     Cancelar
                   </Button>
                 </div>
@@ -461,7 +556,7 @@ const OrderPage = () => {
         <hr />
         <ul className={orderClasses.list_products}>
           {products.map((product) => (
-            <li key={product.id}>
+            <li key={product.product_id}>
               <div className={orderClasses.product_item}>
                 <h5>{product.pro_name}</h5>
                 <div className={orderClasses.product_item__amount}>

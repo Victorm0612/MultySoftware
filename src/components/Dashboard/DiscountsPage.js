@@ -388,7 +388,11 @@ const DiscountsPage = () => {
                     {optionsAction[action]}
                   </Button>
                 )}
-                <Button submitFor="button" action={closeDiscountForm}>
+                <Button
+                  tag="close"
+                  submitFor="button"
+                  action={closeDiscountForm}
+                >
                   Cancelar
                 </Button>
               </div>

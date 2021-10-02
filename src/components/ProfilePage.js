@@ -435,7 +435,11 @@ const ProfilePage = () => {
               />
               <div className={classes.form_control__buttons}>
                 <Button submitFor="submit">Cambiar</Button>
-                <Button submitFor="button" action={closePasswordForm}>
+                <Button
+                  tag="close"
+                  submitFor="button"
+                  action={closePasswordForm}
+                >
                   Cancelar
                 </Button>
               </div>
@@ -566,7 +570,11 @@ const ProfilePage = () => {
                     Aplicar cambios
                   </Button>
                 )}
-                {edit && <Button action={changeEditHandler}>Cancelar</Button>}
+                {edit && (
+                  <Button tag="close" action={changeEditHandler}>
+                    Cancelar
+                  </Button>
+                )}
               </div>
               <div className={classes.form_control__buttons}>
                 {edit && (

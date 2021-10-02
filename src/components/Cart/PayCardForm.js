@@ -118,6 +118,7 @@ const PayCardForm = (props) => {
       ? (data = {
           type: PAY_METHODS.findIndex((el) => el === props.type),
           total_amount: amountToPay,
+          one_pay: props.onePay,
         })
       : (data = {
           type: PAY_METHODS.findIndex((el) => el === props.type),
@@ -128,6 +129,7 @@ const PayCardForm = (props) => {
           card_type: props.isCredit ? "Credito" : "Debito",
           bank: bankList[bank].id,
           total_amount: amountToPay,
+          one_pay: props.onePay,
         });
     const message = validationPay(
       props.currentMethods,
@@ -230,7 +232,9 @@ const PayCardForm = (props) => {
             </div>
           )}
           <div className={classes.form_control__buttons}>
-            <Button action={props.closeForm}>Cancelar</Button>
+            <Button tag="close" action={props.closeForm}>
+              Cancelar
+            </Button>
             <Button isInvalid={!formIsValid}>Guardar</Button>
           </div>
           {messageBox.message.length > 0 && (

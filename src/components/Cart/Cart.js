@@ -15,7 +15,7 @@ const Cart = (props) => {
   const removeProductToCart = (id) => {
     dispatch(cartActions.removeProduct(id));
     setProducts((prevState) => {
-      return prevState.filter((product) => product.id !== id);
+      return prevState.filter((product) => product.product_id !== id);
     });
   };
 
@@ -40,8 +40,8 @@ const Cart = (props) => {
       <ul className={classes.list_cart}>
         {products.map((product) => (
           <ProductItem
-            key={product.id}
-            id={product.id}
+            key={product.product_id}
+            id={product.product_id}
             title={product.pro_name}
             price={product.price}
             amount={product.amount}

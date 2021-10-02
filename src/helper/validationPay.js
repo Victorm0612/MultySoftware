@@ -1,5 +1,4 @@
 export const validationPay = (arr, methodToPay, totalPrice, onePay) => {
-  console.log(arr, methodToPay, totalPrice, onePay);
   if (onePay && +methodToPay.total_amount !== totalPrice) {
     return "El método de pago debe cubrir la totalidad del valor a pagar.";
   }

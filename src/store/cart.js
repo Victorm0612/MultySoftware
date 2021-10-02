@@ -21,7 +21,7 @@ const cartSlice = createSlice({
   reducers: {
     addProduct(state, action) {
       const index = state.products.findIndex(
-        (product) => product.id === action.payload.id
+        (product) => product.product_id === action.payload.product_id
       );
       if (index === -1) {
         state.products.push(action.payload);
@@ -38,11 +38,11 @@ const cartSlice = createSlice({
     },
     removeProduct(state, action) {
       const index = state.products.findIndex(
-        (product) => product.id === action.payload
+        (product) => product.product_id === action.payload
       );
       state.totalPrice -= state.products[index].price;
       const newState = state.products.filter(
-        (product) => product.id !== action.payload
+        (product) => product.product_id !== action.payload
       );
       state.products = newState;
       state.totalAmount--;
@@ -51,7 +51,7 @@ const cartSlice = createSlice({
     },
     increaseAmount(state, action) {
       const index = state.products.findIndex(
-        (product) => product.id === action.payload
+        (product) => product.product_id === action.payload
       );
       state.products[index].amount++;
       state.totalAmount++;
@@ -61,7 +61,7 @@ const cartSlice = createSlice({
     },
     decreaseAmount(state, action) {
       const index = state.products.findIndex(
-        (product) => product.id === action.payload
+        (product) => product.product_id === action.payload
       );
       state.products[index].amount--;
       state.totalAmount--;

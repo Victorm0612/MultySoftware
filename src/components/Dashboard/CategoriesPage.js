@@ -307,7 +307,11 @@ const CategoriesPage = () => {
                     {optionsAction[action]}
                   </Button>
                 )}
-                <Button submitFor="button" action={closeCategoryForm}>
+                <Button
+                  tag="close"
+                  submitFor="button"
+                  action={closeCategoryForm}
+                >
                   Cancelar
                 </Button>
               </div>
