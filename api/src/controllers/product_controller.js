@@ -360,43 +360,97 @@ export async function deleteProduct(req, res) {
 }
 
 export async function getTop20(req, res) {
-  const allTopProducts = await sequelize.query(
-
-    `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo DESC LIMIT 20 ;`,
-      {
-        type: QueryTypes.SELECT,
-      } 
-
-  );
-
-  if (allTopProducts.length > 0) {
-    res.json({
-      data: allTopProducts,
+  try {
+    
+    const allTopProducts = await models.Product.findAll({
+      includeIgnoreAttributes: false,
+      include: [
+        {
+          model: models.Sale,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+      
+      
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              "COUNT",
+              sequelize.col(`"Sales->SaleItem"."product_id"`)
+            ),
+            "count",
+          ],
+        ],
+      },
+      subQuery: false,
+      limit: 20,
+      group: ["Product.id"],
+      order: sequelize.literal("count DESC"),
     });
-  } else {
+  
+    if (allTopProducts.length > 0) {
+      return res.json({
+        data: allTopProducts,
+      });
+    } 
+    
     res.status(404).json({
       message: "There was an error with your request",
     });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong" + error,
+    })
   }
+  
 }
 
 export async function getBottom20(req, res) {
   try {
-    const allBottomProducts = await sequelize.query(
-      `SELECT product_id, "Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".pro_status, "Products".percentage_tax, COUNT(product_id) AS conteo FROM "SaleItems" INNER JOIN "Products" ON "SaleItems".product_id = "Products".id GROUP BY product_id,"Products".pro_description, "Products".pro_image, "Products".price, "Products".category_id, "Products".pro_status, "Products".percentage_tax ORDER BY conteo ASC LIMIT 20 ;`,
-      {
-        type: QueryTypes.SELECT,
-      }     
-    );
 
-    res.json({
-      data: allBottomProducts
-    })
-
-  } catch (error) {
-    res.status(404).json({
-      message: "Something went wrong " + error,
+    const allBottomProducts = await models.Product.findAll({
+      includeIgnoreAttributes: false,
+      include: [
+        {
+          model: models.Sale,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+      
+      
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              "COUNT",
+              sequelize.col(`"Sales->SaleItem"."product_id"`)
+            ),
+            "count",
+          ],
+        ],
+      },
+      subQuery: false,
+      limit: 20,
+      group: ["Product.id"],
+      order: sequelize.literal("count DESC"),
     });
+  
+    if (allBottomProducts.length > 0) {
+      return res.json({
+        data: allBottomProducts,
+      })
+    }
+  
+    res.json({
+      message: "Something went wrong, there's no products?"
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong" + error,
+    })
   }
 }
 

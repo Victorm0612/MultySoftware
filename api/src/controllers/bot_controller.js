@@ -78,29 +78,26 @@ export async function getProductsPromotions(res) {
       ],
     });
 
-    if(products.length > 0) {
-        let productsOk = new Array();
-        
-        for(const oneProduct of products){
+    if (products.length > 0) {
+      let productsOk = new Array();
 
-            for(const oneDiscount of oneProduct.Discounts)
-                if(oneDiscount.id != 1 && oneDiscount.discount_status == true){
-                    productsOk.push(oneProduct);
-                }
-        }
+      for (const oneProduct of products) {
+        for (const oneDiscount of oneProduct.Discounts)
+          if (oneDiscount.id != 1 && oneDiscount.discount_status == true) {
+            productsOk.push(oneProduct);
+          }
+      }
 
-        if(productsOk.length > 0){
-            res.json({
-                data: productsOk,
-            })
-        }
-
+      if (productsOk.length > 0) {
         res.json({
-            message: "No promotions found for today"
-        })
+          data: productsOk,
+        });
+      }
 
+      res.json({
+        message: "No promotions found for today",
+      });
     }
-
   } catch (error) {
     res.status(404).json({
       message: "Something went wrong " + error,
@@ -108,49 +105,66 @@ export async function getProductsPromotions(res) {
   }
 }
 
-export async function todaysProduct(res){
+export async function todaysProduct(res) {
+  try {
+    const actualHour = new Date(Date.now());
+    const initialHour = new Date(Date.now());
+    initialHour.setHours(0, 7, 0);
 
-    try {
+    const actualDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
-        const topProduct = await models.Product.findAll({
-            group: ["Product.id"],
-            include: [
-                {
-                    model: models.Sale,
+    const topProduct = await models.Product.findAll({
+      includeIgnoreAttributes: false,
+      include: [
+        {
+          model: models.Sale,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+          where: {
+            [Op.and]: [
+              {
+                sale_time: {
+                  [Op.between]: ["07:00", actualHour],
                 },
+                sale_date: actualDate,
+              },
             ],
-            attributes: [
-                "id",
-                [
-                  sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
-                  "sells",
-                ],
-                "pro_name",
-                "pro_description",
-                "pro_image",
-                "price",
-                "category_id",
-                "pro_status",
-                "percentage_tax",
-              ],
-              order: sequelize.literal("sells DSC"),
-              limit: 1,
-        })
-    
-        if(topProduct.length > 0) {
-            res.json({
-                data: topProduct,
-            })
-        }
-    
-        res.status(404).json({
-            message: "There was an error with your request",
-        })
-        
-    } catch (error) {
-        res.status(404).json({
-            message: "Something went wrong " + error,
-        })
+          },
+        },
+      ],
+
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              "COUNT",
+              sequelize.col(`"Sales->SaleItem"."product_id"`)
+            ),
+            "count",
+          ],
+        ],
+      },
+      subQuery: false,
+      limit: 1,
+      group: ["Product.id"],
+      order: sequelize.literal("count DESC"),
+    });
+
+    if (topProduct.length > 0) {
+      return res.json({
+        data: topProduct,
+      });
     }
 
+    const allProducts = await models.Product.findAll()
+    const randomNumber = Math.floor(Math.random() * allProducts.length)
+
+    return res.json({
+      data: allProducts[randomNumber],
+    });
+
+  } catch (error) {
+    res.status(404).json({
+      message: "Something went wrong " + error,
+    });
+  }
 }
