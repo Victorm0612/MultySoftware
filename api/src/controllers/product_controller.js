@@ -1,7 +1,7 @@
 import { sequelize } from "../models/index";
 
 const models = require("../models/index");
-const { Op } = require("sequelize");
+const { Op, QueryTypes } = require("sequelize");
 
 export async function getProducts(req, res) {
   try {
@@ -274,7 +274,7 @@ export async function updateProduct(req, res) {
       });
 
       if (discount) {
-        discountsOk.push( discount.id );
+        discountsOk.push(discount.id);
       } else {
         discountError = true;
         break;
@@ -313,14 +313,15 @@ export async function updateProduct(req, res) {
             },
           });
           if (productFound) {
-
-            const oldIngredients = await productFound.getIngredients()
-            for(const ingredient of oldIngredients) {
-              productFound.removeIngredient(ingredient)
+            const oldIngredients = await productFound.getIngredients();
+            for (const ingredient of oldIngredients) {
+              productFound.removeIngredient(ingredient);
             }
 
-            for(const ingredient of ingredientsOk) {
-              productFound.addIngredients(ingredient.ingredient, { through: { amount: ingredient.amount}})
+            for (const ingredient of ingredientsOk) {
+              productFound.addIngredients(ingredient.ingredient, {
+                through: { amount: ingredient.amount },
+              });
             }
 
             const update = await models.Product.update(
@@ -340,7 +341,7 @@ export async function updateProduct(req, res) {
               }
             );
 
-            productFound.setDiscounts(discountsOk)
+            productFound.setDiscounts(discountsOk);
 
             if (update) {
               res.json({
@@ -401,78 +402,97 @@ export async function deleteProduct(req, res) {
 }
 
 export async function getTop20(req, res) {
-  const allTopProducts = await models.Product.findAll({
-    group: ["Product.id"],
-    includeIgnoreAttributes: false,
-    include: [
-      {
-        model: models.Sale,
-      },
-    ],
-    attributes: [
-      "id",
-      [
-        sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
-        "sells",
+  try {
+    
+    const allTopProducts = await models.Product.findAll({
+      includeIgnoreAttributes: false,
+      include: [
+        {
+          model: models.Sale,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
       ],
-      "pro_name",
-      "pro_description",
-      "pro_image",
-      "price",
-      "category_id",
-      "pro_status",
-      "percentage_tax",
-    ],
-    order: sequelize.literal("sells DSC"),
-    limit: 20,
-  });
-
-  if (allTopProducts.length > 0) {
-    res.json({
-      data: allTopProducts,
+      
+      
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              "COUNT",
+              sequelize.col(`"Sales->SaleItem"."product_id"`)
+            ),
+            "count",
+          ],
+        ],
+      },
+      subQuery: false,
+      limit: 20,
+      group: ["Product.id"],
+      order: sequelize.literal("count DESC"),
     });
-  } else {
+  
+    if (allTopProducts.length > 0) {
+      return res.json({
+        data: allTopProducts,
+      });
+    } 
+    
     res.status(404).json({
       message: "There was an error with your request",
     });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong" + error,
+    })
   }
+  
 }
 
 export async function getBottom20(req, res) {
-  const allBottomProducts = await models.Product.findAll({
-    group: ["Product.id"],
-    includeIgnoreAttributes: false,
-    include: [
-      {
-        model: models.Sale,
-      },
-    ],
-    attributes: [
-      "id",
-      [
-        sequelize.fn("count", sequelize.col(`"Sales->SaleItem"."product_id"`)),
-        "sells",
-      ],
-      "pro_name",
-      "pro_description",
-      "pro_image",
-      "price",
-      "category_id",
-      "pro_status",
-      "percentage_tax",
-    ],
-    order: sequelize.literal("sells ASC"),
-    limit: 20,
-  });
+  try {
 
-  if (allBottomProducts.length > 0) {
+    const allBottomProducts = await models.Product.findAll({
+      includeIgnoreAttributes: false,
+      include: [
+        {
+          model: models.Sale,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+      
+      
+      attributes: {
+        include: [
+          [
+            sequelize.fn(
+              "COUNT",
+              sequelize.col(`"Sales->SaleItem"."product_id"`)
+            ),
+            "count",
+          ],
+        ],
+      },
+      subQuery: false,
+      limit: 20,
+      group: ["Product.id"],
+      order: sequelize.literal("count DESC"),
+    });
+  
+    if (allBottomProducts.length > 0) {
+      return res.json({
+        data: allBottomProducts,
+      })
+    }
+  
     res.json({
-      data: allBottomProducts,
-    });
-  } else {
-    res.status(404).json({
-      message: "There was an error with your request",
-    });
+      message: "Something went wrong, there's no products?"
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong" + error,
+    })
   }
 }
 

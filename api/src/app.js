@@ -18,6 +18,7 @@ import cashPayRoutes from "./routes/cashpay_routes";
 import creditPayRoutes from "./routes/creditpay_routes";
 import debitPayRoutes from "./routes/debitpay_routes";
 import paymentRoutes from "./routes/payment_routes";
+import botRoutes from "./routes/bot_routes";
 
 // Initialization
 const app = express();
@@ -42,5 +43,6 @@ app.use("/api/creditPay", creditPayRoutes);
 app.use("/api/debitPay", debitPayRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/bot", botRoutes);
 
 export default app;

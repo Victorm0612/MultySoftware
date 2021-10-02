@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       restaurant_name: DataTypes.STRING,
       restaurant_address: DataTypes.STRING,
       phone: DataTypes.STRING,
-      attention_time: DataTypes.STRING,
+      ini_attention_time: DataTypes.TIME,
+      final_attention_time: DataTypes.TIME,
       restaurant_status: DataTypes.BOOLEAN,
     },
     {
