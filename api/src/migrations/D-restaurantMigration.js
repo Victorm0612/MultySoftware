@@ -17,8 +17,11 @@ module.exports = {
       phone: {
         type: Sequelize.STRING
       },
-      attention_time: {
-        type: Sequelize.STRING
+      ini_attention_time: {
+        type: Sequelize.TIME
+      },
+      final_attention_time: {
+        type: Sequelize.TIME
       },
       restaurant_status: {
         type: Sequelize.BOOLEAN
