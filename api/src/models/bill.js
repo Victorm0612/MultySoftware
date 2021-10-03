@@ -15,14 +15,15 @@ module.exports = (sequelize, DataTypes) => {
       //========== Bill - Sale ==========
       //Bill belongs to one Sale
       models.Bill.belongsTo(models.Sale, {
-        as: "SaleBill",
         foreignKey: "sale_id",
       });
 
       //Sale Have one Bill
       models.Sale.hasOne(models.Bill, {
-        as: "SaleBill",
         foreignKey: "sale_id",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
       });
     }
   }

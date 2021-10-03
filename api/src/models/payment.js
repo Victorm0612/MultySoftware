@@ -15,13 +15,11 @@ module.exports = (sequelize, DataTypes) => {
       //========== Payment - Credit_Pay ==========
       //Credit_Pay belongs to Payment
       models.Credit_Pay.belongsTo(models.Payment, {
-        as: "CreditPayment",
         foreignKey: "payment_id",
       });
 
       //Payment have Credit_Pay
       models.Payment.hasOne(models.Credit_Pay, {
-        as: "CreditPayment",
         onDELETE: 'CASCADE',
         allowNull: false,
         hooks: true,
@@ -31,13 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       //========== Payment - Cash_Pay ==========
       //Cash_pay belongs to one Payment
       models.Cash_Pay.belongsTo(models.Payment, {
-        as: "CashPayment",
         foreignKey: "payment_id",
       });
 
       //Payment have one Cash_Pay
       models.Payment.hasOne(models.Cash_Pay, {
-        as: "CashPayment",
         onDELETE: 'CASCADE',
         allowNull: false,
         hooks: true,
@@ -47,13 +43,11 @@ module.exports = (sequelize, DataTypes) => {
       //========== Payment - Debit_Pay ==========
       //Debit_Pay belongs to one Payment
       models.Debit_Pay.belongsTo(models.Payment, {
-        as: "DebitPayment",
         foreignKey: "payment_id",
       });
 
       //Payment have one Debit_Pay
       models.Payment.hasOne(models.Debit_Pay, {
-        as: "DebitPayment",
         onDELETE: 'CASCADE',
         allowNull: false,
         hooks: true,

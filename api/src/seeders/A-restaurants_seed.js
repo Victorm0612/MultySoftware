@@ -4,6 +4,14 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('Restaurants', [
       {
+        restaurant_name: "Restaurante Maestro",
+        restaurant_address: "Restaurante Maestro",
+        phone: "Restaurante Maestro",
+        ini_attention_time: "00:00",
+        final_attention_time: "01:00",
+        restaurant_status: true,
+      },
+      {
         restaurant_name: "Ciudad de cali",
         restaurant_address: "Cra 41e2 20-10",
         phone: "3145232424",

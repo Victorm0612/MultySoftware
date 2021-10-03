@@ -37,6 +37,15 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         writable: true
       },
+      user_restaurant: {
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        onDelete: 'SET NULL',
+        references: {
+          model: 'Restaurants',
+          key: 'id'
+        }
+      },
       email: {
         type: Sequelize.STRING,
         unique: true
