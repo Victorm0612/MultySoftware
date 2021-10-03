@@ -2,12 +2,12 @@ import { verifyToken, verifyAccess } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
-import { getPromoItems, getOnePromoItem, create, updatePromoItem, deletePromoItem } from '../controllers/productdiscount_controller'
+import { getProductDiscounts, getOneProductDiscount, create, updaupdateProductDiscount, deleteProductDiscount } from '../controllers/productdiscount_controller'
 
-router.get('/', getPromoItems);
-router.get('/:id', getOnePromoItem);
+router.get('/', getProductDiscounts);
+router.get('/:id', getOneProductDiscount);
 router.post('/', verifyAccess, create);
-router.put('/:id', verifyAccess, updatePromoItem);
-router.delete('/:id', verifyAccess, deletePromoItem);
+router.put('/:id', verifyAccess, updaupdateProductDiscount);
+router.delete('/:id', verifyAccess, deleteProductDiscount);
 
 export default router;

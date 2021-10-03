@@ -16,50 +16,59 @@ export async function signUp(req, res) {
     password,
   } = req.body;
 
-  const userExist = await models.User.findOne({
-    where: {
-      email: email,
-    },
-  });
-  if (!userExist) {
-    try {
-      let newUser = await models.User.create({
-        document_type,
-        document_id,
-        first_name,
-        last_name,
-        gender,
-        phone,
-        birthday,
-        user_type: 1,
-        user_status,
-        email,
-        password: await models.User.encryptPassword(password),
-      });
-      if (newUser) {
-        res.json({
-          message: "SUCCESS!!",
-          data: newUser,
-        });
+  try {
+    
+    const emailExist = await models.User.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    const docIdExist = await models.User.findOne({
+      where: {
+        document_id: document_id
       }
-    } catch (error) {
-      res.status(500).json({
-        message: "Something goes wrong " + error,
-        data: {},
+    })
+  
+    if (emailExist) {
+      return res.status(400).json({
+        message: "That email address is already in use",
       });
     }
-  } else {
-    res.json({
-      message: "SUCCESS!!",
-      data: newUser,
+
+    if(docIdExist){
+      return res.status(400).json({
+        message: "The document id must be unique!!"
+      })
+    }
+  
+    let newUser = await models.User.create({
+      document_type,
+      document_id,
+      first_name,
+      last_name,
+      gender,
+      phone,
+      birthday,
+      user_type: 1,
+      user_status,
+      email,
+      password: await models.User.encryptPassword(password),
     });
+    if (newUser) {
+      const token = jwt.sign({ id: newUser.id }, config.SECRET, {
+        expiresIn: 86400, // 24 Hours
+      });
+      res.json({
+        message: "SUCCESS!!",
+        data: newUser,
+        Authorization: token,
+      });
+    }
+
+  } catch (error) {
+    
   }
-
-  const token = jwt.sign({ id: newUser.id }, config.SECRET, {
-    expiresIn: 86400, // 24 Hours
-  });
-
-  res.json({ token });
 }
 
 export async function signIn(req, res) {
