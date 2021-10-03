@@ -88,15 +88,23 @@ export async function updateCategory(req, res) {
 export async function deleteCategory(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Category.destroy({
+    const deleteRowCount = await models.Category.destroy({
       where: {
         id: id,
       },
     });
-    res.json({
-      message: "Category deleted successfully",
-      count: deleteRowCount,
-    });
+    
+    if(deleteRowCount > 0) {
+      return res.json({
+        message: "Category deleted successfully",
+        count: deleteRowCount,
+      });
+    }
+
+    res.status(404).json({
+      message: "That category does not exist"
+    })
+
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,

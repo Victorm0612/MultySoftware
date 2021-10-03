@@ -16,6 +16,7 @@ module.exports = {
       owner_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Users',
           key: 'document_id'
@@ -30,6 +31,7 @@ module.exports = {
       bank: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Banks',
           key: 'id'

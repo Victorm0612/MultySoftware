@@ -96,7 +96,7 @@ export async function updatePayment(req, res) {
 export async function deletePayment(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Payment.destroy({
+    const deleteRowCount = await models.Payment.destroy({
       where: {
         id: id,
       },

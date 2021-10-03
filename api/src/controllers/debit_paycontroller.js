@@ -290,7 +290,7 @@ export async function updateDebit_Pay(req, res) {
 export async function deleteDebit_Pay(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Debit_Pay.destroy({
+    const deleteRowCount = await models.Debit_Pay.destroy({
       where: {
         id: id,
       },

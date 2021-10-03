@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
       //Category have many Products
       models.Category.hasMany(models.Product, {
         foreignKey: "category_id",
+        onDELETE: 'SET NULL',
+        allowNull: false,
+        hooks: true,
       });
 
       //========== Product - Discount ==========

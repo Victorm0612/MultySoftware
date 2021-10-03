@@ -115,10 +115,15 @@ export async function deleteRestaurant(req, res) {
         id: id,
       },
     });
-    res.json({
-      message: "Restaurants deleted succesfully",
-      count: deleteRowCount,
-    });
+    if(deleteRowCount > 0){
+      return res.json({
+        message: "Restaurants deleted succesfully",
+        count: deleteRowCount,
+      });
+    }
+    res.status(404).json({
+      message: "That Restaurant does not exist"
+    })
   } catch (error) {
     res.status(500).json({
       message: "Error deleting Restaurant",

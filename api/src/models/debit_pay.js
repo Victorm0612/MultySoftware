@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       //Card have many Debit_Pay
       models.Card.hasMany(models.Debit_Pay, {
         as: "DebitCard",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
         foreignKey: "card_number",
       });
 

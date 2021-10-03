@@ -14,6 +14,7 @@ module.exports = {
       sale_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Sales',
           key: 'id'

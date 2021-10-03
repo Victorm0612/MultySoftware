@@ -84,7 +84,7 @@ export async function updateIngredientItem(req,res){
 export async function deleteIngredientItem(req,res){
     const { id } = req.params
     try {
-        const deleteRowCount = models.IngredientItem.destroy({
+        const deleteRowCount = await models.IngredientItem.destroy({
             where:{
                 id: id
             }
