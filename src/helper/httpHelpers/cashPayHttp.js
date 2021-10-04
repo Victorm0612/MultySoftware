@@ -3,7 +3,7 @@ import { axiosInstance as axios } from "../../config/axiosConfig";
 export class CashPay {
   constructor(payId, amount, onePay, payerId) {
     this.payId = payId;
-    this.amout = amount;
+    this.amount = amount;
     this.onePay = onePay;
     this.payerId = payerId;
   }
@@ -11,7 +11,7 @@ export class CashPay {
 
 export const createCashPay = async (cashPayModel, token) => {
   try {
-    const { data: response } = axios.post(
+    const { data: response } = await axios.post(
       "cashPay/",
       {
         payment_id: cashPayModel.payId,

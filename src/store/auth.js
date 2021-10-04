@@ -7,6 +7,7 @@ const initialState = JSON.parse(localStorage.getItem("user")) || {
   typeUser: 1,
   id: "",
   userStatus: true,
+  clientDocId: "",
 };
 
 const authSlice = createSlice({
@@ -15,10 +16,18 @@ const authSlice = createSlice({
   reducers: {
     setUser(state, action) {
       const data = action.payload;
-      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...data, clientDocId: "" })
+      );
       return {
         ...data,
+        clientDocId: "",
       };
+    },
+    setClientId(state, action) {
+      state.clientDocId = action.payload;
+      localStorage.setItem("user", JSON.stringify(state));
     },
     logout(state) {
       localStorage.removeItem("user");
@@ -29,6 +38,7 @@ const authSlice = createSlice({
         typeUser: "",
         id: "",
         userStatus: true,
+        clientDocId: "",
       };
     },
   },

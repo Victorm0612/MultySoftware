@@ -9,7 +9,6 @@ import Button from "../UI/Button";
 import Modal from "../UI/Modal";
 import { useSelector } from "react-redux";
 import {
-  createSale,
   deleteSale,
   getSales,
   updateSale,
@@ -20,9 +19,9 @@ import SalesForm from "./Sales/SalesForm";
 
 const SalesPage = () => {
   const TITLES = ["#", "Fecha", "Restaurante", "Estado", "Cobro", "Opciones"];
-  const NUMBERS = [1, 2, 3, 4, 5, 6, 7];
   const { token } = useSelector((state) => state.auth);
 
+  const [oneSale, setOneSale] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [keyWord, setKeyWord] = useState("");
@@ -57,11 +56,9 @@ const SalesPage = () => {
     setSalesForm(false);
   };
 
-  const setInputsForm = (sale) => {};
-
   const generateAction = (action, sale) => {
     setAction(action);
-    setInputsForm(sale);
+    setOneSale(sale);
     setSalesForm(true);
   };
 
@@ -77,15 +74,20 @@ const SalesPage = () => {
         setIsLoading(false);
       }
     };
-
-    const createASale = async () => {};
-    const updateASale = async () => {};
-    const deleteASale = async () => {};
+    const deleteASale = async () => {
+      try {
+        await deleteSale(oneSale.id, token);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setAction("get");
+        setIsLoading(false);
+      }
+    };
 
     const actionToDo = {
-      create: createASale,
+      create: getData,
       get: getData,
-      update: updateASale,
       delete: deleteASale,
     };
 
@@ -101,7 +103,12 @@ const SalesPage = () => {
       ) : (
         <Fragment>
           <Modal show={salesForm} size="big_card">
-            <SalesForm actionToDo={action} closeForm={closeSalesForm} />
+            <SalesForm
+              onSetLoading={setIsLoading}
+              actionToDo={action}
+              closeForm={closeSalesForm}
+              oneSale={oneSale}
+            />
           </Modal>
           <h1>Ventas</h1>
           <div className={classes.sales__header}>
@@ -143,11 +150,6 @@ const SalesPage = () => {
                     <td>{sale.sale_status ? "Activo" : "Inactivo"}</td>
                     <td>{sale.SaleItems[0].subtotal}</td>
                     <td className={classes.product_list__table__edit}>
-                      <IconEdit
-                        action={() => {
-                          generateAction("update", sale);
-                        }}
-                      />
                       <IconTrash
                         action={() => {
                           generateAction("delete", sale);

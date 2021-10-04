@@ -73,6 +73,16 @@ const cartSlice = createSlice({
       state.orderRequested = action.payload;
       localStorage.setItem("cart", JSON.stringify(state));
     },
+    orderCompleted(state) {
+      localStorage.removeItem("cart");
+      return {
+        products: [],
+        totalAmount: 0,
+        totalPrice: 0,
+        orderRequested: false,
+        mainDiscount: "",
+      };
+    },
   },
 });
 

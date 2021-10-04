@@ -1,5 +1,5 @@
 import { axiosInstance as axios } from "../../config/axiosConfig";
-export class Card {
+export class CardToPay {
   constructor(number, owner, expDate, type, bankId) {
     this.number = number;
     this.owner = owner;
@@ -11,7 +11,7 @@ export class Card {
 
 export const createCard = async (cardModel, token) => {
   try {
-    const { data: response } = axios.post(
+    const { data: response } = await axios.post(
       "card/",
       {
         card_number: cardModel.number,

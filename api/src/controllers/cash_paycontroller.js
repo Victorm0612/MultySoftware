@@ -49,7 +49,6 @@ export async function getOneCash_Pay(req, res) {
 export async function create(req, res) {
   const { payment_id, amount, onePay, payer_id } = req.body;
   try {
-
     const debitExist = await models.Debit_Pay.findOne({
       where: {
         payment_id: payment_id,
@@ -62,10 +61,10 @@ export async function create(req, res) {
       },
     });
 
-    if(!paymentExist) {
+    if (!paymentExist) {
       return res.status(500).json({
         message: "That payment doesn't exist",
-      })
+      });
     }
 
     const cashExist = await models.Cash_Pay.findOne({
@@ -80,11 +79,12 @@ export async function create(req, res) {
       },
     });
 
-    if(onePay && !cashExist) {
-      if(amount != paymentExist.amount) {
+    if (onePay && !cashExist) {
+      if (amount != paymentExist.amount) {
         return res.status(500).json({
-          message: "The amount to pay can't be different that the total amount of the payment",
-        })
+          message:
+            "The amount to pay can't be different that the total amount of the payment",
+        });
       }
       let newCashPay = await models.Cash_Pay.create({
         payment_id: payment_id,
@@ -99,9 +99,9 @@ export async function create(req, res) {
           {
             where: {
               id: payment_id,
-            }
+            },
           }
-          )
+        );
 
         res.json({
           message: "SUCCESS",
@@ -109,32 +109,33 @@ export async function create(req, res) {
         });
       }
       return res.status(500).json({
-        message: "You have already made one pay with Cash to that Payment"
-      })
+        message: "You have already made one pay with Cash to that Payment",
+      });
     } else {
-      if(debitExist && creditExist) {
+      if (debitExist && creditExist) {
         return res.satus(500).json({
-          message: "That pay has already been paid"
-        })
-      } else if (cashExist){
-        if(cashExist.amount < paymentExist.amount) {
+          message: "That pay has already been paid",
+        });
+      } else if (cashExist) {
+        if (cashExist.amount < paymentExist.amount) {
           return res.status(500).json({
             message: "You have already paid one part of the payment with Cash",
-          })
+          });
         } else {
           return res.status(500).json({
             message: "You have already paid the payment with Cash",
-          })
+          });
         }
       } else if (debitExist || creditExist) {
         const amountLeft = debitExist
-        ? paymentExist.amount - debitExist.amount
-        : paymentExist.amount - creditExist.amount
+          ? paymentExist.amount - debitExist.amount
+          : paymentExist.amount - creditExist.amount;
 
-        if(amount != amountLeft) {
+        if (amount != amountLeft) {
           res.status(500).json({
-            message: "The amount to pay can't be different than the amount left to pay",
-          })
+            message:
+              "The amount to pay can't be different than the amount left to pay",
+          });
         } else {
           let newCashPay = await models.Cash_Pay.create({
             payment_id: payment_id,
@@ -149,9 +150,9 @@ export async function create(req, res) {
               {
                 where: {
                   id: payment_id,
-                }
+                },
               }
-            )
+            );
 
             res.json({
               message: "SUCCESS",
@@ -159,7 +160,7 @@ export async function create(req, res) {
             });
           }
         }
-      }else if (!(debitExist && creditExist)) {
+      } else if (!(debitExist && creditExist)) {
         if (amount > paymentExist.amount * 0.8) {
           return res.status(500).json({
             message:
@@ -167,10 +168,8 @@ export async function create(req, res) {
           });
         }
         if (
-          (paymentExist.amount < 50000 &&
-            amount < paymentExist.amount * 0.5) ||
-          (paymentExist.amount >= 50000 &&
-            amount < paymentExist.amount * 0.2)
+          (paymentExist.amount < 50000 && amount < paymentExist.amount * 0.5) ||
+          (paymentExist.amount >= 50000 && amount < paymentExist.amount * 0.2)
         ) {
           return res.status(500).json({
             message: "The amount to pay is too low for that payment",
@@ -195,7 +194,7 @@ export async function create(req, res) {
     }
     res.status(500).json({
       message: "That Payment doesn't exist",
-    });    
+    });
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
@@ -207,7 +206,7 @@ export async function create(req, res) {
 export async function updateCash_Pay(req, res) {
   const { id } = req.params;
   const { payment_id, amount, payer_id } = req.body;
-  const cashPay = await model.Cash_Pay.findOne({
+  const cashPay = await models.Cash_Pay.findOne({
     attributes: ["payment_id", "amount", "payer_id"],
     where: {
       id: id,
@@ -215,27 +214,28 @@ export async function updateCash_Pay(req, res) {
   });
 
   const paymentExist = await models.Payment.findOne({
-    where : {
+    where: {
       id: payment_id,
-    }
-  })
+    },
+  });
 
-  if(cashPay.payment_id === payment_id) {
+  if (cashPay.payment_id === payment_id) {
     return res.sttaus(500).json({
-      message: "You can't change the payment that you're going to pay"
-    })
+      message: "You can't change the payment that you're going to pay",
+    });
   }
 
   if (!cashPay && !paymentExist && paymentExist.payed_status) {
     return res.status(500).json({
-      message: "Can't modify pays when the payment is already paid"
-    })
+      message: "Can't modify pays when the payment is already paid",
+    });
   }
 
-  if(amount > paymentExist.amount * 0.8) {
+  if (amount > paymentExist.amount * 0.8) {
     return res.status(500).json({
-      message: "The amount to pay can't be superior to the 80% of the total amount of the payment",
-    })
+      message:
+        "The amount to pay can't be superior to the 80% of the total amount of the payment",
+    });
   }
 
   if (
@@ -243,35 +243,33 @@ export async function updateCash_Pay(req, res) {
     (paymentExist.amount >= 50000 && amount < paymentExist.amount * 0.2)
   ) {
     return res.status(500).json({
-      message: "The amount to pay is too low for that payment"
+      message: "The amount to pay is too low for that payment",
     });
   }
 
-
-  let update = await model.Cash_Pay.update(
+  let update = await models.Cash_Pay.update(
     {
-    payment_id,
-    amount,
-    payer_id
+      payment_id,
+      amount,
+      payer_id,
     },
     {
-      where: {        
-        id: id,        
+      where: {
+        id: id,
       },
     }
-  )
-  
+  );
+
   if (!update) return;
   return res.json({
     message: "Cash pay updated successfully",
   });
-  
 }
 
 export async function deleteCash_Pay(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = model.Cash_Pay.destroy({
+    const deleteRowCount = models.Cash_Pay.destroy({
       where: {
         id: id,
       },

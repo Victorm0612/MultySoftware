@@ -221,7 +221,7 @@ const PayCardForm = (props) => {
             <div>
               <div className={classes.card_figure}>
                 <div className={classes.card_info}>
-                  <p>{props.isCredit ? "Crédito" : "Débito"}</p>
+                  <p>{props.type}</p>
                   <div>
                     <h3>{cardNumber}</h3>
                     <p>{expDate.split("T")[0]}</p>

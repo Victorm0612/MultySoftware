@@ -3,7 +3,7 @@ import sequelize from 'sequelize'
 
 export async function getIngredientItems(res){
     try {
-        const ingredientItems = await model.IngredientItem.findAll()
+        const ingredientItems = await models.IngredientItem.findAll()
         res.json({
             data: ingredientItems
         })
@@ -18,7 +18,7 @@ export async function getIngredientItems(res){
 export async function getOneIngredientItem(req,res){
     const { id } = req.params
     try{
-        const ingredientItem = await model.IngredientItem.findOne({
+        const ingredientItem = await models.IngredientItem.findOne({
             where: {
                 id: id
             }
@@ -36,7 +36,7 @@ export async function getOneIngredientItem(req,res){
 export async function create(req,res){
     const { ingredient_id, product_id, amount } = req.body
     try {
-        let newIngredientItem = await model.IngredientItem.create({
+        let newIngredientItem = await models.IngredientItem.create({
             ingredient_id,
             product_id,
             amount

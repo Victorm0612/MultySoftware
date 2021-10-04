@@ -53,11 +53,10 @@ module.exports = (sequelize, DataTypes) => {
 
       //========== Payment - Bill ==========
       //Bill belongs to Payment
-      models.Bill.hasOne(models.Payment, { foreignKey: "bill_id"})
+      models.Bill.hasOne(models.Payment, { foreignKey: "bill_id" });
 
       //Payment have one Bill
-      models.Payment.belongsTo(models.Bill, { foreignKey: "bill_id"})
-
+      models.Payment.belongsTo(models.Bill, { foreignKey: "bill_id" });
     }
   }
   Payment.init(

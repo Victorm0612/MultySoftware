@@ -41,7 +41,7 @@ export async function getOneCard(req, res) {
 export async function create(req, res) {
   const { card_number, owner_id, exp_date, bank } = req.body;
   try {
-    let newCard = await model.Card.create({
+    let newCard = await models.Card.create({
       card_number,
       owner_id,
       exp_date,
@@ -64,7 +64,7 @@ export async function create(req, res) {
 export async function updateCard(req, res) {
   const { card_number } = req.params;
   const { owner_id, exp_date, bank } = req.body;
-  const cardFound = await model.Card.findAll({
+  const cardFound = await models.Card.findAll({
     attributes: ["card_number", "owner_id", "exp_date", "bank"],
     where: {
       card_number: card_number,
@@ -94,7 +94,7 @@ export async function updateCard(req, res) {
 export async function deleteCard(req, res) {
   const { card_number } = req.params;
   try {
-    const deleteRowCount = model.Card.destroy({
+    const deleteRowCount = models.Card.destroy({
       where: {
         card_number: card_number,
       },

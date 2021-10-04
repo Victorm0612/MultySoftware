@@ -37,12 +37,13 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
-.dashboard__main div {
-  background-color: white;
-  width: 10rem;
-  height: 20rem;
+.dashboard__main > div {
+  background: white;
+  width: 20rem;
+  height: 25rem;
   margin: 1rem 1rem;
   padding: 0 1rem;
 }
@@ -55,7 +56,7 @@
   .dashboard__menu li {
     font-size: 1.4rem;
   }
-  .dashboard__main div {
+  .dashboard__main > div {
     width: 30rem;
   }
 }

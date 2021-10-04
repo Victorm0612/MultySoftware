@@ -5,6 +5,13 @@ export class Payment {
     this.description = description;
     this.amount = amount;
     this.billId = billId;
+    this.time = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    this.date = `${new Date().getFullYear()}${
+      new Date().getMonth() + 1 < 9 ? "-0" : "-"
+    }${new Date().getMonth() + 1}${
+      new Date().getDate() < 9 ? "-0" : "-"
+    }${new Date().getDate()}`;
+    this.status = true;
   }
 }
 
@@ -14,7 +21,7 @@ export const createPayment = async (paymentModel, token) => {
       "payment/",
       {
         pay_description: paymentModel.description,
-        payment_date: paymentModel.date,
+        pay_date: paymentModel.date,
         pay_time: paymentModel.time,
         pay_status: paymentModel.status,
         amount: paymentModel.amount,

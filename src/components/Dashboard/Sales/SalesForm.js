@@ -14,24 +14,34 @@ import { getAllProducts } from "../../../helper/httpHelpers/productHttp";
 import SpinnerLoading from "../../UI/SpinnerLoading";
 import { cartActions } from "../../../store/cart";
 import SalesProducts from "./SalesProducts";
+import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
+import { authActions } from "../../../store/auth";
 
 const SalesForm = (props) => {
   const { token } = useSelector((state) => state.auth);
+  let history = useHistory();
+  const dispatch = useDispatch();
   const {
     products: productsCart,
-    totalAmount,
-    totalPrice,
+    totalAmount: totalAmountStore,
+    totalPrice: totalPriceStore,
   } = useSelector((state) => state.cart);
   const [isLoading, setIsLoading] = useState(true);
   const [messageBox, setMessageBox] = useState({
     message: "",
     isError: false,
   });
+  const [totalAmount, setTotalAmount] = useState(totalAmountStore);
+  const [totalPrice, setTotalPrice] = useState(totalPriceStore);
   const [showProductsCartForm, setShowProductsCartForm] = useState(false);
   const [productsToBuy, setProductsToBuy] = useState(productsCart);
   const [keyWord, setKeyWord] = useState("");
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [totalTax, setTotalTax] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+
   const {
     value: docId,
     isValid: docIdIsValid,
@@ -51,6 +61,7 @@ const SalesForm = (props) => {
     inputBlurHandler: salesStatusBlurHandler,
     reset: resetSalesStatus,
   } = useForm((value) => +value === 0 || +value === 1);
+
   /*   {
     "sale_date": "11/04/2021",
     "sale_time": "13:04",
@@ -95,6 +106,43 @@ const SalesForm = (props) => {
           .includes(keyWord.trim().toLowerCase())
       );
 
+  const createNewSale = (e) => {
+    e.preventDefault();
+    dispatch(authActions.setClientId(docId.toString()));
+    history.push("/menu");
+  };
+
+  const setInputsForm = (sale, clients) => {
+    setDocId(clients.find((user) => user.document_id === sale.docId).id);
+    setsalesStatus(sale.sale_status);
+    setProductsToBuy(sale.SaleItems);
+    setTotalPrice(
+      sale.SaleItems.reduce((prev, current) => ({
+        item_total: prev.item_total + current.item_total,
+      })).item_total
+    );
+    setTotalAmount(
+      sale.SaleItems.reduce((prev, current) => ({
+        amount: prev.amount + current.amount,
+      })).amount
+    );
+    setTotalTax(
+      sale.SaleItems.reduce((prev, current) => ({
+        totalIva: prev.totalIva + current.totalIva,
+      })).totalIva
+    );
+    setTotalDiscount(
+      sale.SaleItems.reduce((prev, current) => ({
+        total_discount: prev.total_discount + current.total_discount,
+      })).total_discount
+    );
+  };
+
+  const deleteSale = (e) => {
+    e.preventDefault();
+    props.onSetLoading(true);
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -102,6 +150,11 @@ const SalesForm = (props) => {
         const allProducts = await getAllProducts();
         setUsers(clients);
         setProducts(allProducts);
+        if (props.actionToDo === "create") {
+          setDocId(clients[0].id);
+        } else {
+          setInputsForm(props.oneSale, clients);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -126,6 +179,23 @@ const SalesForm = (props) => {
         <form className={classes.form_control}>
           {isLoading ? (
             <SpinnerLoading />
+          ) : props.actionToDo === "delete" ? (
+            <Fragment>
+              <h1>{`${optionsAction[props.actionToDo]} Venta`}</h1>
+              <h5 style={{ textAlign: "center" }}>
+                ¿Está seguro que desea eliminar la venta #{props.oneSale.id}?
+              </h5>
+              <div className={classes.form_control__buttons}>
+                <Button submitFor="button" action={props.closeForm} tag="close">
+                  Cancelar
+                </Button>
+                {props.actionToDo !== "details" && (
+                  <Button submitFor="button" action={deleteSale}>
+                    Eliminar
+                  </Button>
+                )}
+              </div>
+            </Fragment>
           ) : (
             <Fragment>
               <h1>{`${optionsAction[props.actionToDo]} Venta`}</h1>
@@ -139,45 +209,62 @@ const SalesForm = (props) => {
                 labelMessage="Usuarios"
                 errorMessage="Seleccione una opción válida."
                 list={users}
-                expression={(value, index) => value.document_id}
+                expression={(value, index) => value.id}
                 accesKey="document_id"
               />
-              <SelectForm
-                id="status__input"
-                change={changeSalesStatus}
-                blur={salesStatusBlurHandler}
-                value={salesStatus}
-                disabled={props.actionToDo === "details"}
-                hasError={salesStatusHasError}
-                labelMessage="Estado"
-                errorMessage="Seleccione una opción válida."
-                list={["Activo", "Inactivo"]}
-                expression={(value, index) => index}
-              />
-              <label>Productos</label>
-              {productsToBuy.length > 0 && (
+              {props.actionToDo !== "create" && (
+                <SelectForm
+                  id="status__input"
+                  change={changeSalesStatus}
+                  blur={salesStatusBlurHandler}
+                  value={salesStatus}
+                  disabled={props.actionToDo === "details"}
+                  hasError={salesStatusHasError}
+                  labelMessage="Estado"
+                  errorMessage="Seleccione una opción válida."
+                  list={["Activo", "Inactivo"]}
+                  expression={(value, index) => index}
+                />
+              )}
+              {props.actionToDo !== "create" && <label>Productos</label>}
+              {props.actionToDo !== "create" && productsToBuy.length > 0 && (
                 <ul>
                   {productsToBuy.map((pro) => (
                     <li key={pro.product_id}>
-                      {pro.pro_name} - x{pro.amount} - ${pro.price}
+                      <b>
+                        {
+                          products.find(
+                            (oneProduct) => oneProduct.id === pro.product_id
+                          ).pro_name
+                        }
+                      </b>
+                      : x{pro.amount} - ${pro.subtotal}
                     </li>
                   ))}
+                  <li>
+                    <b>IVA:</b> ${totalTax}
+                  </li>
+                  <li>
+                    <b>Descuento:</b> ${totalDiscount}
+                  </li>
                   <li>----------------------------------</li>
                   <li>
                     <p>
-                      x{totalAmount} - ${totalPrice}
+                      <b>Total a pagar: </b> x{totalAmount} - ${totalPrice}
                     </p>
                   </li>
                 </ul>
               )}
-              <hr />
-
-              <Button action={openProductsCartForm}>Agregar Productos</Button>
+              {props.actionToDo !== "create" && <hr />}
               <div className={classes.form_control__buttons}>
                 <Button submitFor="button" action={props.closeForm} tag="close">
                   Cancelar
                 </Button>
-                <Button>Guardar</Button>
+                {props.actionToDo !== "details" && (
+                  <Button submitFor="button" action={createNewSale}>
+                    Siguiente
+                  </Button>
+                )}
               </div>
             </Fragment>
           )}

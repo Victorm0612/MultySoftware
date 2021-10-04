@@ -5,9 +5,11 @@ export class Bill {
     this.nit = 1234567890;
     this.saleId = saleId;
     this.billTime = `${new Date().getHours()}:${new Date().getMinutes()}`;
-    this.billDate = `${
-      new Date().getDate() > 9 ? new Date().getDate() : new Date().getDate() + 1
-    }/${new Date().getMonth()}/${new Date().getFullYear()}`;
+    this.billDate = `${new Date().getFullYear()}${
+      new Date().getMonth() + 1 < 9 ? "-0" : "-"
+    }${new Date().getMonth() + 1}${
+      new Date().getDate() < 9 ? "-0" : "-"
+    }${new Date().getDate()}`;
     this.subtotal = subtotal;
     this.totalIva = totalIva;
     this.totalDiscount = totalDiscount;

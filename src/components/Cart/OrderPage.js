@@ -9,15 +9,14 @@ import useForm from "../../hooks/useForm";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import SelectForm from "../Form/SelectForm";
 import { axiosInstance as axios } from "../../config/axiosConfig";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import logoImg from "../../images/Logo.png";
 import Modal from "../UI/Modal";
 import PayCardForm from "./PayCardForm";
 import { createSale, Sale } from "../../helper/httpHelpers/saleHttp";
-import { Bill, createBill } from "../../helper/httpHelpers/billHttp";
 import { createPayment, Payment } from "../../helper/httpHelpers/paymentHttp";
-import { createCard } from "../../helper/httpHelpers/cardHttp";
+import { CardToPay, createCard } from "../../helper/httpHelpers/cardHttp";
 import { CashPay, createCashPay } from "../../helper/httpHelpers/cashPayHttp";
 import {
   createCreditPay,
@@ -27,12 +26,17 @@ import {
   createDebitPay,
   DebitPay,
 } from "../../helper/httpHelpers/debitPayHttp";
+import { cartActions } from "../../store/cart";
 
 const OrderPage = () => {
-  const { id, token } = useSelector((state) => state.auth);
+  const { id, token, clientDocId, typeUser } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
   const { products, mainDiscount, totalPrice, totalAmount } = useSelector(
     (state) => state.cart
   );
+  const TAX = 0.19;
   const PAY_METHODS = ["Efectivo", "Crédito", "Débito"];
   const [action, setAction] = useState("get");
   const [isLoading, setIsLoading] = useState(true);
@@ -214,14 +218,18 @@ const OrderPage = () => {
   let priceWithDiscountAndTax =
     totalPrice -
     totalPrice * mainDiscount +
-    (totalPrice - totalPrice * mainDiscount) * 0.09;
+    (totalPrice - totalPrice * mainDiscount) * TAX;
 
   useEffect(() => {
     const getUser = async () => {
       let boxMessage = "";
       let boxError = false;
+      let userId;
+      clientDocId.length > 0 && typeUser > 1
+        ? (userId = clientDocId)
+        : (userId = id);
       try {
-        const { data: response } = await axios.get(`users/${id}`, {
+        const { data: response } = await axios.get(`users/${userId}`, {
           headers: {
             Authorization: token,
           },
@@ -246,17 +254,18 @@ const OrderPage = () => {
           new Sale(documentId, products),
           token
         );
-        const dataBill = await createBill(
-          new Bill(dataSale.id, totalPrice, 0.09, mainDiscount)
-        );
         const dataPayment = await createPayment(
-          new Payment(payDescription, totalAmount, dataBill.id),
+          new Payment(
+            payDescription,
+            dataSale.newBill.total_payment,
+            dataSale.newBill.id
+          ),
           token
         );
         for (let method of methodsToPay) {
           if (method.type !== 0) {
             await createCard(
-              new Card(
+              new CardToPay(
                 method.card_number,
                 method.owner_id,
                 method.exp_date,
@@ -268,20 +277,19 @@ const OrderPage = () => {
           }
         }
         for (let method of methodsToPay) {
-          let mPay;
           if (method.type === 0) {
-            mPay = await createCashPay(
+            await createCashPay(
               new CashPay(
                 dataPayment.id,
                 method.total_amount,
                 method.one_pay,
-                method.owner_id
+                documentId
               ),
               token
             );
           }
           if (method.type === 1) {
-            mPay = await createCreditPay(
+            await createCreditPay(
               new CreditPay(
                 method.fees_number,
                 method.card_number,
@@ -293,7 +301,7 @@ const OrderPage = () => {
             );
           }
           if (method.type === 2) {
-            mPay = await createDebitPay(
+            await createDebitPay(
               new DebitPay(
                 "Ahorros",
                 method.card_number,
@@ -304,12 +312,14 @@ const OrderPage = () => {
               token
             );
           }
-          console.log(JSON.stringify(mPay));
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
         setIsLoading(false);
+        setAction("get");
+        dispatch(cartActions.orderCompleted());
+      } catch (error) {
+        setIsLoading(false);
+        setAction("get");
+        console.error(error);
       }
     };
 
@@ -320,7 +330,7 @@ const OrderPage = () => {
 
     if (!isLoading) return;
     actionsObj[action]();
-  }, [isLoading, token, id, setInputsForm, action]);
+  }, [isLoading, token, id, setInputsForm, action]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={orderClasses.body_page}>
@@ -606,7 +616,7 @@ const OrderPage = () => {
         >
           <h5>Iva</h5>
           <div className={orderClasses.product_item__amount}>
-            <p>9%</p>
+            <p>{TAX * 100}%</p>
           </div>
         </div>
         <hr />

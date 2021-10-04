@@ -9,7 +9,7 @@ import { useHistory } from "react-router";
 const Cart = (props) => {
   let history = useHistory();
   const dispatch = useDispatch();
-  const productsStored = useSelector((state) => state.cart.products);
+  let productsStored = useSelector((state) => state.cart.products);
   const [products, setProducts] = useState(productsStored);
 
   const removeProductToCart = (id) => {

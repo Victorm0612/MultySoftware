@@ -13,7 +13,7 @@ import {
 
 router.get("/", verifyAccess, getSales);
 router.get("/:id", verifyAccess, getOneSale);
-router.get("/dateRange/sales", getSalesDateRange);
+router.post("/dateRange/sales", verifyAccess, getSalesDateRange);
 router.post("/", create);
 router.put("/:id", verifyAccess, updateSale);
 router.delete("/:id", verifyAccess, deleteSale);
