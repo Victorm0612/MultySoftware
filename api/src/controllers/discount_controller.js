@@ -117,7 +117,7 @@ export async function updateDiscount(req, res) {
 export async function deleteDiscount(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Discount.destroy({
+    const deleteRowCount = await models.Discount.destroy({
       where: {
         id: id,
       },

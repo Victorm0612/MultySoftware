@@ -21,17 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       //Restaurant have many Sale
       models.Restaurant.hasMany(models.Sale, {
         foreignKey: "restaurant_id",
-      });
-
-      //========== SaleItem - Sale ==========
-      //SaleItems belongs to one Sale
-      models.SaleItem.belongsTo(models.Sale, {
-        foreignKey: "sale_id",
-      });
-
-      //Sale have many SaleItems
-      models.Sale.hasMany(models.SaleItem, {
-        foreignKey: "sale_id",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
       });
 
       //========== Sale - Product ==========

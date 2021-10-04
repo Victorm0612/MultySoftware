@@ -16,4 +16,5 @@ router.post("/", create);
 router.put("/:id", verifyAccess, updateSaleItem);
 router.delete("/:id", verifyAccess, deleteSaleItem);
 
+
 export default router;

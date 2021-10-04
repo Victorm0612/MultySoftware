@@ -476,7 +476,7 @@ export async function getBottom20(req, res) {
       subQuery: false,
       limit: 20,
       group: ["Product.id"],
-      order: sequelize.literal("count DESC"),
+      order: sequelize.literal("count ASC"),
     });
   
     if (allBottomProducts.length > 0) {

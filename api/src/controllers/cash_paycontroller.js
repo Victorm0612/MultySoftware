@@ -275,14 +275,15 @@ export async function deleteCash_Pay(req, res) {
       },
     });
     if (deleteRowCount > 0) {
-      res.json({
+      return res.json({
         message: "Cash_Pay deleted successfully",
       });
-    } else {
-      res.status(404).json({
-        message: "Couldnt delete that cash pay",
-      });
     }
+
+    res.status(404).json({
+      message: "That Cash_Pay does not exist",
+    });
+    
   } catch (error) {
     res.status(500).json({
       message: "Error deleting cash pay",

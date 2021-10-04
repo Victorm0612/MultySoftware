@@ -16,7 +16,12 @@ module.exports = (sequelize, DataTypes) => {
 
       //========== User - Sale ==========
       //User have many sales
-      models.User.hasMany(models.Sale, { foreignKey: "docId" });
+      models.User.hasMany(models.Sale, { 
+        foreignKey: "docId" ,
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
+      });
 
       //Sales belongs to one user.
       models.Sale.belongsTo(models.User, {
@@ -29,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.Card, {
         as: "CardUser",
         foreignKey: "owner_id",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
       });
 
       //Cards belongs to one user

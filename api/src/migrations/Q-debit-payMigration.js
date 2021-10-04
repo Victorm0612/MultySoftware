@@ -14,6 +14,7 @@ module.exports = {
       card_number: {
         type: Sequelize.STRING,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Cards',
           key: 'card_number',
@@ -25,6 +26,7 @@ module.exports = {
       payment_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Payments',
           key: 'id',

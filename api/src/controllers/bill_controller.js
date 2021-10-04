@@ -124,6 +124,7 @@ export async function updateBill(req, res) {
           subtotal,
           totalIva,
           total_discount,
+          total_payment,
           bill_status,
         },
         {
@@ -142,15 +143,23 @@ export async function updateBill(req, res) {
 export async function deleteBill(req, res) {
   const { id } = req.params;
   try {
-    const deleteRowCount = models.Bill.destory({
+    const deleteRowCount = await models.Bill.destroy({
       where: {
         id: id,
       },
     });
-    res.json({
-      message: "Bill deleted successfully",
-      count: deleteRowCount,
-    });
+    
+    if(deleteRowCount > 0){
+      return res.json({
+        message: "Bill deleted successfully",
+        count: deleteRowCount,
+      });
+    }
+
+    res.status(404).json({
+      message: "That bill does not exist",
+    })
+
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong" + error,

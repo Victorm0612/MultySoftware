@@ -16,12 +16,15 @@ module.exports = (sequelize, DataTypes) => {
       //Card have many Credit_Pay
       models.Card.hasMany(models.Credit_Pay, {
         as: "CreditCard",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
         foreignKey: "card_number",
       });
 
       //Credit_pay belongs to one Card
       models.Credit_Pay.belongsTo(models.Card, {
-        as: "CreditCard",
+        as: "CreditCard",          
         foreignKey: "card_number",
         targetKey: "card_number"
       });

@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.Cash_Pay, {
         as: "CashPay",
         foreignKey: "payer_id",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
       });
 
       //Cash_Pay belongs to one User

@@ -11,6 +11,7 @@ module.exports = {
       payment_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Payments',
           key: 'id'
@@ -22,6 +23,7 @@ module.exports = {
       payer_id: {
         type: Sequelize.INTEGER,
         foreignKey: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Users',
           key: 'document_id'

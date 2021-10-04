@@ -89,10 +89,18 @@ export async function deleteBank(req, res) {
         id: id,
       },
     });
-    res.json({
-      message: "Bank deleted successfully",
-      count: deleteRowCount,
-    });
+    
+    if(deleteRowCount > 0){
+      return res.json({
+        message: "Bank deleted successfully",
+        count: deleteRowCount,
+      });
+    }
+
+    res.status(404).json({
+      message: "That Bank does not exist"
+    })
+
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong" + error,

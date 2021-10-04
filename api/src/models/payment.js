@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       //Payment have Credit_Pay
       models.Payment.hasOne(models.Credit_Pay, {
         as: "CreditPayment",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
         foreignKey: "payment_id",
       });
 
@@ -35,6 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       //Payment have one Cash_Pay
       models.Payment.hasOne(models.Cash_Pay, {
         as: "CashPayment",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
         foreignKey: "payment_id",
       });
 
@@ -48,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
       //Payment have one Debit_Pay
       models.Payment.hasOne(models.Debit_Pay, {
         as: "DebitPayment",
+        onDELETE: 'CASCADE',
+        allowNull: false,
+        hooks: true,
         foreignKey: "payment_id",
       });
 
