@@ -215,10 +215,11 @@ const OrderPage = () => {
     });
   };
 
-  let priceWithDiscountAndTax =
+  let priceWithDiscountAndTax = Math.trunc(
     totalPrice -
-    totalPrice * mainDiscount +
-    (totalPrice - totalPrice * mainDiscount) * TAX;
+      totalPrice * mainDiscount +
+      (totalPrice - totalPrice * mainDiscount) * TAX
+  );
 
   useEffect(() => {
     const getUser = async () => {

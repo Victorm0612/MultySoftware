@@ -111,6 +111,7 @@ const PayCardForm = (props) => {
         (props.type === "Crédito" ? feesNumberIsValid : true)
       : true);
 
+  console.log(amountToPayIsValid);
   const submitHandler = (e) => {
     e.preventDefault();
     let data;
