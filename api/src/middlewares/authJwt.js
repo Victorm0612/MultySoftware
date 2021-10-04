@@ -49,17 +49,12 @@ export const verifyToken = async (req, res) => {
         id: decoded.id,
       },
     });
-    if (userExist) {
-      return userExist;
-    } else {
-      res.status(403).json({
-        message: "No user match with the token provided",
-      });
+    if (userExist instanceof models.User) {
+      return userExist;      
     }
-    
   } catch (error) {
     return res.status(500).json({
-      message: error.message,
+      message: "Error in verifyToken " + error.message,
     });
   }
 };
@@ -67,9 +62,9 @@ export const verifyToken = async (req, res) => {
 export const verifyAccess = async (req, res, next) => {
   try {
     //Verifying if the token is valid
-    const userExist = verifyToken(req, res);
-
-    if(userExist instanceof models.User) {
+    const userExist = await verifyToken(req, res);
+    
+    if(userExist instanceof models.User){
       if (userExist.user_type != 1) {
         next();
       } else {
@@ -78,7 +73,6 @@ export const verifyAccess = async (req, res, next) => {
         });
       }
     }
-
     
   } catch (error) {
     res.status(500).json({
@@ -93,6 +87,7 @@ export const verifyBelongsToUser = async (req, res, next) => {
     const id = parseInt(req.params.id);
     const userExist = await verifyToken(req, res);
     //Verifying that only the client has access to update/delete of his account, or the admin
+    
     if(userExist instanceof models.User){
       if (userExist.user_type != 3 && userExist.id != id) {
         res.status(500).json({
@@ -102,6 +97,7 @@ export const verifyBelongsToUser = async (req, res, next) => {
         next();
       }
     }
+    
   } catch (error) {
     res.status(500).json({
       message: "There was a problem in verifyBelongsToUser",
@@ -109,32 +105,19 @@ export const verifyBelongsToUser = async (req, res, next) => {
   }
 };
 
-export const verifyTokenIsValid = async (req, res) => {
+export const verifyTokenIsValid = async (req, res, next) => {
   try {
-    const token = req.headers["authorization"];
+    const userExist = await verifyToken(req, res);
+    
+    if(userExist instanceof models.User){
+      if (userExist) {
+        next();
+      }
+    }
 
-    if (!token) {
-      return res.status(500).json({
-        message: "No token provided",
-      });
-    }
-    const decoded = jwt.verify(token, config.SECRET);
-    const userExist = await models.User.findOne({
-      where: {
-        id: decoded.id,
-      },
-    });
-    if (userExist) {
-      return res.json({
-        message: "OK",
-      });
-    }
-    return res.status(403).json({
-      message: "No user match with the token provided",
-    });
   } catch (error) {
     return res.status(500).json({
-      message: error.message,
+      message: "Error in verifyTokenIsValid " + error.message,
     });
   }
 };

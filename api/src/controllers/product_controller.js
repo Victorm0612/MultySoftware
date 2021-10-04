@@ -54,12 +54,11 @@ export async function getProductsByName(req, res) {
       ],
     });
 
-    for(const oneProduct of products) {
-      const ingredients = await oneproduct.getIngredients()
+    for (const oneProduct of products) {
+      const ingredients = await oneproduct.getIngredients();
 
-      for(const oneIngredient of ingredients) {
-        if(oneIngredient.amount == 0) {
-
+      for (const oneIngredient of ingredients) {
+        if (oneIngredient.amount == 0) {
           await models.Product.update(
             {
               pro_status: false,
@@ -67,9 +66,9 @@ export async function getProductsByName(req, res) {
             {
               where: {
                 id: oneProduct.id,
-              }
+              },
             }
-          )
+          );
         }
       }
     }
@@ -94,10 +93,10 @@ export async function getOneProduct(req, res) {
       },
     });
 
-    const ingredients = product.getIngredients()
+    const ingredients = product.getIngredients();
 
-    for(const oneIngredient of ingredients) {
-      if(oneIngredient.amount == 0) {
+    for (const oneIngredient of ingredients) {
+      if (oneIngredient.amount == 0) {
         await models.Product.update(
           {
             pro_status: false,
@@ -105,9 +104,9 @@ export async function getOneProduct(req, res) {
           {
             where: {
               id: id,
-            }
+            },
           }
-        )
+        );
       }
     }
 
@@ -177,7 +176,7 @@ export async function create(req, res) {
       });
 
       if (ingredient) {
-        if(ingredient.amount == 0 ) {
+        if (ingredient.amount == 0) {
           ingredientError = true;
         }
         ingredientsOk.push({ ingredient, amount: oneIngredient.amount });
@@ -403,19 +402,21 @@ export async function deleteProduct(req, res) {
 
 export async function getTop20(req, res) {
   try {
-    
     const allTopProducts = await models.Product.findAll({
       includeIgnoreAttributes: false,
       include: [
         {
           model: models.Sale,
           attributes: { exclude: ["createdAt", "updatedAt"] },
+          required: true,
         },
       ],
-      
-      
       attributes: {
         include: [
+          [
+            sequelize.fn("SUM", sequelize.col(`"Sales->SaleItem"."amount"`)),
+            "suma",
+          ],
           [
             sequelize.fn(
               "COUNT",
@@ -428,42 +429,43 @@ export async function getTop20(req, res) {
       subQuery: false,
       limit: 20,
       group: ["Product.id"],
-      order: sequelize.literal("count DESC"),
+      order: sequelize.literal("suma DESC"),
     });
-  
+
+    console.log(allTopProducts.length)
+
     if (allTopProducts.length > 0) {
       return res.json({
         data: allTopProducts,
       });
-    } 
-    
+    }
     res.status(404).json({
       message: "There was an error with your request",
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong" + error,
-    })
+    });
   }
-  
 }
 
 export async function getBottom20(req, res) {
   try {
-
     const allBottomProducts = await models.Product.findAll({
       includeIgnoreAttributes: false,
       include: [
         {
           model: models.Sale,
           attributes: { exclude: ["createdAt", "updatedAt"] },
+          required: true,
         },
       ],
-      
-      
       attributes: {
         include: [
+          [
+            sequelize.fn("SUM", sequelize.col(`"Sales->SaleItem"."amount"`)),
+            "suma",
+          ],
           [
             sequelize.fn(
               "COUNT",
@@ -476,52 +478,83 @@ export async function getBottom20(req, res) {
       subQuery: false,
       limit: 20,
       group: ["Product.id"],
-      order: sequelize.literal("count ASC"),
+      order: sequelize.literal("suma ASC"),
     });
-  
+
     if (allBottomProducts.length > 0) {
       return res.json({
         data: allBottomProducts,
-      })
+      });
     }
-  
+
     res.json({
-      message: "Something went wrong, there's no products?"
-    })
-    
+      message: "Something went wrong, there's no products?",
+    });
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong" + error,
-    })
+    });
   }
 }
 
 export async function last6Months(req, res) {
   const { id } = req.params;
-  const actualMonth = new Date(Date.now());
+  let { final_date, ini_date } = req.body;
 
-  const last6Months = new Date(Date.now());
-  last6Months.setMonth(actualMonth.getMonth() - 6);
+  if (!final_date && !ini_date) {
+    ini_date = new Date(Date.now());
+    final_date = new Date(Date.now());
+    final_date.setMonth(ini_date.getMonth() - 6);
+  } else {
+    final_date = new Date(final_date);
+    ini_date = new Date(ini_date);
+  }
 
-  const allSells = await models.SaleItem.count({
-    where: {
-      product_id: id,
-    },
-    include: [
-      {
-        model: models.Sale,
-        where: {
-          sale_date: {
-            [Op.between]: [last6Months, actualMonth],
-          },
-        },
+  const allSells = await models.Sale.findAll({
+    include: {
+      model: models.Product,
+      where: {
+        id: id,
       },
-    ],
+    },
+    where: {
+      sale_date: {
+        [Op.between]: [final_date, ini_date],
+      },
+    },
   });
 
-  if (allSells > 0) {
-    res.json({
-      message: `For the product with the id ${id} were ${allSells} sells in the last 6 months.`,
+  // const allSells = await models.Product.findAll({
+  //   includeIgnoreAttributes: false,
+  //   include: [
+  //     {
+  //       model: models.Sale,
+  //       where: {
+  //         sale_date: {
+  //           [Op.between]: [last6Months, actualMonth],
+  //         },
+  //       },
+  //     },
+  //   ],
+  //   attributes: {
+  //     include: [
+  //       [
+  //         sequelize.literal(
+  //           'COUNT (DISTINCT ("Sales->SaleItem"."product_id"))'
+  //         ),
+  //         "sells",
+  //       ],
+  //     ],
+  //   },
+  //   where: {
+  //     id: id,
+  //   },
+  //   group: ["Product.id"],
+  // });
+
+  if (allSells) {
+    return res.json({
+      data: allSells,
     });
   } else {
     res.json({

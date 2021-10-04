@@ -24,7 +24,7 @@ module.exports = {
         discount_description: 'Descuento de 15% si llevas Coca cola y 1 pollo asado',
         ini_date: '30/04/2021',
         final_date: '10/05/2021',
-        discount_value: 15,
+        discount_value: 0.15,
         discount_status: true   
       },
       {
@@ -32,9 +32,25 @@ module.exports = {
         discount_description: 'Descuento de 5% a todos los estudiantes que presenten su carnet estudiantil',
         ini_date: '28/04/2021',
         final_date: '03/05/2021',
-        discount_value: 5,
+        discount_value: 0.5,
         discount_status: true        
-      }      
+      },
+      {
+        discount_name: 'Descuento de 35%',
+        discount_description: 'Descuento de 35% a todos los devs que prueben este programa',
+        ini_date: '01/01/2021',
+        final_date: '01/12/2021',
+        discount_value: 0.35,
+        discount_status: true
+      },
+      {
+        discount_name: 'Descuento de 50%',
+        discount_description: 'Descuento de 50% a todos los devs que prueben este programa dos veces',
+        ini_date: '01/01/2021',
+        final_date: '01/12/2021',
+        discount_value: 0.50,
+        discount_status: true
+      }
     ])
   },
 

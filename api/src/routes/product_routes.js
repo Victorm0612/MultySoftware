@@ -22,6 +22,6 @@ router.put("/:id", verifyAccess, updateProduct);
 router.delete("/:id", verifyAccess, deleteProduct);
 router.get("/mas_vendidos/", getTop20);
 router.get("/menos_vendidos", getBottom20);
-router.get("/ultimos6Meses/:id", last6Months);
+router.post("/ultimos6Meses/:id", last6Months);
 
 export default router;

@@ -38,6 +38,17 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
         through: models.SaleItem,
       });
+
+       //========== SaleItem - Sale ==========
+      //SaleItems belongs to one Sale
+      models.SaleItem.belongsTo(models.Sale, {
+        foreignKey: "sale_id",
+      });
+
+      //Sale have many SaleItems
+      models.Sale.hasMany(models.SaleItem, {
+        foreignKey: "sale_id",
+      });
     }
   }
   Sale.init(

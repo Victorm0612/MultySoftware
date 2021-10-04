@@ -1,4 +1,4 @@
-import { verifyAccess, verifyBelongsToUser, verifyToken } from '../middlewares'
+import { verifyAccess, verifyTokenIsValid} from '../middlewares'
 import { Router } from 'express';
 
 const router = Router();
@@ -12,11 +12,11 @@ import {
   getSalesDateRange,
 } from "../controllers/sale_controller";
 
-router.get("/", verifyAccess, getSales);
-router.get("/:id", verifyAccess, getOneSale);
-router.post("/dateRange/sales", verifyAccess, getSalesDateRange);
-router.post("/", create);
-router.put("/:id", verifyAccess, updateSale);
-router.delete("/:id", verifyAccess, deleteSale);
+router.get('/', verifyTokenIsValid, getSales);
+router.get('/:id', verifyTokenIsValid, getOneSale);
+router.get('/dateRange/sales', verifyTokenIsValid, getSalesDateRange)
+router.post('/', verifyTokenIsValid, create);
+router.put('/:id', verifyAccess, updateSale);
+router.delete('/:id', verifyAccess, deleteSale);
 
 export default router;

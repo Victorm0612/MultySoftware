@@ -1,39 +1,84 @@
 const models = require("../models/index");
 const { Op, json } = require("sequelize");
+import jwt from "jsonwebtoken";
+import config from "../config";
 
 export async function getSales(req, res) {
   try {
-    const sales = await models.Sale.findAll({
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    if (user.user_type === 1) {
+      const sales = await models.Sale.findAll({
+        where: {
+          docId: user.document_id,
+        },
+        include: [
+          {
+            model: models.Restaurant,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+          {
+            model: models.Product,
+            through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+          },
+        ],
+      });
+
+      return res.json({
+        data: sales,
+      });
+    }
+
+    if (user.user_type != 1 && user.user_restaurant != 1) {
+      const sales = await models.Sale.findAll({
+        where: {
+          restaurant_id: user.user_restaurant,
+        },
+        include: [
+          {
+            model: models.User,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+          {
+            model: models.Restaurant,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+          {
+            model: models.Product,
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+          },
+        ],
+      });
+
+      return res.json({
+        data: sales,
+      });
+    }
+    const salesAdm = await models.Sale.findAll({
       include: [
         {
           model: models.User,
-          attributes: [
-            "document_type",
-            "document_id",
-            "first_name",
-            "last_name",
-          ],
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
         {
           model: models.Restaurant,
-          attributes: ["id", "restaurant_name", "restaurant_address"],
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
         {
-          model: models.SaleItem,
-          attributes: [
-            "product_id",
-            "amount",
-            "totalIva",
-            "subtotal",
-            "item_total",
-            "total_discount",
-          ],
+          model: models.Product,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
       order: [["id", "DESC"]],
     });
     res.json({
-      data: sales,
+      data: salesAdm,
     });
   } catch (error) {
     res.status(500).json({
@@ -46,39 +91,58 @@ export async function getSales(req, res) {
 export async function getOneSale(req, res) {
   const { id } = req.params;
   try {
-    const sale = await models.Sale.findOne({
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    const saleFound = await models.Sale.findOne({
       where: {
         id: id,
       },
       include: [
         {
           model: models.User,
-          attributes: [
-            "document_type",
-            "document_id",
-            "first_name",
-            "last_name",
-          ],
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
         {
           model: models.Restaurant,
-          attributes: ["id", "restaurant_name", "restaurant_address"],
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
         {
-          model: models.SaleItem,
-          attributes: [
-            "product_id",
-            "amount",
-            "totalIva",
-            "subtotal",
-            "item_total",
-            "total_discount",
-          ],
+          model: models.Product,
+          attributes: { exclude: ["createdAt", "updatedAt"] },
         },
       ],
     });
+
+    if (!saleFound) {
+      return res.status(404).json({
+        message: "Sale not found",
+      });
+    }
+
+    if (user.user_type === 1) {
+      if (saleFound.docId != user.document_id) {
+        return res.status(403).json({
+          message: "You are not allowed to do that",
+        });
+      }
+    }
+
+    if (user.user_type != 1 && user.user_restaurant != 1) {
+      if (saleFound.restaurant_id != user.user_restaurant) {
+        return res.status(403).json({
+          message: "You are not allowed to do that",
+        });
+      }
+    }
+
     res.json({
-      data: sale,
+      data: saleFound,
     });
   } catch (error) {
     res.status(500).json({
@@ -98,6 +162,22 @@ export async function create(req, res) {
   let productsOk = new Array();
 
   try {
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    if (user.user_type != 1 && user.user_restaurant != 1) {
+      if (restaurant_id != user.user_restaurant) {
+        return res.status(403).json({
+          message: "You can't create sales for a different restaurant",
+        });
+      }
+    }
+
     for (const oneProduct of products) {
       const product = await models.Product.findOne({
         where: {
@@ -138,31 +218,35 @@ export async function create(req, res) {
         });
 
         if (newSale) {
-
           //Variables for Bill
-          let totalIvaBill = 0
-          let subtotalBill = 0
-          let total_discountBill = 0
-          let item_totalBill = 0
+          let totalIvaBill = 0;
+          let subtotalBill = 0;
+          let total_discountBill = 0;
+          let item_totalBill = 0;
 
           for (const oneProduct of productsOk) {
             const today = new Date(Date.now());
 
             //Getting discounts of the product that applies for today's date
-            const discount = await oneProduct.product.getDiscounts({
+            const discount = await models.Discount.findAll({
+              include: {
+                model: models.Product,
+                where: {
+                  id: oneProduct.product.id,
+                }
+              },
               where: {
                 [Op.and]: [
-                  { ini_date: { [Op.gte]: today } },
-                  { final_date: { [Op.lte]: today } },
+                  { ini_date: { [Op.lte]: today } },
+                  { final_date: { [Op.gte]: today } },
                 ],
-              },
-            });
-
+              }
+            })
             let discount_value;
             //If there are more than one valid discount, determine the discount to use depending on the higher discount
             if (discount.length > 0) {
-              const higher = 0;
-              for (const oneDiscount of discount) {
+              let higher = 0;
+              for (const oneDiscount of discount) {                
                 higher =
                   oneDiscount.discount_value >= higher
                     ? oneDiscount.discount_value
@@ -171,8 +255,6 @@ export async function create(req, res) {
               discount_value = higher;
             } else if (discount.length == 1) {
               discount_value = discount.discount_value;
-            } else {
-              discount_value = 0;
             }
 
             const ingredients = await oneProduct.product.getIngredients({
@@ -197,19 +279,19 @@ export async function create(req, res) {
             //Executing operations in order to get the values for the join table
             const amount = oneProduct.amount;
             let totalIva = oneProduct.product.price * 0.19 * amount;
-            totalIvaBill += totalIva
+            totalIvaBill += totalIva;
             let subtotal = oneProduct.product.price * amount;
-            subtotalBill += subtotal
+            subtotalBill += subtotal;
             let total_discount =
               oneProduct.product.price * discount_value * amount;
-            total_discountBill += total_discount
-            let item_total = (subtotal + totalIva) - total_discount;
-            item_totalBill += item_total
+            total_discountBill += total_discount;
+            let item_total = subtotal + totalIva - total_discount;
+            item_totalBill += item_total;
 
-            console.log("totalIvaBill: " + totalIvaBill)
-            console.log("subtotalBill: " + subtotalBill)
-            console.log("total_discountBill: " + total_discountBill)
-            console.log("item_totalBill: " + item_totalBill)
+            console.log("totalIvaBill: " + totalIvaBill);
+            console.log("subtotalBill: " + subtotalBill);
+            console.log("total_discountBill: " + total_discountBill);
+            console.log("item_totalBill: " + item_totalBill);
             newSale.addProducts(oneProduct.product, {
               through: {
                 amount: amount,
@@ -219,7 +301,6 @@ export async function create(req, res) {
                 total_discount: total_discount,
               },
             });
-
           }
 
           const newBill = await models.Bill.create({
@@ -232,11 +313,12 @@ export async function create(req, res) {
             total_discount: total_discountBill,
             total_payment: item_totalBill,
             bill_status: true,
-          })
+          });
 
           res.json({
             message: "SUCCESS!!",
-            data: newSale, newBill
+            data: newSale,
+            newBill,
           });
         }
       } else {
@@ -268,6 +350,33 @@ export async function updateSale(req, res) {
   let productsOk = new Array();
 
   try {
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+    const saleFound = await models.Sale.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!saleFound) {
+      return res.status(404).json({
+        message: "Sale not found",
+      });
+    }
+
+    if (user.user_type != 1 && user.user_restaurant) {
+      if (saleFound.restaurant_id != user.user_restaurant) {
+        return res.status(403).json({
+          message: "You can't update sales for a different restaurant",
+        });
+      }
+    }
+
     for (const oneProduct of products) {
       const product = await models.Product.findOne({
         where: {
@@ -296,195 +405,197 @@ export async function updateSale(req, res) {
         productError = true;
         break;
       }
+    }
 
-      if (!productError) {
-        if (!ingredientError) {
-          const saleFound = await models.Sale.findOne({
+    if (!productError) {
+      if (!ingredientError) {
+        const saleFound = await models.Sale.findOne({
+          where: {
+            id: id,
+          },
+        });
+
+        if (saleFound) {
+          //Removing the change on the amount of the ingredients
+          //because is changing products
+          const oldProducts = await saleFound.getProducts({
+            joinTableAttributes: ["amount"],
+          });
+          for (const oneProduct of oldProducts) {
+            saleFound.removeProduct(oneProduct);
+
+            const ingredients = await oneProduct.getIngredients({
+              joinTableAttributes: ["amount"],
+            });
+            //Here we add because we're deleting products that were mistakenly selled
+            for (const oneIngredient of ingredients) {
+              const finalAmount =
+                oneIngredient.amount +
+                oneProduct.SaleItem.amount *
+                  oneIngredient.IngredientItem.amount;
+
+              await models.Ingredient.update(
+                {
+                  amount: finalAmount,
+                },
+                {
+                  where: {
+                    id: oneIngredient.id,
+                  },
+                }
+              );
+            }
+          }
+
+          const billFound = await models.Bill.findOne({
             where: {
-              id: id,
+              sale_id: id,
             },
           });
 
-          if (saleFound) {
-            //Removing the change on the amount of the ingredients
-            //because is changing products
-            const oldProducts = await saleFound.getProducts({
-              joinTableAttributes: ["amount"],
-            });
-            for (const oneProduct of oldProducts) {
-              saleFound.removeProduct(oneProduct);
+          //Variables for Bill
+          let totalIvaBill = 0;
+          let subtotalBill = 0;
+          let total_discountBill = 0;
+          let item_totalBill = 0;
 
-              const ingredients = await oneProduct.getIngredients({
-                joinTableAttributes: ["amount"],
-              });
-              //Here we add because we're deleting products that were mistakenly selled
-              for (const oneIngredient of ingredients) {
-                const finalAmount =
-                  oneIngredient.amount +
-                  oneProduct.SaleItem.amount *
-                    oneIngredient.IngredientItem.amount;
+          for (const oneProduct of productsOk) {
+            const today = new Date(Date.now());
 
-                await models.Ingredient.update(
-                  {
-                    amount: finalAmount,
-                  },
-                  {
-                    where: {
-                      id: oneIngredient.id,
-                    },
-                  }
-                );
-              }
-            }
-
-            const billFound = await models.Bill.findOne({
+            //Getting discounts of the product that applies for today's date
+            const discount = await models.Discount.findAll({
+              include: {
+                model: models.Product,
+                where: {
+                  id: oneProduct.product.id,
+                }
+              },
               where: {
-                sale_id: id
+                [Op.and]: [
+                  { ini_date: { [Op.lte]: today } },
+                  { final_date: { [Op.gte]: today } },
+                ],
               }
             })
+            let discount_value;
+            //If there are more than one valid discount, determine the discount to use depending on the higher discount
+            if (discount.length > 0) {
+              let higher = 0;
+              for (const oneDiscount of discount) {
+                
+                higher =
+                  oneDiscount.discount_value >= higher
+                    ? oneDiscount.discount_value
+                    : higher;
+              }
+              discount_value = higher;
+            } else if (discount.length == 1) {
+              discount_value = discount.discount_value;
+            }
+            const ingredients = await oneProduct.product.getIngredients({
+              joinTableAttributes: ["amount"],
+            }); //FUNCTION TO GET THE AMOUNT OF INGREDIENTS IN THAT PRODUCT
 
-            //Variables for Bill
-            let totalIvaBill = 0
-            let subtotalBill = 0
-            let total_discountBill = 0
-            let item_totalBill = 0
-
-            for (const oneProduct of productsOk) {
-              const today = new Date(Date.now());
-
-              //Getting discounts of the product that applies for today's date
-              const discount = await oneProduct.product.getDiscounts({
-                where: {
-                  [Op.and]: [
-                    { ini_date: { [Op.gte]: today } },
-                    { final_date: { [Op.lte]: today } },
-                  ],
+            //Executing the logic of sustracting amount of the ingredients in the product and updating it
+            for (const oneIngredient of ingredients) {
+              await models.Ingredient.update(
+                {
+                  amount:
+                    oneIngredient.amount -
+                    oneProduct.amount * oneIngredient.IngredientItem.amount,
                 },
-              });
-
-              let discount_value;
-              //If there are more than one valid discount, determine the discount to use depending on the higher discount
-              if (discount.length > 0) {
-                const higher = 0;
-                for (const oneDiscount of discount) {
-                  higher =
-                    oneDiscount.discount_value >= higher
-                      ? oneDiscount.discount_value
-                      : higher;
+                {
+                  where: {
+                    id: oneIngredient.id,
+                  },
                 }
-                discount_value = higher;
-              } else if (discount.length == 1) {
-                discount_value = discount.discount_value;
-              } else {
-                discount_value = 0;
-              }
-
-              const ingredients = await oneProduct.product.getIngredients({
-                joinTableAttributes: ["amount"],
-              }); //FUNCTION TO GET THE AMOUNT OF INGREDIENTS IN THAT PRODUCT
-
-              //Executing the logic of sustracting amount of the ingredients in the product and updating it
-              for (const oneIngredient of ingredients) {
-                await models.Ingredient.update(
-                  {
-                    amount:
-                      oneIngredient.amount -
-                      oneProduct.amount * oneIngredient.IngredientItem.amount,
-                  },
-                  {
-                    where: {
-                      id: oneIngredient.id,
-                    },
-                  }
-                );
-              }
-
-              //Executing operations in order to get the values for the join table
-              const amount = oneProduct.amount;
-              let totalIva = oneProduct.product.price * 0.19 * amount;
-              totalIvaBill += totalIva
-              let subtotal = oneProduct.product.price * amount;
-              subtotalBill += subtotal
-              let total_discount =
-                oneProduct.product.price * discount_value * amount;
-              total_discountBill += total_discount
-              let item_total = (subtotal + totalIva) - total_discount;
-              item_totalBill += item_total
-
-              saleFound.addProducts(oneProduct.product, {
-                through: {
-                  amount: amount,
-                  totalIva: totalIva,
-                  subtotal: subtotal,
-                  item_total: item_total,
-                  total_discount: total_discount,
-                },
-              });
+              );
             }
 
-            const update = await models.Sale.update(
-              {
-                sale_date,
-                sale_time,
-                docId,
-                restaurant_id,
-                sale_status,
+            //Executing operations in order to get the values for the join table
+            const amount = oneProduct.amount;
+            let totalIva = oneProduct.product.price * 0.19 * amount;
+            totalIvaBill += totalIva;
+            let subtotal = oneProduct.product.price * amount;
+            subtotalBill += subtotal;
+            let total_discount =
+              oneProduct.product.price * discount_value * amount;
+            total_discountBill += total_discount;
+            let item_total = subtotal + totalIva - total_discount;
+            item_totalBill += item_total;
+
+            saleFound.addProducts(oneProduct.product, {
+              through: {
+                amount: amount,
+                totalIva: totalIva,
+                subtotal: subtotal,
+                item_total: item_total,
+                total_discount: total_discount,
               },
-              {
-                where: {
-                  id: id,
-                },
-              }
-            );
-
-            if (update) {
-
-              if(billFound){
-                await models.Bill.update(
-                  {
-                    bill_time: sale_time,
-                    bill_date: sale_date,
-                    subtotal: subtotalBill,
-                    totalIva: totalIvaBill,
-                    total_discount: total_discountBill,
-                    total_payment: item_totalBill,
-                    bill_status: true,
-                  },
-                  {
-                    where: {
-                      id: billFound.id
-                    }
-                  }
-                  )
-              }
-
-              const newBill = await models.Bill.create({
-                nit: 33333346,
-                sale_id: saleFound.id,
-                bill_time: saleFound.sale_time,
-                bill_date: saleFound.sale_date,
-                subtotal: subtotalBill,
-                totalIva: totalIvaBill,
-                total_discount: total_discountBill,
-                total_payment: item_totalBill,
-                bill_status: true,
-              })
-
-              res.json({
-                message: "Sale updated successfully",
-              });
-            }
+            });
           }
-        } else {
-          res.status(404).json({
-            message: "There's not enought ingredients for that products",
-          });
+
+          const update = await models.Sale.update(
+            {
+              sale_date,
+              sale_time,
+              docId,
+              restaurant_id,
+              sale_status,
+            },
+            {
+              where: {
+                id: id,
+              },
+            }
+          );
+
+          if (update) {
+            if (billFound) {
+              await models.Bill.update(
+                {
+                  bill_time: sale_time,
+                  bill_date: sale_date,
+                  subtotal: subtotalBill,
+                  totalIva: totalIvaBill,
+                  total_discount: total_discountBill,
+                  total_payment: item_totalBill,
+                  bill_status: true,
+                },
+                {
+                  where: {
+                    id: billFound.id,
+                  },
+                }
+              );
+            }
+
+            const newBill = await models.Bill.create({
+              nit: 33333346,
+              sale_id: saleFound.id,
+              bill_time: saleFound.sale_time,
+              bill_date: saleFound.sale_date,
+              subtotal: subtotalBill,
+              totalIva: totalIvaBill,
+              total_discount: total_discountBill,
+              total_payment: item_totalBill,
+              bill_status: true,
+            });
+
+            res.json({
+              message: "Sale updated successfully",
+            });
+          }
         }
       } else {
         res.status(404).json({
-          message: "There was a problem with the products",
+          message: "There's not enought ingredients for that products",
         });
       }
+    } else {
+      res.status(404).json({
+        message: "There was a problem with the products",
+      });
     }
   } catch (error) {
     res.status(500).json({
@@ -496,6 +607,60 @@ export async function updateSale(req, res) {
 export async function deleteSale(req, res) {
   const { id } = req.params;
   try {
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    const saleFound = await models.Sale.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!saleFound) {
+      return res.status(404).json({
+        message: "Sale not found",
+      });
+    }
+
+    if (user.user_type != 1 && user.user_restaurant != 1) {
+      if (saleFound.restaurant_id != user.user_restaurant) {
+        return res.status(403).json({
+          message: "You can't delete sales for a different restaurant",
+        });
+      }
+    }
+
+    const products = await saleFound.getProducts({
+      joinTableAttributes: ["amount"],
+    });
+
+    for (const oneProduct of products) {
+      const ingredients = await oneProduct.getIngredients({
+        joinTableAttributes: ["amount"],
+      });
+
+      for (const oneIngredient of ingredients) {
+        console.log(oneIngredient.IngredientItem.amount);
+        await models.Ingredient.update(
+          {
+            amount:
+              oneIngredient.amount -
+              oneProduct.SaleItem.amount * oneIngredient.IngredientItem.amount,
+          },
+          {
+            where: {
+              id: oneIngredient.id,
+            },
+          }
+        );
+      }
+    }
+
     const deleteRowCount = await models.Sale.destroy({
       where: {
         id: id,

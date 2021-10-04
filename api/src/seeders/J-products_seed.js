@@ -33,6 +33,26 @@ module.exports = {
         pro_status: true,
         percentage_tax: 19,
       },
+      {
+        pro_name: "Gato feli",
+        pro_description: "Un gato muy feli",
+        pro_image:
+          "https://infomascota.com/wp-content/uploads/2020/05/gato-gracioso-332x375.jpg",
+        price: 28000,
+        category_id: 1,
+        pro_status: true,
+        percentage_tax: 19,
+      },
+      {
+        pro_name: "Gato asustao",
+        pro_description: "Un gato muy asustao",
+        pro_image:
+          "https://bbl-bdb.s3.amazonaws.com/collections/images/gato-asustado.png",
+        price: 17000,
+        category_id: 1,
+        pro_status: true,
+        percentage_tax: 19,
+      },
     ]);
   },
 

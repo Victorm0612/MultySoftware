@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
 
       //========== User - Sale ==========
       //User have many sales
-      models.User.hasMany(models.Sale, { 
-        foreignKey: "docId" ,
-        onDELETE: 'CASCADE',
+      models.User.hasMany(models.Sale, {
+        foreignKey: "docId",
+        onDELETE: "CASCADE",
         allowNull: false,
         hooks: true,
       });
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       models.User.hasMany(models.Card, {
         as: "CardUser",
         foreignKey: "owner_id",
-        onDELETE: 'CASCADE',
+        onDELETE: "CASCADE",
         allowNull: false,
         hooks: true,
       });
@@ -44,6 +44,19 @@ module.exports = (sequelize, DataTypes) => {
         as: "CardUser",
         foreignKey: "owner_id",
         targetKey: "document_id",
+      });
+
+      //========== User - Restaurant ==========
+      //Restaurant have many Users
+      models.Restaurant.hasMany(models.User, {
+        foreignKey: "user_restaurant",
+        onDelete: "SET NULL",
+        allowNull: true,
+        hooks: true,
+      });
+
+      models.User.belongsTo(models.Restaurant, {
+        foreignKey: "user_restaurant",
       });
     }
   }
@@ -59,6 +72,7 @@ module.exports = (sequelize, DataTypes) => {
       birthday: DataTypes.DATE,
       user_type: DataTypes.INTEGER,
       user_status: DataTypes.BOOLEAN,
+      user_restaurant: DataTypes.INTEGER,
       email: DataTypes.STRING,
       password: DataTypes.STRING,
     },

@@ -1,16 +1,29 @@
 const models = require("../models/index");
+import jwt from "jsonwebtoken";
+import config from "../config";
 
 export async function getCards(req, res) {
   try {
-    const cards = await models.Card.findAll({
-      include: {
-        model: models.User,
-        as: "CardUser",
-        attributes: { exclude: ["createdAt", "updatedAt"] },
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
       },
     });
-    res.json({
-      data: cards,
+    if (user.user_type === 1) {
+      const cards = await models.Card.findAll({
+        where: {
+          owner_id: user.document_id,
+        },
+      });
+
+      return res.json({
+        data: cards,
+      });
+    }
+    return res.status(403).json({
+      message: "Only the owner of a card can do this",
     });
   } catch (error) {
     res.status(500).json({
@@ -21,16 +34,32 @@ export async function getCards(req, res) {
 }
 
 export async function getOneCard(req, res) {
-  const { card_number } = req.params;
   try {
-    const card = await models.Card.findOne({
+    const { card_number } = req.params;
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
       where: {
-        card_number: card_number,
+        id: decoded.id,
       },
     });
-    res.json({
-      data: card,
-    });
+    if (user.user_type === 1) {
+      const card = await models.Card.findAll({
+        where: {
+          card_number: card_number,
+        },
+      });
+
+      if (card.owner_id != user.document_id) {
+        return res.status(403).json({
+          message: "Wrong card owner",
+        });
+      }
+
+      return res.json({
+        data: cardd,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       message: "Something goes wrong " + error,
@@ -39,9 +68,22 @@ export async function getOneCard(req, res) {
 }
 
 export async function create(req, res) {
-  const { card_number, owner_id, exp_date, bank } = req.body;
   try {
-    let newCard = await models.Card.create({
+    const { card_number, owner_id, exp_date, bank } = req.body;
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    if (owner_id != user.document_id) {
+      return res.status(403).json({
+        message: "Invalid owner",
+      });
+    }
+    let newCard = await model.Card.create({
       card_number,
       owner_id,
       exp_date,
@@ -62,54 +104,98 @@ export async function create(req, res) {
 }
 
 export async function updateCard(req, res) {
-  const { card_number } = req.params;
-  const { owner_id, exp_date, bank } = req.body;
-  const cardFound = await models.Card.findAll({
-    attributes: ["card_number", "owner_id", "exp_date", "bank"],
-    where: {
-      card_number: card_number,
-    },
-  });
-  if (cardFound.length > 0) {
-    cardFound.forEach(async (cardFound) => {
-      await models.Card.update(
-        {
-          owner_id,
-          exp_date,
-          bank,
-        },
-        {
-          where: {
-            card_number: card_number,
-          },
-        }
-      );
-    });
-  }
-  return res.json({
-    message: "Card updated successfully",
-  });
-}
-
-export async function deleteCard(req, res) {
-  const { card_number } = req.params;
   try {
-    const deleteRowCount = models.Card.destroy({
+    const { card_number } = req.params;
+    const { owner_id, exp_date, bank } = req.body;
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+    const cardFound = await model.Card.findOne({
       where: {
         card_number: card_number,
       },
     });
-    
-    if(deleteRowCount > 0){
+
+    if (!cardFound) {
+      return res.status(404).json({
+        message: "Card not found",
+      });
+    }
+
+    if (cardFound.owner_id != user.document_id) {
+      return res.status(403).json({
+        message: "You're not allowed to do that",
+      });
+    }
+
+    const update = await models.Card.update(
+      {
+        exp_date,
+        bank,
+      },
+      {
+        where: {
+          card_number: card_number,
+        },
+      }
+    );
+
+    if (update) {
+      return res.json({
+        message: "Card updated successfully",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Something went wrong updating card " + error.message,
+    });
+  }
+}
+
+export async function deleteCard(req, res) {
+  try {
+    const { card_number } = req.params;
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+    const cardFound = await models.Card.findOne({
+      where: {
+        card_number: card_number,
+      }
+    })
+
+    if(!cardFound) {
+      return res.status(404).json({
+        message: "Card not found",
+      })
+    }
+
+    if(cardFound.owner_id != user.document_id){
+      return res.status(403).json({
+        message: "You're not allowed to do that"
+      })
+    }
+
+    const deleteRowCount = model.Card.destroy({
+      where: {
+        card_number: card_number,
+      },
+    });
+
+    if (deleteRowCount > 0) {
       return res.json({
         message: "Card deleted successfully",
         count: deleteRowCount,
       });
     }
-
-    res.status(404).json({
-      message: "That card does not exist",
-    })
 
   } catch (error) {
     res.status(500).json({
