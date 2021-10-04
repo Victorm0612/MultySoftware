@@ -1,8 +1,16 @@
 import { verifyAccess, verifyTokenIsValid} from '../middlewares'
 import { Router } from 'express';
+
 const router = Router();
 
-import { create, deleteSale, getOneSale, getSales, updateSale, getSalesDateRange } from '../controllers/sale_controller';
+import {
+  create,
+  deleteSale,
+  getOneSale,
+  getSales,
+  updateSale,
+  getSalesDateRange,
+} from "../controllers/sale_controller";
 
 router.get('/', verifyTokenIsValid, getSales);
 router.get('/:id', verifyTokenIsValid, getOneSale);

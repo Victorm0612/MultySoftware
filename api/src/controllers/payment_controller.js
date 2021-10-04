@@ -166,8 +166,8 @@ export async function create(req, res) {
       pay_description,
       pay_date,
       pay_time,
-      pay_type,
       amount,
+      payed_status: false,
       pay_status,
       bill_id,
     });

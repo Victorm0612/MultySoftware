@@ -1,8 +1,15 @@
 import { verifyAccess, verifyTokenIsValid, verifyToken } from '../middlewares'
 import { Router } from 'express';
+
 const router = Router();
 
-import { create, deleteCash_Pay, getOneCash_Pay, getCashPays, updateCash_Pay } from '../controllers/cash_paycontroller';
+import {
+  create,
+  deleteCash_Pay,
+  getOneCash_Pay,
+  getCashPays,
+  updateCash_Pay,
+} from "../controllers/cash_paycontroller";
 
 router.get('/', verifyTokenIsValid, getCashPays);
 router.get('/:id', verifyTokenIsValid, getOneCash_Pay);

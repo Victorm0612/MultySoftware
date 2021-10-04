@@ -2,7 +2,13 @@ import { verifyAccess, verifyTokenIsValid, verifyToken } from '../middlewares'
 import { Router } from 'express';
 const router = Router();
 
-import { create, deleteDebit_Pay, getOneDebit_Pay, getDebitPays, updateDebit_Pay } from '../controllers/debit_paycontroller';
+import {
+  create,
+  deleteDebit_Pay,
+  getOneDebit_Pay,
+  getDebitPays,
+  updateDebit_Pay,
+} from "../controllers/debit_paycontroller";
 
 router.get('/', verifyTokenIsValid, getDebitPays);
 router.get('/:id', verifyTokenIsValid, getOneDebit_Pay);

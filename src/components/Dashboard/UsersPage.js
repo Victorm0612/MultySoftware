@@ -560,7 +560,11 @@ const UsersPage = () => {
                 >
                   Cambiar
                 </Button>
-                <Button submitFor="button" action={closePasswordForm}>
+                <Button
+                  tag="close"
+                  submitFor="button"
+                  action={closePasswordForm}
+                >
                   Cancelar
                 </Button>
               </div>
@@ -747,7 +751,7 @@ const UsersPage = () => {
                     Cambiar contraseña
                   </Button>
                 )}
-                <Button submitFor="button" action={closeUserForm}>
+                <Button tag="close" submitFor="button" action={closeUserForm}>
                   Cerrar
                 </Button>
               </div>

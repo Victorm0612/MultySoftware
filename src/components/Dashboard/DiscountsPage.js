@@ -15,19 +15,12 @@ import IconTrash from "../UI/Icons/IconTrash";
 import IconDetails from "../UI/Icons/IconDetails";
 import SelectForm from "../Form/SelectForm";
 const DiscountsPage = () => {
-  const TITLES = [
-    "#",
-    "Titulo",
-    "Descripción",
-    "Inicio",
-    "Final",
-    "Valor",
-    "Estado",
-  ];
+  const TITLES = ["#", "Titulo", "Inicio", "Final", "Valor", "Estado"];
   const [discounts, setDiscounts] = useState(null);
   const [action, setAction] = useState("get");
   const [discountForm, setDiscountForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [keyWord, setKeyWord] = useState("");
   const { token } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
     isError: false,
@@ -266,6 +259,10 @@ const DiscountsPage = () => {
     setDiscountStatus(discount.discount_status ? 0 : 1);
   };
 
+  const changeKeyWord = (e) => {
+    setKeyWord(e.target.value);
+  };
+
   const submitDiscount = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -304,17 +301,26 @@ const DiscountsPage = () => {
                     errorMessage="Ingresa un nombre válido."
                     disabled={action === "details"}
                   />
-                  <InputForm
-                    id="description__input"
-                    labelMessage="Descripción"
-                    change={changeDiscountDescription}
-                    value={discountDescription}
-                    blur={discountDescriptionBlurHandler}
-                    typeInput="text"
-                    inputHasError={discountDescriptionHasError}
-                    errorMessage="Ingresa una descripción válida."
-                    disabled={action === "details"}
-                  />
+                  {action === "details" ? (
+                    <div style={{ marginBottom: "0.5rem" }}>
+                      <label>Descripción</label>
+                      <p style={{ margin: "0 0.5rem" }}>
+                        {discountDescription}
+                      </p>
+                    </div>
+                  ) : (
+                    <InputForm
+                      id="description__input"
+                      labelMessage="Descripción"
+                      change={changeDiscountDescription}
+                      value={discountDescription}
+                      blur={discountDescriptionBlurHandler}
+                      typeInput="text"
+                      inputHasError={discountDescriptionHasError}
+                      errorMessage="Ingresa una descripción válida."
+                      disabled={action === "details"}
+                    />
+                  )}
                   <InputForm
                     id="value__input"
                     labelMessage="Valor"
@@ -388,7 +394,11 @@ const DiscountsPage = () => {
                     {optionsAction[action]}
                   </Button>
                 )}
-                <Button submitFor="button" action={closeDiscountForm}>
+                <Button
+                  tag="close"
+                  submitFor="button"
+                  action={closeDiscountForm}
+                >
                   Cancelar
                 </Button>
               </div>
@@ -397,6 +407,12 @@ const DiscountsPage = () => {
           </Modal>
           <h1>Descuentos Disponibles</h1>
           <div className={classes.discount_page__header}>
+            <input
+              value={keyWord}
+              onChange={changeKeyWord}
+              className={classes.search_item}
+              placeholder="Buscar"
+            />
             <Button
               submitFor="button"
               action={(e) => {
@@ -411,39 +427,45 @@ const DiscountsPage = () => {
             {discounts.length === 0 ? (
               <tr></tr>
             ) : (
-              discounts.map((discount, index) => (
-                <tr key={index}>
-                  <td>{discount.id}</td>
-                  <td>{discount.discount_name}</td>
-                  <td>{discount.discount_description}</td>
-                  <td>{discount.ini_date.split("T")[0]}</td>
-                  <td>{discount.final_date.split("T")[0]}</td>
-                  <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>
-                  <td className={classes.product_list__table__edit}>
-                    <IconEdit
-                      action={() => {
-                        setAction("update");
-                        setDiscountData(discount);
-                        setDiscountForm(true);
-                      }}
-                    />
-                    <IconTrash
-                      action={() => {
-                        setAction("delete");
-                        setDiscountData(discount);
-                        setDiscountForm(true);
-                      }}
-                    />
-                    <IconDetails
-                      action={() => {
-                        setAction("details");
-                        setDiscountData(discount);
-                        setDiscountForm(true);
-                      }}
-                    />
-                  </td>
-                </tr>
-              ))
+              discounts
+                .filter((discount) =>
+                  discount.discount_name
+                    .trim()
+                    .toLowerCase()
+                    .includes(keyWord.trim().toLowerCase())
+                )
+                .map((discount, index) => (
+                  <tr key={index}>
+                    <td>{discount.id}</td>
+                    <td>{discount.discount_name}</td>
+                    <td>{discount.ini_date.split("T")[0]}</td>
+                    <td>{discount.final_date.split("T")[0]}</td>
+                    <td>{discount.discount_status ? "Activo" : "Inactivo"}</td>
+                    <td className={classes.product_list__table__edit}>
+                      <IconEdit
+                        action={() => {
+                          setAction("update");
+                          setDiscountData(discount);
+                          setDiscountForm(true);
+                        }}
+                      />
+                      <IconTrash
+                        action={() => {
+                          setAction("delete");
+                          setDiscountData(discount);
+                          setDiscountForm(true);
+                        }}
+                      />
+                      <IconDetails
+                        action={() => {
+                          setAction("details");
+                          setDiscountData(discount);
+                          setDiscountForm(true);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))
             )}
           </InventoryTable>
         </Fragment>
