@@ -14,13 +14,16 @@ import AccountDisabled from "./pages/Auth/AccountDisabled";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import NewPassword from "./pages/Auth/NewPassword";
 import Menu from "./pages/Menu";
+import Order from "./pages/Order";
 
 const App = () => {
   const [show, setShow] = useState(false);
   const openModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const { isLogged, typeUser, userStatus } = useSelector((state) => state.auth);
-  const { totalAmount } = useSelector((state) => state.cart);
+  const { isLogged, typeUser, userStatus, clientDocId } = useSelector(
+    (state) => state.auth
+  );
+  const { totalAmount, orderRequested } = useSelector((state) => state.cart);
   const accountDisabled = isLogged && !userStatus;
   return (
     <Fragment>
@@ -63,10 +66,22 @@ const App = () => {
           {isLogged && <Dashboard />}
           {!isLogged && <Redirect to="/" />}
         </Route>
-        <Route path="/menu">
+        <Route path="/menu" exact>
           {accountDisabled && <Redirect to="/account-disabled" />}
-          {typeUser === 1 && <Menu />}
-          {typeUser !== 1 && <Redirect to="/" />}
+          {isLogged && <Menu />}
+          {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/order">
+          {accountDisabled && <Redirect to="/account-disabled" />}
+          {orderRequested &&
+            totalAmount !== 0 &&
+            typeUser === 1 &&
+            clientDocId.length === 0 && <Order />}
+          {orderRequested &&
+            totalAmount !== 0 &&
+            typeUser > 1 &&
+            clientDocId.length > 0 && <Order />}
+          {totalAmount === 0 && <Redirect to="/" />}
         </Route>
         <Route path="/reset-password/:token">
           <NewPassword />

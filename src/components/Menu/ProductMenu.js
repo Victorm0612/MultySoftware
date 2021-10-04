@@ -17,9 +17,11 @@ const ProductMenu = (props) => {
     e.preventDefault();
     dispatch(
       cartActions.addProduct({
-        id: props.id,
+        product_id: props.id,
         pro_name: props.title,
         price: props.price,
+        tax: props.tax,
+        discounts: props.discounts,
         amount: 1,
       })
     );

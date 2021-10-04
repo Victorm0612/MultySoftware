@@ -34,16 +34,17 @@ export async function getOnePayment(req, res) {
 }
 
 export async function create(req, res) {
-  const { pay_description, pay_date, pay_time, amount, pay_status, bill_id } = req.body;
+  const { pay_description, pay_date, pay_time, amount, pay_status, bill_id } =
+    req.body;
   try {
     let newPayment = await models.Payment.create({
       pay_description,
       pay_date,
       pay_time,
-      pay_type,
       amount,
+      payed_status: false,
       pay_status,
-      bill_id
+      bill_id,
     });
     if (newPayment) {
       res.json({
@@ -61,10 +62,18 @@ export async function create(req, res) {
 
 export async function updatePayment(req, res) {
   const { id } = req.params;
-  const { pay_description, pay_date, pay_time, amount, pay_status, bill_id } = req.body;
+  const { pay_description, pay_date, pay_time, amount, pay_status, bill_id } =
+    req.body;
 
   const paymentFound = await models.Payment.findAll({
-    attributes: ["pay_description", "pay_date", "pay_time", "amount", "pay_status", "bill_id"],
+    attributes: [
+      "pay_description",
+      "pay_date",
+      "pay_time",
+      "amount",
+      "pay_status",
+      "bill_id",
+    ],
     where: {
       id: id,
     },
@@ -78,7 +87,7 @@ export async function updatePayment(req, res) {
           pay_time,
           amount,
           pay_status,
-          bill_id
+          bill_id,
         },
         {
           where: {

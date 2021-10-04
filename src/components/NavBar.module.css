@@ -87,9 +87,9 @@
   }
 }
 
-.main_nav a {
+.main_nav a,
+.main_nav button {
   text-decoration: none;
-  color: white;
   font-weight: bold;
   display: inline-block;
 }
@@ -110,7 +110,6 @@
 
 .mobile_icon:hover,
 .mobile_icon svg:hover {
-  color: white;
   background-color: #ec8005;
   border-color: white;
 }
@@ -154,14 +153,6 @@
 @media (min-width: 40rem) {
   .main_nav {
     display: block;
-  }
-  .main_nav ul {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .main_nav a {
-    margin: 0 0.3rem;
   }
 
   .mobile_icon {

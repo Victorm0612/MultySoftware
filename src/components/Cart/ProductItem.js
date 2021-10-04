@@ -9,7 +9,20 @@ const ProductItem = (props) => {
 
   const increaseAmount = (e) => {
     e.preventDefault();
-    dispatch(cartActions.increaseAmount(props.id));
+    if (amount === 0) {
+      dispatch(
+        cartActions.addProduct({
+          product_id: props.id,
+          pro_name: props.title,
+          price: props.price,
+          tax: props.tax,
+          discounts: props.discounts,
+          amount: 1,
+        })
+      );
+    } else {
+      dispatch(cartActions.increaseAmount(props.id));
+    }
     setAmount((prevState) => {
       return prevState + 1;
     });
@@ -17,8 +30,10 @@ const ProductItem = (props) => {
 
   const decreaseAmount = (e) => {
     e.preventDefault();
+    if (amount === 0) return;
     if (amount === 1) {
       props.onRemove(props.id);
+      setAmount(0);
       return;
     }
     setAmount((prevState) => {
@@ -30,15 +45,15 @@ const ProductItem = (props) => {
     <li className={classes["list-product"]}>
       <h2>{props.title}</h2>
       <div>
-        <h4>
+        <h5>
           $
           {new Intl.NumberFormat("es-CO", {
             maximumSignificantDigits: 3,
           }).format(props.price)}
-        </h4>
+        </h5>
         <div className={classes["list-product__amount"]}>
           <Button action={decreaseAmount}>-</Button>
-          <h4>x{amount}</h4>
+          <h6>x{amount}</h6>
           <Button action={increaseAmount}>+</Button>
         </div>
       </div>

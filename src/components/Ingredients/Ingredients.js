@@ -54,7 +54,7 @@ const Ingredients = (props) => {
         <Button data-test="button-add" action={sendIngredients}>
           Agregar Ingredientes
         </Button>
-        <Button data-test="button-cancel" action={props.closeList}>
+        <Button tag="close" data-test="button-cancel" action={props.closeList}>
           Cancelar
         </Button>
       </div>

@@ -152,6 +152,7 @@ const MenuPage = () => {
                       categories={product.Category}
                       image={product.pro_image}
                       price={product.price}
+                      tax={product.percentage_tax}
                       description={product.pro_description}
                       productStatus={product.pro_status}
                     />

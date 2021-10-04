@@ -1,0 +1,93 @@
+.body_page {
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.order_page {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.checkout {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20rem;
+  padding: 2rem 0;
+  width: 25rem;
+  background-color: white;
+}
+
+.img_header {
+  display: block;
+  margin: 0 auto;
+}
+
+.label_select {
+  font-weight: 700;
+  margin: 0rem 0.5rem;
+}
+
+.order__input select {
+  width: 100%;
+  margin-right: 2rem !important;
+}
+
+.textarea_order {
+  font-family: inherit;
+  margin: 0.5rem 0.5rem;
+  border-radius: 10px;
+  outline: none !important;
+  border: 2px solid rgb(230, 155, 17);
+}
+
+.checkout h3 {
+  font-weight: 700;
+  text-align: center;
+}
+
+.list_products {
+  list-style: none;
+  padding: 0;
+}
+
+.product_item {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  margin: 0 1rem;
+}
+
+.product_item h5 {
+  font-weight: 700;
+}
+
+.badge {
+  margin-right: 0.5rem;
+  background-color: rgb(243, 138, 1) !important;
+}
+
+.product_item__amount {
+  display: flex;
+  justify-content: space-between;
+}
+
+.product__button {
+  width: 100%;
+  text-align: center;
+}
+
+.product__button button {
+  width: 15rem;
+  display: block;
+  margin: 0 auto;
+}
+
+.method_pay {
+  display: flex;
+}
+
+.method_pay p {
+  margin: 0 0.5rem;
+}

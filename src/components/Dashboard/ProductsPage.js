@@ -466,7 +466,9 @@ const ProductsPage = () => {
                     ))}
                   <div className={productClasses.discount_buttons}>
                     <Button>Agregar Descuentos</Button>
-                    <Button action={closeDiscountsList}>Cancelar</Button>
+                    <Button tag="close" action={closeDiscountsList}>
+                      Cancelar
+                    </Button>
                   </div>
                 </div>
               </form>
@@ -646,7 +648,11 @@ const ProductsPage = () => {
                       {optionsAction[action]}
                     </Button>
                   )}
-                  <Button submitFor="button" action={closeProductForm}>
+                  <Button
+                    tag="close"
+                    submitFor="button"
+                    action={closeProductForm}
+                  >
                     {action === "details" ? "Cerrar" : "Cancelar"}
                   </Button>
                 </div>

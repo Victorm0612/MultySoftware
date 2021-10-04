@@ -5,7 +5,7 @@ const Button = (props) => {
       onClick={props.action}
       type={props.submitFor}
       disabled={props.isInvalid}
-      className={classes.button}
+      className={props.tag === "close" ? classes.close_button : classes.button}
     >
       {props.children}
     </button>
