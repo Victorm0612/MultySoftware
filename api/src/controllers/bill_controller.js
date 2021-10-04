@@ -35,7 +35,6 @@ export async function getBills(req, res) {
     }
 
     if (user.user_type != 1 && user.user_restaurant != 1) {
-      console.log(user.user_restaurant);
       const bills = await models.Bill.findAll({
         include: [
           {

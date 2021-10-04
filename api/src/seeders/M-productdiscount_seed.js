@@ -15,6 +15,18 @@ module.exports = {
         discount_id: 1,
         product_id: 3,
       },
+      {
+        discount_id: 5,
+        product_id: 4, 
+      },
+      {
+        discount_id: 6,
+        product_id: 4, 
+      },
+      {
+        discount_id: 5,
+        product_id: 5,
+      }
     ])
   },
 

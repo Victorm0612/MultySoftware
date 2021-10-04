@@ -35,12 +35,12 @@ export async function getPayment(req, res) {
         include: {
           model: models.Bill,
           include: {
-            model: models.Sale,
-            where: {
-              restaurant_id: user.user_restaurant,
-            },
-          },
+            model: models.Sale,            
+          }
         },
+        where: {
+          '$Bill.Sale.restaurant_id$': user.user_restaurant,
+        }
       });
 
       return res.json({
