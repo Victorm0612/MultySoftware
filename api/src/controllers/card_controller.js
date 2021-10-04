@@ -83,7 +83,7 @@ export async function create(req, res) {
         message: "Invalid owner",
       });
     }
-    let newCard = await model.Card.create({
+    let newCard = await models.Card.create({
       card_number,
       owner_id,
       exp_date,
@@ -114,7 +114,7 @@ export async function updateCard(req, res) {
         id: decoded.id,
       },
     });
-    const cardFound = await model.Card.findOne({
+    const cardFound = await models.Card.findOne({
       where: {
         card_number: card_number,
       },
@@ -169,22 +169,22 @@ export async function deleteCard(req, res) {
     const cardFound = await models.Card.findOne({
       where: {
         card_number: card_number,
-      }
-    })
+      },
+    });
 
-    if(!cardFound) {
+    if (!cardFound) {
       return res.status(404).json({
         message: "Card not found",
-      })
+      });
     }
 
-    if(cardFound.owner_id != user.document_id){
+    if (cardFound.owner_id != user.document_id) {
       return res.status(403).json({
-        message: "You're not allowed to do that"
-      })
+        message: "You're not allowed to do that",
+      });
     }
 
-    const deleteRowCount = model.Card.destroy({
+    const deleteRowCount = models.Card.destroy({
       where: {
         card_number: card_number,
       },
@@ -196,7 +196,6 @@ export async function deleteCard(req, res) {
         count: deleteRowCount,
       });
     }
-
   } catch (error) {
     res.status(500).json({
       message: "Error deleting Card" + error,
