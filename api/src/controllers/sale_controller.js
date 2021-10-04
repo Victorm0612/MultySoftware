@@ -233,28 +233,22 @@ export async function create(req, res) {
                 model: models.Product,
                 where: {
                   id: oneProduct.product.id,
-                }
+                },
               },
               where: {
                 [Op.and]: [
                   { ini_date: { [Op.lte]: today } },
                   { final_date: { [Op.gte]: today } },
                 ],
-              }
-            })
+              },
+            });
             let discount_value;
-            //If there are more than one valid discount, determine the discount to use depending on the higher discount
             if (discount.length > 0) {
-              let higher = 0;
-              for (const oneDiscount of discount) {                
-                higher =
-                  oneDiscount.discount_value >= higher
-                    ? oneDiscount.discount_value
-                    : higher;
-              }
-              discount_value = higher;
-            } else if (discount.length == 1) {
-              discount_value = discount.discount_value;
+              discount_value = Math.max(
+                ...discount.map((item) => item.discount_value)
+              );
+            } else {
+              discount_value = 0;
             }
 
             const ingredients = await oneProduct.product.getIngredients({
@@ -278,7 +272,10 @@ export async function create(req, res) {
             }
             //Executing operations in order to get the values for the join table
             const amount = oneProduct.amount;
-            let totalIva = oneProduct.product.price * 0.19 * amount;
+            let totalIva =
+              oneProduct.product.price *
+              oneProduct.product.percentage_tax *
+              amount;
             totalIvaBill += totalIva;
             let subtotal = oneProduct.product.price * amount;
             subtotalBill += subtotal;
@@ -463,34 +460,29 @@ export async function updateSale(req, res) {
             const today = new Date(Date.now());
 
             //Getting discounts of the product that applies for today's date
+
             const discount = await models.Discount.findAll({
               include: {
                 model: models.Product,
                 where: {
                   id: oneProduct.product.id,
-                }
+                },
               },
               where: {
                 [Op.and]: [
                   { ini_date: { [Op.lte]: today } },
                   { final_date: { [Op.gte]: today } },
                 ],
-              }
-            })
+              },
+            });
             let discount_value;
             //If there are more than one valid discount, determine the discount to use depending on the higher discount
             if (discount.length > 0) {
-              let higher = 0;
-              for (const oneDiscount of discount) {
-                
-                higher =
-                  oneDiscount.discount_value >= higher
-                    ? oneDiscount.discount_value
-                    : higher;
-              }
-              discount_value = higher;
-            } else if (discount.length == 1) {
-              discount_value = discount.discount_value;
+              discount_value = Math.max(
+                ...discount.map((item) => item.discount_value)
+              );
+            } else {
+              discount_value = 0;
             }
             const ingredients = await oneProduct.product.getIngredients({
               joinTableAttributes: ["amount"],

@@ -11,7 +11,7 @@ module.exports = {
         price: 18500,
         category_id: 3,
         pro_status: true,
-        percentage_tax: 19,
+        percentage_tax: 0.19,
       },
       {
         pro_name: "PapasChicks",
@@ -21,7 +21,7 @@ module.exports = {
         price: 10000,
         category_id: 2,
         pro_status: true,
-        percentage_tax: 19,
+        percentage_tax: 0.19,
       },
       {
         pro_name: "CocaCola personal",
@@ -31,7 +31,7 @@ module.exports = {
         price: 3500,
         category_id: 1,
         pro_status: true,
-        percentage_tax: 19,
+        percentage_tax: 0.19,
       },
       {
         pro_name: "Gato feli",
@@ -41,7 +41,7 @@ module.exports = {
         price: 28000,
         category_id: 1,
         pro_status: true,
-        percentage_tax: 19,
+        percentage_tax: 0.19,
       },
       {
         pro_name: "Gato asustao",
@@ -51,7 +51,7 @@ module.exports = {
         price: 17000,
         category_id: 1,
         pro_status: true,
-        percentage_tax: 19,
+        percentage_tax: 0.19,
       },
     ]);
   },

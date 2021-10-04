@@ -21,6 +21,26 @@ export async function getProducts(req, res) {
         },
       ],
     });
+
+    for (const oneProduct of products) {
+      const ingredients = await oneproduct.getIngredients();
+
+      for (const oneIngredient of ingredients) {
+        if (oneIngredient.amount == 0) {
+          await models.Product.update(
+            {
+              pro_status: false,
+            },
+            {
+              where: {
+                id: oneProduct.id,
+              },
+            }
+          );
+        }
+      }
+    }
+
     res.json({
       data: products,
     });
