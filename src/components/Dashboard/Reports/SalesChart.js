@@ -119,7 +119,6 @@ const SalesChart = () => {
     for (let sale of sales) {
       if (!sale.sale_date) break;
       const saleMonth = new Date(sale.sale_date).getMonth(); // starting at 0 => January => 0
-      console.log(saleMonth);
       chartDataPoints[saleMonth].value += 1;
     }
   }

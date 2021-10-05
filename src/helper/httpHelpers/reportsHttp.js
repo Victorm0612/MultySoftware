@@ -60,3 +60,39 @@ export const getProductSales = async (id, initDate, finalDate) => {
     return error.response.data.message;
   }
 };
+
+export const getTopProducts = async () => {
+  try {
+    const { data: response } = await axios.get("product/mas_vendidos/");
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getBottomProducts = async () => {
+  try {
+    const { data: response } = await axios.get("product/menos_vendidos/");
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getMostSeller = async () => {
+  try {
+    const { data: response } = await axios.get("restaurant/mostSeller/");
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getLessSeller = async () => {
+  try {
+    const { data: response } = await axios.get("restaurant/lessSeller/");
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};

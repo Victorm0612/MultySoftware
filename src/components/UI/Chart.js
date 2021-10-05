@@ -8,13 +8,18 @@ const Chart = (props) => {
   const totalMaximum = Math.max(...dataPointValues);
 
   return (
-    <div className={classes.chart}>
+    <div
+      className={`${classes.chart} ${
+        props.isHorizontal ? classes.horizontal : classes.vertical
+      }`}
+    >
       {props.dataPoints.map((dataPoint) => (
         <ChartBar
           key={dataPoint.label}
           value={dataPoint.value}
           maxValue={totalMaximum}
           label={dataPoint.label}
+          isHorizontal={props.isHorizontal}
         />
       ))}
     </div>
