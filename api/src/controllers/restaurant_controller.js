@@ -38,7 +38,8 @@ export async function create(req, res) {
     restaurant_name,
     restaurant_address,
     phone,
-    attention_time,
+    ini_attention_time,
+    final_attention_time,
     restaurant_status,
   } = req.body;
   try {
@@ -46,7 +47,8 @@ export async function create(req, res) {
       restaurant_name,
       restaurant_address,
       phone,
-      attention_time,
+      ini_attention_time,
+      final_attention_time,
       restaurant_status,
     });
     if (newRestaurant) {
@@ -69,17 +71,11 @@ export async function updateRestaurant(req, res) {
     restaurant_name,
     restaurant_address,
     phone,
-    attention_time,
+    ini_attention_time,
+    final_attention_time,
     restaurant_status,
   } = req.body;
-  const restaurantFound = await models.Restaurant.findAll({
-    attributes: [
-      "restaurant_name",
-      "restaurant_address",
-      "phone",
-      "attention_time",
-      "restaurant_status",
-    ],
+  const restaurantFound = await models.Restaurant.findAll({   
     where: {
       id: id,
     },
@@ -91,7 +87,8 @@ export async function updateRestaurant(req, res) {
           restaurant_name,
           restaurant_address,
           phone,
-          attention_time,
+          ini_attention_time,
+          final_attention_time,
           restaurant_status,
         },
         {

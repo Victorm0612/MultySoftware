@@ -141,6 +141,7 @@ export async function create(req, res) {
     gender,
     phone,
     birthday,
+    address,
     user_type,
     user_status,
     email,
@@ -155,6 +156,7 @@ export async function create(req, res) {
       gender,
       phone,
       birthday,
+      address,
       user_type,
       user_status,
       email,
@@ -184,6 +186,7 @@ export async function updateUser(req, res) {
     gender,
     phone,
     birthday,
+    address,
     user_type,
   } = req.body;
 
@@ -196,6 +199,7 @@ export async function updateUser(req, res) {
       "gender",
       "phone",
       "birthday",
+      "address",
       "user_type",
     ],
     where: {
@@ -215,6 +219,7 @@ export async function updateUser(req, res) {
         gender,
         phone,
         birthday,
+        address,
         user_type: user_type_req === 3 ? user_type : userFound.user_type,
       },
       {
