@@ -14,7 +14,7 @@ import {
 
 router.get('/', verifyTokenIsValid, getSales);
 router.get('/:id', verifyTokenIsValid, getOneSale);
-router.get('/dateRange/sales', verifyTokenIsValid, getSalesDateRange)
+router.post('/dateRange/sales', verifyTokenIsValid, getSalesDateRange)
 router.post('/', verifyTokenIsValid, create);
 router.put('/:id', verifyAccess, updateSale);
 router.delete('/:id', verifyAccess, deleteSale);
