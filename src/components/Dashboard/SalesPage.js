@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
 import IconDetails from "../UI/Icons/IconDetails";
-import IconEdit from "../UI/Icons/IconEdit";
 import IconTrash from "../UI/Icons/IconTrash";
 import InventoryTable from "../UI/InventoryTable";
 import SpinnerLoading from "../UI/SpinnerLoading";
@@ -8,11 +7,7 @@ import classes from "./shared.module.css";
 import Button from "../UI/Button";
 import Modal from "../UI/Modal";
 import { useSelector } from "react-redux";
-import {
-  deleteSale,
-  getSales,
-  updateSale,
-} from "../../helper/httpHelpers/saleHttp";
+import { deleteSale, getSales } from "../../helper/httpHelpers/saleHttp";
 import { sliceArray } from "../../helper/sliceArray";
 import IconPrinter from "../UI/Icons/IconPrinter";
 import SalesForm from "./Sales/SalesForm";
@@ -66,6 +61,7 @@ const SalesPage = () => {
     const getData = async () => {
       try {
         const data = await getSales(token);
+        console.log(data);
         setSales(sliceArray(data));
       } catch (error) {
         console.error(error);
@@ -94,7 +90,7 @@ const SalesPage = () => {
     if (isLoading) {
       actionToDo[action]();
     }
-  }, [isLoading, action, token]);
+  }, [isLoading, action, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={classes.sales}>
@@ -148,7 +144,7 @@ const SalesPage = () => {
                     <td>{sale.sale_date.split("T")[0]}</td>
                     <td>{sale.Restaurant.restaurant_name}</td>
                     <td>{sale.sale_status ? "Activo" : "Inactivo"}</td>
-                    <td>{sale.SaleItems[0].subtotal}</td>
+                    <td>{sale.Products[0].SaleItem.subtotal}</td>
                     <td className={classes.product_list__table__edit}>
                       <IconTrash
                         action={() => {

@@ -42,9 +42,19 @@ export const getAllSales = async (
   }
 };
 
-export const getProductSales = async (id) => {
+export const getProductSales = async (id, initDate, finalDate) => {
+  let data = {
+    ini_date: initDate,
+    final_date: finalDate,
+  };
+  if (!initDate && !finalDate) {
+    data = null;
+  }
   try {
-    const { data: response } = await axios.get(`product/ultimos6Meses/${id}`);
+    const { data: response } = await axios.post(
+      `product/ultimos6Meses/${id}`,
+      data
+    );
     return response.data;
   } catch (error) {
     return error.response.data.message;

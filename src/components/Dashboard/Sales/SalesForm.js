@@ -164,7 +164,7 @@ const SalesForm = (props) => {
 
     if (!isLoading) return;
     getData();
-  }, [isLoading]);
+  }, [isLoading]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <Fragment>
       {showProductsCartForm ? (

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Fragment } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { axiosInstance as axios } from "../../../config/axiosConfig";
 import InputForm from "../../Form/InputForm";
 import SelectForm from "../../Form/SelectForm";
 import Card from "../../UI/Card";
@@ -60,11 +59,20 @@ const SalesChart = () => {
       : new Date(finalDate).getMonth();
 
   useEffect(() => {
-    const getData = async () => {
+    const getProducts = async () => {
       try {
         const allProducts = await getAllProducts();
         setProducts([{ id: 0, pro_name: "Todos" }, ...allProducts]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getProducts();
+  }, []);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
         if (+productSelected === 0) {
           const allSales = await getAllSales(
             optionSelected,
@@ -76,19 +84,21 @@ const SalesChart = () => {
           );
           setSales(allSales);
         } else {
-          const parcialSales = await getProductSales(productSelected);
+          const parcialSales = await getProductSales(
+            productSelected,
+            initDate,
+            finalDate
+          );
           setSales(parcialSales);
         }
       } catch (error) {
-        if (!error.includes("Not sales found in that range")) {
-          console.error(error);
-        }
+        console.log(error);
       } finally {
         setIsLoading(false);
       }
     };
     getData();
-  }, [initDate, finalDate, token, optionSelected]);
+  }, [initDate, finalDate, token, optionSelected, productSelected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chartDataPoints = [
     { label: "Ene", value: 0 },
@@ -105,9 +115,13 @@ const SalesChart = () => {
     { label: "Dic", value: 0 },
   ];
 
-  for (const sale of sales) {
-    const saleMonth = new Date(sale.sale_date).getMonth(); // starting at 0 => January => 0
-    chartDataPoints[saleMonth].value += 1;
+  if (sales.length > 0) {
+    for (let sale of sales) {
+      if (!sale.sale_date) break;
+      const saleMonth = new Date(sale.sale_date).getMonth(); // starting at 0 => January => 0
+      console.log(saleMonth);
+      chartDataPoints[saleMonth].value += 1;
+    }
   }
 
   return (
@@ -131,7 +145,7 @@ const SalesChart = () => {
                 change={changeHandlerOptionSelected}
                 value={optionSelected}
                 labelMessage="Seleccionar Fecha"
-                list={+productSelected === 0 ? options : options.slice(0, 1)}
+                list={options}
                 expression={(value, index) => index}
               />
               <SelectForm

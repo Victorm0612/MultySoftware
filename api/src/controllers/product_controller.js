@@ -452,7 +452,7 @@ export async function getTop20(req, res) {
       order: sequelize.literal("suma DESC"),
     });
 
-    console.log(allTopProducts.length)
+    console.log(allTopProducts.length);
 
     if (allTopProducts.length > 0) {
       return res.json({
@@ -524,7 +524,7 @@ export async function last6Months(req, res) {
   if (!final_date && !ini_date) {
     ini_date = new Date(Date.now());
     final_date = new Date(Date.now());
-    final_date.setMonth(ini_date.getMonth() - 6);
+    ini_date.setMonth(final_date.getMonth() - 6);
   } else {
     final_date = new Date(final_date);
     ini_date = new Date(ini_date);
@@ -539,7 +539,7 @@ export async function last6Months(req, res) {
     },
     where: {
       sale_date: {
-        [Op.between]: [final_date, ini_date],
+        [Op.between]: [ini_date, final_date],
       },
     },
   });

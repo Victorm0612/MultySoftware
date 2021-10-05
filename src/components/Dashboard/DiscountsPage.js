@@ -250,11 +250,12 @@ const DiscountsPage = () => {
         (action === "update" ? discountIdIsValid : true);
 
   const setDiscountData = (discount) => {
+    console.log(discount);
     setDiscountId(discount.id);
     setDiscountName(discount.discount_name);
     setDiscountDescription(discount.discount_description);
-    setDiscountInitDate(discount.ini_date);
-    setDiscountEndDate(discount.final_date);
+    setDiscountInitDate(discount.ini_date.split("T")[0]);
+    setDiscountEndDate(discount.final_date.split("T")[0]);
     setDiscountValue(discount.discount_value * 100);
     setDiscountStatus(discount.discount_status ? 0 : 1);
   };
@@ -338,30 +339,13 @@ const DiscountsPage = () => {
                     change={changeDiscountStatus}
                     blur={discountStatusBlurHandler}
                     value={discountStatus}
+                    hasError={discountStatusHasError}
                     list={["Activo", "Inactivo"]}
-                    accesKey="cat_name"
                     disabled={action === "details"}
                     labelMessage="Estado"
                     errorMessage="Seleccione una opción válida."
                     expression={(value, index) => index}
                   />
-                  <label htmlFor="status__input">Estado</label>
-                  <select
-                    onChange={changeDiscountStatus}
-                    onBlur={discountStatusBlurHandler}
-                    value={discountStatus}
-                    required
-                    id="status__input"
-                    disabled={action === "details"}
-                  >
-                    <option value={0}>Activo</option>
-                    <option value={1}>Inactivo</option>
-                  </select>
-                  {discountStatusHasError && (
-                    <p className={classes.error_message}>
-                      Seleccione una opción válida.
-                    </p>
-                  )}
                   <InputForm
                     id="initDate__input"
                     labelMessage="Fecha de inicio"
