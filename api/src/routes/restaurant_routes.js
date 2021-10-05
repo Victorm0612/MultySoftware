@@ -18,5 +18,5 @@ router.post("/", verifyAccess, create);
 router.put("/:id", verifyAccess, updateRestaurant);
 router.delete("/:id", verifyAccess, deleteRestaurant);
 router.get("/mostSeller/", mostSeller);
-router.get("/lestSeller/", lessSeller);
+router.get("/lessSeller/", lessSeller);
 export default router;

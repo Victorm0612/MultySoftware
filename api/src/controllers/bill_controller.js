@@ -143,7 +143,6 @@ export async function getOneBill(req, res) {
 export async function create(req, res) {
   try {
     const {
-      nit,
       sale_id,
       bill_time,
       bill_date,
@@ -193,7 +192,7 @@ export async function create(req, res) {
     }
 
     let newBill = await models.Bill.create({
-      nit,
+      nit: 966447851,
       sale_id,
       bill_time,
       bill_date,
@@ -221,7 +220,6 @@ export async function updateBill(req, res) {
   try {
     const { id } = req.params;
     const {
-      nit,
       sale_id,
       bill_time,
       bill_date,
@@ -268,18 +266,7 @@ export async function updateBill(req, res) {
       }
     }
 
-    const billFound = await models.Bill.findOne({
-      attributes: [
-        "nit",
-        "sale_id",
-        "bill_time",
-        "bill_date",
-        "subtotal",
-        "totalIva",
-        "total_discount",
-        "total_payment",
-        "bill_status",
-      ],
+    const billFound = await models.Bill.findOne({      
       where: {
         id: id,
       },
@@ -287,7 +274,6 @@ export async function updateBill(req, res) {
     if (billFound) {
       await models.Bill.update(
         {
-          nit,
           sale_id,
           bill_time,
           bill_date,
