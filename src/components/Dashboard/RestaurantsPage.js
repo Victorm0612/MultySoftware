@@ -129,6 +129,8 @@ const RestaurantsPage = () => {
         message = error;
         isError = true;
       } finally {
+        setShowForm(false);
+        setAction("get");
         setIsLoading(false);
         setMessageBox({
           message,

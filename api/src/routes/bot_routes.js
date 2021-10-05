@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
 
-import { processMessage } from '../controllers/bot_controller'
+import { processMessage } from "../controllers/bot_controller";
 
-router.get('/', processMessage)
+router.post("/", processMessage);
 
 export default router;
