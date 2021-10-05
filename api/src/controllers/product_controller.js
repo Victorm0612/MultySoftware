@@ -23,7 +23,7 @@ export async function getProducts(req, res) {
     });
 
     for (const oneProduct of products) {
-      const ingredients = await oneproduct.getIngredients();
+      const ingredients = await oneProduct.getIngredients();
 
       for (const oneIngredient of ingredients) {
         if (oneIngredient.amount == 0) {
@@ -75,7 +75,7 @@ export async function getProductsByName(req, res) {
     });
 
     for (const oneProduct of products) {
-      const ingredients = await oneproduct.getIngredients();
+      const ingredients = await oneProduct.getIngredients();
 
       for (const oneIngredient of ingredients) {
         if (oneIngredient.amount == 0) {
