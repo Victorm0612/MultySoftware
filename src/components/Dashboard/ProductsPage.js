@@ -87,7 +87,7 @@ const ProductsPage = () => {
             price: productPrice,
             category_id: +productCategories,
             pro_status: +productStatus === 0 ? true : false,
-            percentage_tax: productTax,
+            percentage_tax: productTax / 100,
             discounts: productDiscounts,
             ingredients: ingredientProduct,
           },
@@ -113,7 +113,6 @@ const ProductsPage = () => {
       let discountsFixed = productDiscounts.map((disc) => ({
         discount_id: disc.id ? disc.id : disc.discount_id,
       }));
-      console.log(productStatus);
       try {
         await axios.put(
           `product/${productId}`,
@@ -129,7 +128,7 @@ const ProductsPage = () => {
                 : +productStatus === 0
                 ? true
                 : false,
-            percentage_tax: productTax,
+            percentage_tax: productTax / 100,
             discounts: discountsFixed,
             ingredients: ingredientProduct,
           },
@@ -317,6 +316,7 @@ const ProductsPage = () => {
         (action === "update" ? productIdIsValid : true);
 
   const setInputsForm = (product) => {
+    console.log(product);
     let ingredientsFixed = product.Ingredients.map((element) => ({
       ingredient_id: element.id,
       ingredient_name: element.ingredient_name,
@@ -331,7 +331,7 @@ const ProductsPage = () => {
     setProductDiscounts(product.Discounts);
     setIngredientProduct(ingredientsFixed);
     setProductValue(product.price);
-    setProductTax(product.percentage_tax);
+    setProductTax(product.percentage_tax * 100);
   };
 
   const onSetKeyWordProduct = (e) => {

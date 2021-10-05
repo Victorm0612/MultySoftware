@@ -61,7 +61,7 @@ const DiscountsPage = () => {
             ini_date: discountInitDate,
             final_date: discountEndDate,
             discount_status: +discountStatus === 0 ? true : false,
-            dis_value: discountValue,
+            dis_value: discountValue / 100,
           },
           { headers: { Authorization: token } }
         );
@@ -91,7 +91,7 @@ const DiscountsPage = () => {
             ini_date: discountInitDate,
             final_date: discountEndDate,
             discount_status: +discountStatus === 0 ? true : false,
-            dis_value: discountValue,
+            dis_value: discountValue / 100,
           },
           {
             headers: {
@@ -255,7 +255,7 @@ const DiscountsPage = () => {
     setDiscountDescription(discount.discount_description);
     setDiscountInitDate(discount.ini_date);
     setDiscountEndDate(discount.final_date);
-    setDiscountValue(discount.discount_value);
+    setDiscountValue(discount.discount_value * 100);
     setDiscountStatus(discount.discount_status ? 0 : 1);
   };
 
