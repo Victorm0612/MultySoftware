@@ -148,7 +148,7 @@ export async function mostSeller(req, res) {
 }
 
 export async function lessSeller(req, res) {
-  const lestSeller = await models.Sale.findAll({
+  const lessSeller = await models.Sale.findAll({
     attributes: [
       "restaurant_id",
       [sequelize.fn("count", sequelize.col("restaurant_id")), "sells"],
@@ -157,4 +157,8 @@ export async function lessSeller(req, res) {
     order: sequelize.literal("sells ASC"),
     limit: 1,
   });
+
+  res.json({
+    data: lessSeller
+  })
 }
