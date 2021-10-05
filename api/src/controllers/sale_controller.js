@@ -301,7 +301,7 @@ export async function create(req, res) {
           }
 
           const newBill = await models.Bill.create({
-            nit: 33333346,
+            nit: 966447851,
             sale_id: newSale.id,
             bill_time: newSale.sale_time,
             bill_date: newSale.sale_date,

@@ -9,6 +9,7 @@ import {
   getProducts,
   getProductsByName,
   updateProduct,
+  updateAllProductsIva,
   getTop20,
   getBottom20,
   last6Months,
@@ -20,8 +21,9 @@ router.get("/one/:id", getOneProduct);
 router.post("/", verifyAccess, create);
 router.put("/:id", verifyAccess, updateProduct);
 router.delete("/:id", verifyAccess, deleteProduct);
-router.get("/mas_vendidos/", getTop20);
-router.get("/menos_vendidos", getBottom20);
-router.post("/ultimos6Meses/:id", last6Months);
+router.post("/actualizarIva/", verifyAccess, updateAllProductsIva)
+router.get("/mas_vendidos/", verifyAccess, getTop20);
+router.get("/menos_vendidos", verifyAccess, getBottom20);
+router.post("/ultimos6Meses/:id", verifyAccess, last6Months);
 
 export default router;

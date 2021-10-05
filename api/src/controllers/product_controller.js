@@ -1,4 +1,6 @@
 import { sequelize } from "../models/index";
+import jwt from "jsonwebtoken";
+import config from "../config";
 
 const models = require("../models/index");
 const { Op, QueryTypes } = require("sequelize");
@@ -420,6 +422,47 @@ export async function deleteProduct(req, res) {
   }
 }
 
+export async function updateAllProductsIva(req, res) {
+  const { iva } = req.body;
+  try {    
+    const token = req.headers["authorization"];
+    const decoded = jwt.verify(token, config.SECRET);
+    const user = await models.User.findOne({
+      where: {
+        id: decoded.id,
+      },
+    });
+    
+    if(user.user_type != 1 && user.user_restaurant != 1){
+      return res.status(500).json({
+        message: "You're not allowed to update the iva"
+      })
+    }
+
+    const productFound = await models.Product.findAll()
+
+    if(productFound.length > 0){
+      productFound.forEach( async productFound => {
+        await models.Product.update({
+          percentage_tax: iva,
+        },
+        {
+          where: {
+            id: productFound.id,
+          }
+        })
+      })
+      return res.json({
+        message: "Iva updated successfully",
+      })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: " Error updating the iva " + error.message 
+    })
+  }
+}
+
 export async function getTop20(req, res) {
   try {
     const allTopProducts = await models.Product.findAll({
@@ -543,34 +586,6 @@ export async function last6Months(req, res) {
       },
     },
   });
-
-  // const allSells = await models.Product.findAll({
-  //   includeIgnoreAttributes: false,
-  //   include: [
-  //     {
-  //       model: models.Sale,
-  //       where: {
-  //         sale_date: {
-  //           [Op.between]: [last6Months, actualMonth],
-  //         },
-  //       },
-  //     },
-  //   ],
-  //   attributes: {
-  //     include: [
-  //       [
-  //         sequelize.literal(
-  //           'COUNT (DISTINCT ("Sales->SaleItem"."product_id"))'
-  //         ),
-  //         "sells",
-  //       ],
-  //     ],
-  //   },
-  //   where: {
-  //     id: id,
-  //   },
-  //   group: ["Product.id"],
-  // });
 
   if (allSells) {
     return res.json({
