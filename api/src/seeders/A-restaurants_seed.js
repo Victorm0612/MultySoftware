@@ -13,7 +13,7 @@ module.exports = {
       },
       {
         restaurant_name: "Ciudad de cali",
-        restaurant_address: "Cra 41e2 20-10",
+        restaurant_address: "Cra 85c ## 16-11, Cali, Valle del Cauca",
         phone: "3145232424",
         ini_attention_time: "07:00",
         final_attention_time: "22:00",
@@ -21,7 +21,7 @@ module.exports = {
       },  
       {
         restaurant_name: "Elca Ney",
-        restaurant_address: "Cra 50e1 30-30",
+        restaurant_address: "Cl. 48 ## 86 - 133, Cali, Valle del Cauca",
         phone: "3145232525",
         ini_attention_time: "07:00",
         final_attention_time: "22:00",
@@ -29,7 +29,7 @@ module.exports = {
       },
       {
         restaurant_name: "Chimi nangos",
-        restaurant_address: "Cra 6N 50-10",
+        restaurant_address: "Avenida 4N # 8N - 10, Cali",
         phone: "3145232626",
         ini_attention_time: "07:00",
         final_attention_time: "22:00",
@@ -37,7 +37,7 @@ module.exports = {
       },
       {
         restaurant_name: "Aveni Dario",
-        restaurant_address: "Cra 3N 24-13",
+        restaurant_address: "Cl. 9 ## 50B - 06, Cali, Valle del Cauca",
         phone: "3145232727",
         ini_attention_time: "07:00",
         final_attention_time: "22:00",

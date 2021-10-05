@@ -30,6 +30,9 @@ module.exports = {
       birthday: {
         type: Sequelize.DATE
       },
+      address: {
+        type: Sequelize.STRING
+      },
       user_type: {
         type: Sequelize.INTEGER
       },
