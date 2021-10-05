@@ -1,16 +1,19 @@
 import { useEffect } from "react";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { getBottomProducts } from "../../../helper/httpHelpers/reportsHttp";
 import Card from "../../UI/Card";
 import Chart from "../../UI/Chart";
+import classes from "./shared.module.css";
 const BottomList = () => {
+  const { token } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   const [bottomProducts, setBottomProducts] = useState([]);
 
   useEffect(() => {
     const getProductList = async () => {
       try {
-        const newList = await getBottomProducts();
+        const newList = await getBottomProducts(token);
         setBottomProducts(newList);
       } catch (error) {
         console.log(error);
@@ -19,7 +22,7 @@ const BottomList = () => {
       }
     };
     getProductList();
-  }, []);
+  }, [token]);
 
   let chartDataPoints = isLoading
     ? []
@@ -33,7 +36,7 @@ const BottomList = () => {
       {isLoading ? (
         <div></div>
       ) : (
-        <div>
+        <div className={classes.restaurant_info}>
           <h1
             style={{
               textAlign: "center",

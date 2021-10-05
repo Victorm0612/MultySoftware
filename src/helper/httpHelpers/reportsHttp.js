@@ -42,7 +42,7 @@ export const getAllSales = async (
   }
 };
 
-export const getProductSales = async (id, initDate, finalDate) => {
+export const getProductSales = async (id, initDate, finalDate, token) => {
   let data = {
     ini_date: initDate,
     final_date: finalDate,
@@ -53,7 +53,12 @@ export const getProductSales = async (id, initDate, finalDate) => {
   try {
     const { data: response } = await axios.post(
       `product/ultimos6Meses/${id}`,
-      data
+      data,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -61,36 +66,65 @@ export const getProductSales = async (id, initDate, finalDate) => {
   }
 };
 
-export const getTopProducts = async () => {
+export const getTopProducts = async (token) => {
   try {
-    const { data: response } = await axios.get("product/mas_vendidos/");
+    const { data: response } = await axios.get("product/mas_vendidos/", {
+      headers: {
+        Authorization: token,
+      },
+    });
     return response.data;
   } catch (error) {
     return error.response.data.message;
   }
 };
 
-export const getBottomProducts = async () => {
+export const getBottomProducts = async (token) => {
   try {
-    const { data: response } = await axios.get("product/menos_vendidos/");
+    const { data: response } = await axios.get("product/menos_vendidos/", {
+      headers: {
+        Authorization: token,
+      },
+    });
     return response.data;
   } catch (error) {
     return error.response.data.message;
   }
 };
 
-export const getMostSeller = async () => {
+export const getMostSeller = async (token) => {
   try {
-    const { data: response } = await axios.get("restaurant/mostSeller/");
+    const { data: responseSeller } = await axios.get("restaurant/mostSeller/", {
+      headers: { Authorization: token },
+    });
+    const { data: response } = await axios.get(
+      `restaurant/one/${responseSeller.data[0].restaurant_id}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     return error.response.data.message;
   }
 };
 
-export const getLessSeller = async () => {
+export const getLessSeller = async (token) => {
   try {
-    const { data: response } = await axios.get("restaurant/lessSeller/");
+    const { data: responseSeller } = await axios.get("restaurant/lessSeller/", {
+      headers: { Authorization: token },
+    });
+    const { data: response } = await axios.get(
+      `restaurant/one/${responseSeller.data[0].restaurant_id}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     return error.response.data.message;
