@@ -1,19 +1,34 @@
 .chart-bar {
   height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.vertical__inner {
+  flex-direction: column;
+  background-color: #fb9a4b;
+  border: 1px solid #313131;
+}
+
+.horizontal {
+  flex-direction: row;
+}
+
+.horizontal__inner {
+  flex-direction: row;
+  padding: 1rem;
 }
 
 .chart-bar__inner {
   height: 100%;
   width: 100%;
-  border: 1px solid #313131;
   border-radius: 12px;
-  background-color: #fb9a4b;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
   justify-content: flex-end;
 }
 
@@ -27,4 +42,8 @@
   font-weight: bold;
   font-size: 0.8rem;
   text-align: center;
+}
+
+.chart_label__horizontal {
+  width: 100px;
 }

@@ -5,14 +5,31 @@ const { Op } = require("sequelize");
 export async function processMessage(req, res) {
   const { message } = req.body;
 
-  if (message.includes("restaurantes")) {
+  if (
+    message.split(" ").includes("restaurantes") ||
+    message.split(" ").includes("restaurante")
+  ) {
     getRestaurants(res);
-  } else if (message.includes("horarios")) {
+  } else if (
+    message.split(" ").includes("horarios") ||
+    message.split(" ").includes("horario")
+  ) {
     getRestaurantSchedule(res);
-  } else if (message.includes("promociones")) {
+  } else if (
+    message.split(" ").includes("promociones") ||
+    message.split(" ").includes("promocion")
+  ) {
     getProductsPromotions(res);
-  } else if (message.includes("productoDia")) {
+  } else if (
+    (message.split(" ").includes("producto") ||
+      message.split(" ").includes("productos")) &&
+    message.split(" ").includes("dia")
+  ) {
     todaysProduct(res);
+  } else {
+    res.json({
+      message: "No entendí tu consulta.",
+    });
   }
 }
 
@@ -50,7 +67,7 @@ export async function getRestaurantSchedule(res) {
     }
 
     res.json({
-      message: "No restaurants are open now",
+      message: "No hay restaurantes abiertos en este momento.",
     });
   } catch (error) {
     res.status(404).json({
@@ -95,7 +112,7 @@ export async function getProductsPromotions(res) {
       }
 
       res.json({
-        message: "No promotions found for today",
+        message: "No se encontraron promociones vigentes el día de hoy.",
       });
     }
   } catch (error) {
@@ -111,7 +128,11 @@ export async function todaysProduct(res) {
     const initialHour = new Date(Date.now());
     initialHour.setHours(0, 7, 0);
 
-    const actualDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    const actualDate = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate()
+    );
 
     const topProduct = await models.Product.findAll({
       includeIgnoreAttributes: false,
@@ -155,13 +176,12 @@ export async function todaysProduct(res) {
       });
     }
 
-    const allProducts = await models.Product.findAll()
-    const randomNumber = Math.floor(Math.random() * allProducts.length)
+    const allProducts = await models.Product.findAll();
+    const randomNumber = Math.floor(Math.random() * allProducts.length);
 
     return res.json({
       data: allProducts[randomNumber],
     });
-
   } catch (error) {
     res.status(404).json({
       message: "Something went wrong " + error,

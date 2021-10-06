@@ -7,6 +7,9 @@ import DiscountsPage from "./Dashboard/DiscountsPage";
 import UsersPage from "./Dashboard/UsersPage";
 import SalesPage from "./Dashboard/SalesPage";
 import SalesChart from "./Dashboard/Reports/SalesChart";
+import TopList from "./Dashboard/Reports/TopList";
+import BottomList from "./Dashboard/Reports/BottomList";
+import RestaurantSales from "./Dashboard/Reports/RestaurantSales";
 const DashboardPage = () => {
   let { path, url } = useRouteMatch();
   const ROUTES = [
@@ -60,6 +63,9 @@ const DashboardPage = () => {
         <Route exact path={path}>
           <div className={classes.dashboard__main}>
             <SalesChart />
+            <TopList />
+            <BottomList />
+            <RestaurantSales />
           </div>
         </Route>
         <Route path={`${path}/products`}>

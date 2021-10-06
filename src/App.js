@@ -15,6 +15,7 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 import NewPassword from "./pages/Auth/NewPassword";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
+import ChatBotComponent from "./components/ChatBotComponet";
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -90,6 +91,7 @@ const App = () => {
           <NotFound />
         </Route>
       </Switch>
+      <ChatBotComponent />
     </Fragment>
   );
 };

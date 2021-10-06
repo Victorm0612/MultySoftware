@@ -12,6 +12,7 @@ import {
   getAllSales,
   getProductSales,
 } from "../../../helper/httpHelpers/reportsHttp";
+import classes from "./shared.module.css";
 
 const SalesChart = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +69,7 @@ const SalesChart = () => {
       }
     };
     getProducts();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const getData = async () => {
@@ -119,7 +120,6 @@ const SalesChart = () => {
     for (let sale of sales) {
       if (!sale.sale_date) break;
       const saleMonth = new Date(sale.sale_date).getMonth(); // starting at 0 => January => 0
-      console.log(saleMonth);
       chartDataPoints[saleMonth].value += 1;
     }
   }
@@ -129,7 +129,7 @@ const SalesChart = () => {
       {isLoading ? (
         <div></div>
       ) : (
-        <Fragment>
+        <div className={classes.restaurant_info}>
           <div className="row">
             <div className="col-12">
               <h1
@@ -194,7 +194,7 @@ const SalesChart = () => {
                 : chartDataPoints.slice(min, max + 1)
             }
           />
-        </Fragment>
+        </div>
       )}
     </Card>
   );

@@ -1,9 +1,19 @@
 .chart {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
   border-radius: 12px;
   background-color: #ffd5ae;
   text-align: center;
-  display: flex;
-  justify-content: space-around;
   height: 10rem;
+}
+
+.vertical {
+  padding: 1rem;
+  flex-direction: row;
+}
+
+.horizontal {
+  padding: 1rem;
+  flex-direction: column;
 }

@@ -9,15 +9,41 @@ const ChartBar = (props) => {
   }
 
   return (
-    <div className={classes["chart-bar"]}>
-      <p style={{ margin: "0" }}>{props.value === 0 ? "" : props.value}</p>
-      <div className={classes["chart-bar__inner"]}>
+    <div
+      className={`${classes["chart-bar"]} ${
+        props.isHorizontal ? classes.horizontal : classes.vertical
+      }`}
+    >
+      {props.isHorizontal ? (
+        <div
+          className={`${classes["chart-bar__label"]} ${classes.chart_label__horizontal}`}
+        >
+          {props.label}
+        </div>
+      ) : (
+        <p style={{ margin: "0" }}>{props.value === 0 ? "" : props.value}</p>
+      )}
+      <div
+        className={`${classes["chart-bar__inner"]} ${
+          props.isHorizontal
+            ? classes.horizontal__inner
+            : classes.vertical__inner
+        }`}
+      >
         <div
           className={classes["chart-bar__fill"]}
-          style={{ height: barFillHeight }}
+          style={
+            props.isHorizontal
+              ? { width: barFillHeight }
+              : { height: barFillHeight }
+          }
         ></div>
       </div>
-      <div className={classes["chart-bar__label"]}>{props.label}</div>
+      {props.isHorizontal ? (
+        <p style={{ margin: "0" }}>{props.value === 0 ? "" : props.value}</p>
+      ) : (
+        <div className={classes["chart-bar__label"]}>{props.label}</div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,8 @@
 .product_list,
 .discount_page,
 .sales,
-.users {
+.users,
+.restaurants {
   height: 100vh;
   width: 100%;
   display: flex;
@@ -15,6 +16,7 @@
 .categories__header,
 .product_list__header,
 .discount_page__header,
+.restaurants__header,
 .sales__header,
 .users__header {
   width: 100%;
@@ -27,7 +29,8 @@
 .product_list h1,
 .discount_page h1,
 .sales h1,
-.users h1 {
+.users h1,
+.restaurants h1 {
   color: white;
   font-weight: 700;
   margin: 3rem 0;
@@ -38,14 +41,16 @@
 .product_list__header button,
 .discount_page__header button,
 .sales__header button,
-.users__header button {
+.users__header button,
+.restaurants__header button {
   margin: 1.2rem 0;
 }
 
 .product_list__table__edit svg,
 .categories__table__edit svg,
 .discount_page__table__edit svg,
-.users__table__edit svg {
+.users__table__edit svg,
+.restaurants__table__edit {
   cursor: pointer;
   margin: 0 0.3rem;
 }
@@ -194,14 +199,16 @@ ul.pagination li button.active {
   .product_list__header,
   .discount_page__header,
   .sales__header,
-  .users__header {
+  .users__header,
+  .restaurants__header {
     width: 80%;
   }
   .categories__header button,
   .sales__header button,
   .product_list__header button,
   .discount_page__header button,
-  .users__header button {
+  .users__header button,
+  .restaurants__header button {
     margin: 1.2rem 1.2rem;
   }
 }
