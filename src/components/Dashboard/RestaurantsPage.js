@@ -18,7 +18,7 @@ import {
 import RestaurantForm from "./Restaurants/RestaurantForm";
 
 const RestaurantsPage = () => {
-  const { token } = useSelector((state) => state.auth);
+  const { token, typeUser } = useSelector((state) => state.auth);
   const [messageBox, setMessageBox] = useState({
     message: "",
     isError: false,
@@ -217,20 +217,24 @@ const RestaurantsPage = () => {
                       {restaurant.restaurant_status ? "Activo" : "Inactivo"}
                     </td>
                     <td className={classes.restaurants__table__edit}>
-                      <IconEdit
-                        action={() => {
-                          setAction("update");
-                          setOneRestaurant(restaurant);
-                          openForm();
-                        }}
-                      />
-                      <IconTrash
-                        action={() => {
-                          setAction("delete");
-                          setOneRestaurant(restaurant);
-                          openForm();
-                        }}
-                      />
+                      {typeUser === 3 && (
+                        <IconEdit
+                          action={() => {
+                            setAction("update");
+                            setOneRestaurant(restaurant);
+                            openForm();
+                          }}
+                        />
+                      )}
+                      {typeUser === 3 && (
+                        <IconTrash
+                          action={() => {
+                            setAction("delete");
+                            setOneRestaurant(restaurant);
+                            openForm();
+                          }}
+                        />
+                      )}
                       <IconDetails
                         action={() => {
                           setAction("details");

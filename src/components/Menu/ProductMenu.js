@@ -26,7 +26,6 @@ const ProductMenu = (props) => {
       })
     );
   };
-
   return (
     <div className={`col-md-3 ${classes.column}`}>
       {!props.productStatus && (

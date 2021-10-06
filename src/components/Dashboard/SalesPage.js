@@ -60,7 +60,6 @@ const SalesPage = () => {
   };
 
   const createPDF = (sale) => {
-    let saleFixed = { ...sale, amount: 0 };
     const mainLabels = [
       "Fecha:",
       "Hora:",
@@ -77,18 +76,18 @@ const SalesPage = () => {
       "------------- Productos vendidos -------------",
     ];
     const data = [
-      saleFixed.sale_date.split("T")[0],
-      saleFixed.sale_time,
+      sale.sale_date.split("T")[0],
+      sale.sale_time,
       "",
-      saleFixed.User.document_id,
-      saleFixed.User.email,
-      `${saleFixed.User.first_name} ${saleFixed.User.last_name}`,
-      saleFixed.User.phone,
+      sale.User.document_id,
+      sale.User.email,
+      `${sale.User.first_name} ${sale.User.last_name}`,
+      sale.User.phone,
       "",
-      saleFixed.Restaurant.restaurant_name,
-      saleFixed.Restaurant.phone,
-      saleFixed.Restaurant.restaurant_address,
-      `${saleFixed.Restaurant.ini_attention_time} - ${saleFixed.Restaurant.final_attention_time}`,
+      sale.Restaurant.restaurant_name,
+      sale.Restaurant.phone,
+      sale.Restaurant.restaurant_address,
+      `${sale.Restaurant.ini_attention_time} - ${sale.Restaurant.final_attention_time}`,
       "",
     ];
     let n = 100;
@@ -110,7 +109,7 @@ const SalesPage = () => {
     }
     const labels = ["Nombre:", "Precio/u:", "IVA:", "Cantidad:"];
     const keys = ["pro_name", "price", "percentage_tax", "amount"];
-    for (let i = 1; i <= saleFixed.Products.length; i++) {
+    for (let i = 1; i <= sale.Products.length; i++) {
       n += 40;
       doc.text(60, n, `--------- Producto #${i} ---------`);
       for (let j = 1; j <= labels.length; j++) {
@@ -140,21 +139,29 @@ const SalesPage = () => {
       }
     }
     doc.setPage(2);
-    for (let i = 1; i <= saleFixed.Products.length; i++) {
+    for (let i = 1; i <= sale.Products.length; i++) {
       n += 40;
       doc.text(300, n, "");
       for (let j = 1; j <= labels.length; j++) {
         n += 20;
-        doc.text(300, n, `${saleFixed.Products[keys[i]]}\n`);
+        doc.text(
+          300,
+          n,
+          `${
+            keys[j - 1] === "amount"
+              ? sale.Products[i - 1].SaleItem[keys[j - 1]]
+              : sale.Products[i - 1][keys[j - 1]]
+          }\n`
+        );
       }
       n = n + labels.length * 20;
     }
     doc.text(300, n + 20, "");
-    doc.text(300, n + 40, `${"0"}`);
+    doc.text(300, n + 40, `${sale.Bill.total_payment}`);
     doc.save(
       `${
-        saleFixed.sale_date.split("T")[0]
-      }__${saleFixed.Restaurant.restaurant_name.replace(/\s/g, "_")}.pdf`
+        sale.sale_date.split("T")[0]
+      }__${sale.Restaurant.restaurant_name.replace(/\s/g, "_")}.pdf`
     );
   };
 
@@ -192,6 +199,7 @@ const SalesPage = () => {
     }
   }, [isLoading, action, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  console.log(sales);
   return (
     <div className={classes.sales}>
       {isLoading ? (
@@ -244,7 +252,7 @@ const SalesPage = () => {
                     <td>{sale.sale_date.split("T")[0]}</td>
                     <td>{sale.Restaurant.restaurant_name}</td>
                     <td>{sale.sale_status ? "Activo" : "Inactivo"}</td>
-                    <td>{sale.Products[0].SaleItem.subtotal}</td>
+                    <td>{sale.Bill.total_payment}</td>
                     <td className={classes.product_list__table__edit}>
                       <IconTrash
                         action={() => {

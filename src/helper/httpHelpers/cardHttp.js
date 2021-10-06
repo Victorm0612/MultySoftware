@@ -11,6 +11,14 @@ export class CardToPay {
 
 export const createCard = async (cardModel, token) => {
   try {
+    const cardResponse = await axios.get(`card/${cardModel.number}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+    if (cardResponse.data) {
+      return cardResponse.data;
+    }
     const { data: response } = await axios.post(
       "card/",
       {

@@ -799,20 +799,24 @@ const UsersPage = () => {
                     <td>{user.document_id}</td>
                     <td>{ROLES[user.user_type - 1]}</td>
                     <td className={classes.users__table__edit}>
-                      <IconEdit
-                        action={() => {
-                          setAction("update");
-                          setInputsForm(user);
-                          openUserForm();
-                        }}
-                      />
-                      <IconTrash
-                        action={() => {
-                          setAction("delete");
-                          setInputsForm(user);
-                          openUserForm();
-                        }}
-                      />
+                      {user.user_type === 1 && (
+                        <IconEdit
+                          action={() => {
+                            setAction("update");
+                            setInputsForm(user);
+                            openUserForm();
+                          }}
+                        />
+                      )}
+                      {user.user_type === 1 && (
+                        <IconTrash
+                          action={() => {
+                            setAction("delete");
+                            setInputsForm(user);
+                            openUserForm();
+                          }}
+                        />
+                      )}
                       <IconDetails
                         action={() => {
                           setAction("details");

@@ -111,7 +111,6 @@ const PayCardForm = (props) => {
         (props.type === "Crédito" ? feesNumberIsValid : true)
       : true);
 
-  console.log(amountToPayIsValid);
   const submitHandler = (e) => {
     e.preventDefault();
     let data;
@@ -127,7 +126,7 @@ const PayCardForm = (props) => {
           owner_id: documentOwner,
           exp_date: expDate.split("T")[0],
           fees_number: feesNumber,
-          card_type: props.isCredit ? "Credito" : "Debito",
+          card_type: props.type,
           bank: bankList[bank].id,
           total_amount: amountToPay,
           one_pay: props.onePay,
