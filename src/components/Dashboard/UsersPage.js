@@ -230,6 +230,7 @@ const UsersPage = () => {
     resetPhone,
     resetBirthday,
     resetRol,
+    resetRestaurant,
   ]);
 
   const setInputsForm = (user) => {
@@ -244,7 +245,7 @@ const UsersPage = () => {
     setBirthday(user.birthday.split("T")[0]);
     setRol(user.user_type);
     setUserStatus(user.user_status);
-    user.user_type !== 1 && setRestaurant(user.user_restaurant);
+    setRestaurant(user.user_restaurant);
   };
 
   const changeKeyWord = (e) => {
@@ -472,30 +473,7 @@ const UsersPage = () => {
     if (isLoading) {
       actionToDo[action]();
     }
-  }, [
-    action,
-    isLoading,
-    token,
-    firstName,
-    lastName,
-    documentId,
-    documentType,
-    gender,
-    email,
-    password,
-    passwordConfirmed,
-    oldPassword,
-    birthday,
-    phone,
-    rol,
-    typeUser,
-    userId,
-    userStatus,
-    showPasswordForm,
-    resetInputsForm,
-    closeUserForm,
-    closePasswordForm,
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [action, isLoading, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
   let passwordsAreEquals =
     password.length > 0 && password === passwordConfirmed;
@@ -836,7 +814,7 @@ const UsersPage = () => {
                     <td>{user.document_id}</td>
                     <td>{ROLES[user.user_type - 1]}</td>
                     <td className={classes.users__table__edit}>
-                      {user.user_type === 1 && (
+                      {typeUser === 3 && (
                         <IconEdit
                           action={() => {
                             setAction("update");
@@ -845,7 +823,7 @@ const UsersPage = () => {
                           }}
                         />
                       )}
-                      {user.user_type === 1 && (
+                      {typeUser === 3 && (
                         <IconTrash
                           action={() => {
                             setAction("delete");

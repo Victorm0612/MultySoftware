@@ -182,7 +182,7 @@ const SalesForm = (props) => {
                 productsToBuy.length > 0 && (
                   <ul>
                     {productsToBuy.map((pro) => (
-                      <li key={pro.product_id}>
+                      <li key={pro.id}>
                         <b>{pro.pro_name}</b>: x{pro.SaleItem.amount} - $
                         {pro.price}/u
                       </li>
