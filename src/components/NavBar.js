@@ -25,6 +25,11 @@ const NavBar = (props) => {
 
   const ROUTES = [
     { path: "/menu", namePath: "Menú", access: isLogged && typeUser === 1 },
+    {
+      path: "/shopping",
+      namePath: "Compras",
+      access: isLogged && typeUser === 1,
+    },
     { path: "/login", namePath: "Iniciar Sesión", access: !isLogged },
     { path: "/register", namePath: "Registrarse", access: !isLogged },
     {

@@ -16,6 +16,7 @@ import NewPassword from "./pages/Auth/NewPassword";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
 import ChatBotComponent from "./components/ChatBotComponet";
+import SalesPage from "./components/Dashboard/SalesPage";
 
 const App = () => {
   const [show, setShow] = useState(false);
@@ -65,6 +66,11 @@ const App = () => {
         <Route path="/dashboard">
           {accountDisabled && <Redirect to="/account-disabled" />}
           {isLogged && <Dashboard />}
+          {!isLogged && <Redirect to="/" />}
+        </Route>
+        <Route path="/shopping" exact>
+          {accountDisabled && <Redirect to="/account-disabled" />}
+          {isLogged && <SalesPage />}
           {!isLogged && <Redirect to="/" />}
         </Route>
         <Route path="/menu" exact>

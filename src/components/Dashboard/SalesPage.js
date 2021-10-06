@@ -16,7 +16,7 @@ import logo from "../../images/Logo.png";
 
 const SalesPage = () => {
   const TITLES = ["#", "Fecha", "Restaurante", "Estado", "Cobro", "Opciones"];
-  const { token } = useSelector((state) => state.auth);
+  const { token, typeUser } = useSelector((state) => state.auth);
 
   const [oneSale, setOneSale] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,9 +65,9 @@ const SalesPage = () => {
       "Hora:",
       "--------- Información del cliente ---------",
       "Documento de identidad:",
-      "Email:",
-      "Nombre Completo:",
-      "Teléfono:",
+      typeUser === 1 ? "" : "Email:",
+      typeUser === 1 ? "" : "Nombre Completo:",
+      typeUser === 1 ? "" : "Teléfono:",
       "--------- Información del Restaurante ---------",
       "Sede:",
       "Teléfono:",
@@ -79,10 +79,10 @@ const SalesPage = () => {
       sale.sale_date.split("T")[0],
       sale.sale_time,
       "",
-      sale.User.document_id,
-      sale.User.email,
-      `${sale.User.first_name} ${sale.User.last_name}`,
-      sale.User.phone,
+      typeUser === 1 ? sale.docId : sale.User.document_id,
+      typeUser === 1 ? "" : sale.User.email,
+      typeUser === 1 ? "" : `${sale.User.first_name} ${sale.User.last_name}`,
+      typeUser === 1 ? "" : sale.User.phone,
       "",
       sale.Restaurant.restaurant_name,
       sale.Restaurant.phone,
@@ -199,7 +199,6 @@ const SalesPage = () => {
     }
   }, [isLoading, action, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  console.log(sales);
   return (
     <div className={classes.sales}>
       {isLoading ? (
@@ -222,15 +221,17 @@ const SalesPage = () => {
               className={classes.search_item}
               placeholder="Buscar"
             />
-            <Button
-              submitFor="button"
-              action={(e) => {
-                setAction("create");
-                openSalesForm(e);
-              }}
-            >
-              Añadir Venta
-            </Button>
+            {typeUser !== 1 && (
+              <Button
+                submitFor="button"
+                action={(e) => {
+                  setAction("create");
+                  openSalesForm(e);
+                }}
+              >
+                Añadir Venta
+              </Button>
+            )}
           </div>
           <InventoryTable titles={TITLES}>
             {sales.length === 0 ? (
@@ -254,11 +255,13 @@ const SalesPage = () => {
                     <td>{sale.sale_status ? "Activo" : "Inactivo"}</td>
                     <td>{sale.Bill.total_payment}</td>
                     <td className={classes.product_list__table__edit}>
-                      <IconTrash
-                        action={() => {
-                          generateAction("delete", sale);
-                        }}
-                      />
+                      {typeUser === 3 && (
+                        <IconTrash
+                          action={() => {
+                            generateAction("delete", sale);
+                          }}
+                        />
+                      )}
                       <IconDetails
                         action={() => {
                           generateAction("details", sale);

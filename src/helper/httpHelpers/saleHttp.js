@@ -89,7 +89,7 @@ export const createSale = async (saleModel, token) => {
       )
     );
 
-    const closePlace = Math.max(...distanceBtwnRestaurantAndMe);
+    const closePlace = Math.min(...distanceBtwnRestaurantAndMe);
     const index = distanceBtwnRestaurantAndMe.findIndex(
       (distance) => distance === closePlace
     );

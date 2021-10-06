@@ -15,6 +15,7 @@ import Modal from "../UI/Modal";
 import SpinnerLoading from "../UI/SpinnerLoading";
 import MessageBox from "../UI/MessageBox";
 import classes from "./shared.module.css";
+import { getRestaurants } from "../../helper/httpHelpers/resturantHttp";
 
 const UsersPage = () => {
   const [keyWord, setKeyWord] = useState("");
@@ -24,6 +25,7 @@ const UsersPage = () => {
   const [showUserForm, setShowUserForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [restaurants, setRestaurants] = useState([]);
   const [userStatus, setUserStatus] = useState(null);
   const { token, typeUser } = useSelector((state) => state.auth);
   const [message, setMessage] = useState({
@@ -190,6 +192,17 @@ const UsersPage = () => {
     reset: resetRol,
   } = useForm((rol) => rol > 0 && rol <= 3, 1);
 
+  //RolEntered
+  const {
+    value: restaurant,
+    isValid: restaurantIsValid,
+    hasError: restaurantHasError,
+    changeInputValueHandler: changeRestaurant,
+    inputBlurHandler: restaurantBlurHandler,
+    setInputValue: setRestaurant,
+    reset: resetRestaurant,
+  } = useForm((restaurant) => typeof +restaurant === "number");
+
   const resetInputsForm = useCallback(() => {
     resetFirstName();
     resetLastName();
@@ -203,6 +216,7 @@ const UsersPage = () => {
     resetPhone();
     resetBirthday();
     resetRol();
+    resetRestaurant();
   }, [
     resetFirstName,
     resetLastName,
@@ -230,6 +244,7 @@ const UsersPage = () => {
     setBirthday(user.birthday.split("T")[0]);
     setRol(user.user_type);
     setUserStatus(user.user_status);
+    user.user_type !== 1 && setRestaurant(user.user_restaurant);
   };
 
   const changeKeyWord = (e) => {
@@ -269,6 +284,10 @@ const UsersPage = () => {
           typeUser === 2 ? user.user_type < 3 : true
         );
         setUsers(arrUser);
+
+        const dataRestaurant = await getRestaurants(token);
+        setRestaurants(dataRestaurant.filter((res) => res.id !== 1));
+        setRestaurant(dataRestaurant[0].id);
       } catch (error) {
         message = error.response.data.message;
         messageError = true;
@@ -299,6 +318,7 @@ const UsersPage = () => {
             user_status: true,
             email: email,
             password: password,
+            user_restaurant: +restaurant,
           },
           {
             headers: {
@@ -339,6 +359,7 @@ const UsersPage = () => {
             user_status: userStatus,
             email: email,
             password: password,
+            user_restaurant: typeUser === 3 ? +restaurant : null,
           },
           {
             headers: {
@@ -474,7 +495,7 @@ const UsersPage = () => {
     resetInputsForm,
     closeUserForm,
     closePasswordForm,
-  ]);
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   let passwordsAreEquals =
     password.length > 0 && password === passwordConfirmed;
@@ -491,6 +512,7 @@ const UsersPage = () => {
         rolIsValid &&
         phoneIsValid &&
         birthdayIsValid &&
+        (rol !== 1 ? restaurantIsValid : true) &&
         (action === "create"
           ? passwordIsValid && passwordConfirmedIsValid && passwordsAreEquals
           : true) &&
@@ -708,6 +730,21 @@ const UsersPage = () => {
                     keyPress={true}
                     disabled={action === "details"}
                   />
+                  {+rol !== 1 && typeUser === 3 && (
+                    <SelectForm
+                      id="restaurant_input"
+                      change={changeRestaurant}
+                      blur={restaurantBlurHandler}
+                      value={restaurant}
+                      hasError={restaurantHasError}
+                      list={restaurants}
+                      labelMessage="Sede:"
+                      accesKey="restaurant_name"
+                      errorMessage="Seleccione una opción válida."
+                      expression={(value, index) => value.id}
+                      disabled={action === "details"}
+                    />
+                  )}
                   <InputForm
                     id="birthday__input"
                     labelMessage="Fecha de Nacimiento"

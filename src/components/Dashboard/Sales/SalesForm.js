@@ -13,7 +13,7 @@ import { useHistory } from "react-router";
 import { authActions } from "../../../store/auth";
 
 const SalesForm = (props) => {
-  const { token } = useSelector((state) => state.auth);
+  const { token, typeUser } = useSelector((state) => state.auth);
   let history = useHistory();
   const dispatch = useDispatch();
   const {
@@ -73,27 +73,15 @@ const SalesForm = (props) => {
   const setInputsForm = (sale, clients) => {
     setDocId(clients.find((user) => user.document_id === sale.docId).id);
     setsalesStatus(sale.sale_status);
-    setProductsToBuy(sale.SaleItems);
-    setTotalPrice(
-      sale.SaleItems.reduce((prev, current) => ({
-        item_total: prev.item_total + current.item_total,
-      })).item_total
-    );
+    setProductsToBuy(sale.Products);
+    setTotalPrice(sale.Bill.total_payment);
     setTotalAmount(
-      sale.SaleItems.reduce((prev, current) => ({
-        amount: prev.amount + current.amount,
+      sale.Products.reduce((prev, current) => ({
+        amount: prev.SaleItem.amount + current.SaleItem.amount,
       })).amount
     );
-    setTotalTax(
-      sale.SaleItems.reduce((prev, current) => ({
-        totalIva: prev.totalIva + current.totalIva,
-      })).totalIva
-    );
-    setTotalDiscount(
-      sale.SaleItems.reduce((prev, current) => ({
-        total_discount: prev.total_discount + current.total_discount,
-      })).total_discount
-    );
+    setTotalTax(sale.Bill.totalIva);
+    setTotalDiscount(sale.Bill.total_discount);
   };
 
   const deleteSale = (e) => {
@@ -104,15 +92,17 @@ const SalesForm = (props) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const clients = await getFilteredUsers(1, token);
-        const allProducts = await getAllProducts();
-        setUsers(clients);
-        setProducts(allProducts);
-        if (props.actionToDo === "create") {
-          setDocId(clients[0].id);
-        } else {
-          setInputsForm(props.oneSale, clients);
+        if (typeUser === 3) {
+          const clients = await getFilteredUsers(1, token);
+          setUsers(clients);
+          if (props.actionToDo === "create") {
+            setDocId(clients[0].id);
+          } else {
+            setInputsForm(props.oneSale, clients);
+          }
         }
+        const allProducts = await getAllProducts();
+        setProducts(allProducts);
       } catch (error) {
         console.error(error);
       } finally {
@@ -157,19 +147,21 @@ const SalesForm = (props) => {
           ) : (
             <Fragment>
               <h1>{`${optionsAction[props.actionToDo]} Venta`}</h1>
-              <SelectForm
-                id="users_select"
-                change={changeDocId}
-                blur={docIdBlurHandler}
-                value={docId}
-                disabled={props.actionToDo === "details"}
-                hasError={docIdHasError}
-                labelMessage="Usuarios"
-                errorMessage="Seleccione una opción válida."
-                list={users}
-                expression={(value, index) => value.id}
-                accesKey="document_id"
-              />
+              {typeUser !== 1 && (
+                <SelectForm
+                  id="users_select"
+                  change={changeDocId}
+                  blur={docIdBlurHandler}
+                  value={docId}
+                  disabled={props.actionToDo === "details"}
+                  hasError={docIdHasError}
+                  labelMessage="Usuarios"
+                  errorMessage="Seleccione una opción válida."
+                  list={users}
+                  expression={(value, index) => value.id}
+                  accesKey="document_id"
+                />
+              )}
               {props.actionToDo !== "create" && (
                 <SelectForm
                   id="status__input"
@@ -191,14 +183,8 @@ const SalesForm = (props) => {
                   <ul>
                     {productsToBuy.map((pro) => (
                       <li key={pro.product_id}>
-                        <b>
-                          {
-                            products.find(
-                              (oneProduct) => oneProduct.id === pro.product_id
-                            ).pro_name
-                          }
-                        </b>
-                        : x{pro.amount} - ${pro.subtotal}
+                        <b>{pro.pro_name}</b>: x{pro.SaleItem.amount} - $
+                        {pro.price}/u
                       </li>
                     ))}
                     <li>
