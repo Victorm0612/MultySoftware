@@ -29,7 +29,7 @@ export async function getSales(req, res) {
           },
           {
             model: models.Bill,
-            through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+            attributes: { attributes: { exclude: ["createdAt", "updatedAt"] } },
           },
         ],
       });
@@ -55,11 +55,11 @@ export async function getSales(req, res) {
           },
           {
             model: models.Product,
-            attributes: { exclude: ["createdAt", "updatedAt"] },
+            through: { exclude: ["createdAt", "updatedAt"] },
           },
           {
             model: models.Bill,
-            through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+            attributes: { attributes: { exclude: ["createdAt", "updatedAt"] } },
           },
         ],
       });
@@ -80,7 +80,7 @@ export async function getSales(req, res) {
         },
         {
           model: models.Product,
-          attributes: { exclude: ["createdAt", "updatedAt"] },
+          through: { exclude: ["createdAt", "updatedAt"] },
         },
         {
           model: models.Bill,
@@ -126,7 +126,7 @@ export async function getOneSale(req, res) {
         },
         {
           model: models.Product,
-          attributes: { exclude: ["createdAt", "updatedAt"] },
+          through: { exclude: ["createdAt", "updatedAt"] },
         },
         {
           model: models.Bill,
