@@ -188,20 +188,10 @@ export async function updateUser(req, res) {
     birthday,
     address,
     user_type,
+    user_restaurant
   } = req.body;
 
-  const userFound = await models.User.findOne({
-    attributes: [
-      "document_type",
-      "document_id",
-      "first_name",
-      "last_name",
-      "gender",
-      "phone",
-      "birthday",
-      "address",
-      "user_type",
-    ],
+  const userFound = await models.User.findOne({    
     where: {
       id: id,
     },
@@ -221,6 +211,7 @@ export async function updateUser(req, res) {
         birthday,
         address,
         user_type: user_type_req === 3 ? user_type : userFound.user_type,
+        user_restaurant: user_type_req === 3 ? user_restaurant : userFound.user_restaurant,
       },
       {
         where: {

@@ -12,6 +12,7 @@ export async function signUp(req, res) {
     birthday,
     phone,
     user_status,
+    user_restaurant,
     email,
     password,
   } = req.body;
@@ -51,6 +52,7 @@ export async function signUp(req, res) {
       phone,
       birthday,
       user_type: 1,
+      user_restaurant,
       user_status,
       email,
       password: await models.User.encryptPassword(password),
