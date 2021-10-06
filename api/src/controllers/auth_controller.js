@@ -18,7 +18,6 @@ export async function signUp(req, res) {
   } = req.body;
 
   try {
-    
     const emailExist = await models.User.findOne({
       where: {
         email: email,
@@ -27,22 +26,22 @@ export async function signUp(req, res) {
 
     const docIdExist = await models.User.findOne({
       where: {
-        document_id: document_id
-      }
-    })
-  
+        document_id: document_id,
+      },
+    });
+
     if (emailExist) {
       return res.status(400).json({
-        message: "That email address is already in use",
+        message: "Ese correo ya está en uso.",
       });
     }
 
-    if(docIdExist){
+    if (docIdExist) {
       return res.status(400).json({
-        message: "The document id must be unique!!"
-      })
+        message: "El documento debe ser único.",
+      });
     }
-  
+
     let newUser = await models.User.create({
       document_type,
       document_id,
@@ -67,10 +66,7 @@ export async function signUp(req, res) {
         Authorization: token,
       });
     }
-
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 }
 
 export async function signIn(req, res) {
@@ -88,7 +84,7 @@ export async function signIn(req, res) {
     );
     if (!matchPassword) {
       res.status(422).json({
-        message: "Invalid password",
+        message: "Contraseña inválida.",
       });
     } else {
       const token = jwt.sign({ id: userFound.id }, config.SECRET, {
@@ -102,7 +98,7 @@ export async function signIn(req, res) {
     }
   } else {
     res.status(422).json({
-      message: "That user doesnt exist",
+      message: "El usuario no existe",
     });
   }
 }
