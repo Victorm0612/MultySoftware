@@ -34,20 +34,20 @@ module.exports = {
         percentage_tax: 0.19,
       },
       {
-        pro_name: "Gato feli",
-        pro_description: "Un gato muy feli",
+        pro_name: "Hamburguesa de Pollo apanado",
+        pro_description: "Deliciosa hamburguesa de pollo apanado",
         pro_image:
-          "https://infomascota.com/wp-content/uploads/2020/05/gato-gracioso-332x375.jpg",
+          "https://cdn.recetas360.com/wp-content/uploads/2019/07/receta-hamburguesa-de-pollo-crujiente.jpg",
         price: 28000,
         category_id: 1,
         pro_status: true,
         percentage_tax: 0.19,
       },
       {
-        pro_name: "Gato asustao",
-        pro_description: "Un gato muy asustao",
+        pro_name: "Hamburguesa de Pollo asado",
+        pro_description: "Deliciosa hamburguesa de pollo apanado",
         pro_image:
-          "https://bbl-bdb.s3.amazonaws.com/collections/images/gato-asustado.png",
+          "https://www.aldelis.com/wp-content/uploads/2020/07/burger-pollo.jpg",
         price: 17000,
         category_id: 1,
         pro_status: true,

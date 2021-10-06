@@ -28,68 +28,6 @@ function errors(error) {
   return options[flag];
 }
 
-/*export async function login(req, res) {
-  const { email, password } = req.body;
-
-  //Verify exist user
-  const user = await models.User.findOne({
-    where: {
-      email: email,
-      password: password,
-    },
-  });
-  if (user) {
-    const token = jwt.sign(
-      { user },
-      process.env.JWT_SECRET,
-      { expiresIn: "60s" },
-      { algorithm: "HS256", expiresIn: "1h" }
-    );
-    const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_SECRET, {
-      algorithm: "HS256",
-    });
-
-    res.json({
-      token,
-      refreshToken,
-      user,
-    });
-  } else {
-    res.status(500).json({
-      message: "El correo o la contraseña no existen.",
-      data: {},
-    });
-  }
-}*/
-
-/*export async function refresh_token(req, res) {
-  try {
-    const user = jwt.verify(req.token, process.env.JWT_REFRESH_SECRET);
-    if (user === null) res.status(403).json({ RES: "Error token inválido." });
-    else {
-      const token = jwt.sign(
-        { user },
-        process.env.JWT_SECRET,
-        { expiresIn: "60s" },
-        { algorithm: "HS256", expiresIn: "1h" }
-      );
-      const refreshToken = jwt.sign({ user }, process.env.JWT_REFRESH_SECRET, {
-        algorithm: "HS256",
-      });
-
-      res.json({
-        token,
-        refreshToken,
-        user,
-      });
-    }
-  } catch (error) {
-    res.status(403).json({
-      message: errors(error),
-    });
-  }
-}*/
-
 export async function getUsers(req, res) {
   const users = await models.User.findAll();
 
@@ -188,10 +126,10 @@ export async function updateUser(req, res) {
     birthday,
     address,
     user_type,
-    user_restaurant
+    user_restaurant,
   } = req.body;
 
-  const userFound = await models.User.findOne({    
+  const userFound = await models.User.findOne({
     where: {
       id: id,
     },
@@ -211,7 +149,8 @@ export async function updateUser(req, res) {
         birthday,
         address,
         user_type: user_type_req === 3 ? user_type : userFound.user_type,
-        user_restaurant: user_type_req === 3 ? user_restaurant : userFound.user_restaurant,
+        user_restaurant:
+          user_type_req === 3 ? user_restaurant : userFound.user_restaurant,
       },
       {
         where: {
@@ -244,8 +183,8 @@ export async function deleteUser(req, res) {
         id: id,
       },
     });
-    
-    if(deleteRowCount > 0){
+
+    if (deleteRowCount > 0) {
       return res.json({
         message: "User deleted successfully",
         count: deleteRowCount,
@@ -254,8 +193,7 @@ export async function deleteUser(req, res) {
 
     res.status(404).json({
       message: "That user does not exist",
-    })
-
+    });
   } catch (error) {
     res.status(404).json({
       message: "Error " + error,
