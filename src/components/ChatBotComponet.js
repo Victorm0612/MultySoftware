@@ -21,7 +21,7 @@ const theme = {
 };
 
 const CheckComponent = (props) => {
-  const [request, setRequest] = useState(props.steps.action);
+  const request = props.steps.action;
   const [isLoading, setIsLoading] = useState(true);
   const [isMessage, setIsMessage] = useState(false);
   const [dataReq, setDataReq] = useState("");

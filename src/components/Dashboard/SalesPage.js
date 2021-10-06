@@ -11,6 +11,8 @@ import { deleteSale, getSales } from "../../helper/httpHelpers/saleHttp";
 import { sliceArray } from "../../helper/sliceArray";
 import IconPrinter from "../UI/Icons/IconPrinter";
 import SalesForm from "./Sales/SalesForm";
+import { jsPDF } from "jspdf";
+import logo from "../../images/Logo.png";
 
 const SalesPage = () => {
   const TITLES = ["#", "Fecha", "Restaurante", "Estado", "Cobro", "Opciones"];
@@ -57,11 +59,109 @@ const SalesPage = () => {
     setSalesForm(true);
   };
 
+  const createPDF = (sale) => {
+    let saleFixed = { ...sale, amount: 0 };
+    const mainLabels = [
+      "Fecha:",
+      "Hora:",
+      "--------- Información del cliente ---------",
+      "Documento de identidad:",
+      "Email:",
+      "Nombre Completo:",
+      "Teléfono:",
+      "--------- Información del Restaurante ---------",
+      "Sede:",
+      "Teléfono:",
+      "Dirección:",
+      "Horario de atención:",
+      "------------- Productos vendidos -------------",
+    ];
+    const data = [
+      saleFixed.sale_date.split("T")[0],
+      saleFixed.sale_time,
+      "",
+      saleFixed.User.document_id,
+      saleFixed.User.email,
+      `${saleFixed.User.first_name} ${saleFixed.User.last_name}`,
+      saleFixed.User.phone,
+      "",
+      saleFixed.Restaurant.restaurant_name,
+      saleFixed.Restaurant.phone,
+      saleFixed.Restaurant.restaurant_address,
+      `${saleFixed.Restaurant.ini_attention_time} - ${saleFixed.Restaurant.final_attention_time}`,
+      "",
+    ];
+    let n = 100;
+    const doc = new jsPDF("landscape", "px", "a4", "false");
+    doc.addImage(logo, "PNG", 40, 10, 100, 60);
+    doc.setFont("Helvetica", "bold");
+    for (let i = 1; i <= mainLabels.length; i++) {
+      if (mainLabels[i - 1].includes("----")) {
+        n += 40;
+        doc.text(60, n, `${mainLabels[i - 1]}`);
+      } else {
+        n += 20;
+        doc.text(60, n, `${mainLabels[i - 1]}`);
+      }
+      if (n > 360) {
+        doc.addPage();
+        n = 100;
+      }
+    }
+    const labels = ["Nombre:", "Precio/u:", "IVA:", "Cantidad:"];
+    const keys = ["pro_name", "price", "percentage_tax", "amount"];
+    for (let i = 1; i <= saleFixed.Products.length; i++) {
+      n += 40;
+      doc.text(60, n, `--------- Producto #${i} ---------`);
+      for (let j = 1; j <= labels.length; j++) {
+        n += 20;
+        doc.text(60, n, `${labels[j - 1]}\n`);
+      }
+      n = n + labels.length * 20;
+    }
+    doc.text(60, n + 20, "--------------------------", {
+      align: "left",
+    });
+    doc.text(60, n + 40, "Total a pagar:");
+    doc.setFont("Helvetica", "Normal");
+    doc.setPage(1);
+    n = 100;
+    for (let i = 1; i <= data.length; i++) {
+      if (mainLabels[i - 1].includes("----")) {
+        n += 40;
+        doc.text(300, n, `${data[i - 1]}`);
+      } else {
+        n += 20;
+        doc.text(300, n, `${data[i - 1]}`);
+      }
+      if (n > 360) {
+        doc.addPage();
+        n = 100;
+      }
+    }
+    doc.setPage(2);
+    for (let i = 1; i <= saleFixed.Products.length; i++) {
+      n += 40;
+      doc.text(300, n, "");
+      for (let j = 1; j <= labels.length; j++) {
+        n += 20;
+        doc.text(300, n, `${saleFixed.Products[keys[i]]}\n`);
+      }
+      n = n + labels.length * 20;
+    }
+    doc.text(300, n + 20, "");
+    doc.text(300, n + 40, `${"0"}`);
+    doc.save(
+      `${
+        saleFixed.sale_date.split("T")[0]
+      }__${saleFixed.Restaurant.restaurant_name.replace(/\s/g, "_")}.pdf`
+    );
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
         const data = await getSales(token);
-        console.log(data);
         setSales(sliceArray(data));
       } catch (error) {
         console.error(error);
@@ -156,7 +256,7 @@ const SalesPage = () => {
                           generateAction("details", sale);
                         }}
                       />
-                      <IconPrinter />
+                      <IconPrinter action={() => createPDF(sale)} />
                     </td>
                   </tr>
                 ))
