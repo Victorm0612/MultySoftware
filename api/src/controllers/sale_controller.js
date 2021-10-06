@@ -27,6 +27,10 @@ export async function getSales(req, res) {
             model: models.Product,
             through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
           },
+          {
+            model: models.Bill,
+            through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+          },
         ],
       });
 
@@ -53,6 +57,10 @@ export async function getSales(req, res) {
             model: models.Product,
             attributes: { exclude: ["createdAt", "updatedAt"] },
           },
+          {
+            model: models.Bill,
+            through: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+          },
         ],
       });
 
@@ -73,6 +81,10 @@ export async function getSales(req, res) {
         {
           model: models.Product,
           attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+        {
+          model: models.Bill,
+          attributes: { attributes: { exclude: ["createdAt", "updatedAt"] } },
         },
       ],
       order: [["id", "DESC"]],
@@ -116,6 +128,10 @@ export async function getOneSale(req, res) {
           model: models.Product,
           attributes: { exclude: ["createdAt", "updatedAt"] },
         },
+        {
+          model: models.Bill,
+          attributes: { attributes: { exclude: ["createdAt", "updatedAt"] } },
+        },
       ],
     });
 
@@ -146,7 +162,7 @@ export async function getOneSale(req, res) {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Something goes wrong " + error,
+      message: "Something goes wrong" + error,
       data: {},
     });
   }
@@ -284,11 +300,7 @@ export async function create(req, res) {
             total_discountBill += total_discount;
             let item_total = subtotal + totalIva - total_discount;
             item_totalBill += item_total;
-
-            console.log("totalIvaBill: " + totalIvaBill);
-            console.log("subtotalBill: " + subtotalBill);
-            console.log("total_discountBill: " + total_discountBill);
-            console.log("item_totalBill: " + item_totalBill);
+            
             newSale.addProducts(oneProduct.product, {
               through: {
                 amount: amount,
