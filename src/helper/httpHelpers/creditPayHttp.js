@@ -3,6 +3,7 @@ import { axiosInstance as axios } from "../../config/axiosConfig";
 export class CreditPay {
   constructor(fees, cardNumber, paymentId, amount, onePay) {
     this.fees = fees;
+    this.approval = Math.floor(Math.random() * 1000000).toString();
     this.cardNumber = cardNumber;
     this.paymentId = paymentId;
     this.amount = amount;

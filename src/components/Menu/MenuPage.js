@@ -27,7 +27,17 @@ const MenuPage = () => {
         const { data: response } = await axios.get("product/");
         const { data: discountResponse } = await axios.get("discount/");
         const { data: categoryResponse } = await axios.get("category/");
-        setProducts(response.data);
+        setProducts(
+          response.data.map((product) => ({
+            ...product,
+            Discounts: product.Discounts.filter(
+              (disc) =>
+                discountResponse.data.find(
+                  (realDisc) => realDisc.id === disc.id
+                ).discount_status
+            ),
+          }))
+        );
         setOptionsDiscount(discountResponse.data);
         setOptionsCategory(categoryResponse.data);
       } catch (error) {

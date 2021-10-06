@@ -43,8 +43,8 @@ export async function getOneCard(req, res) {
         id: decoded.id,
       },
     });
-    if (user.user_type === 1) {
-      const card = await models.Card.findAll({
+    if (user.user_type === 1 || user.user_type === 3) {
+      const card = await models.Card.findOne({
         where: {
           card_number: card_number,
         },
@@ -57,7 +57,11 @@ export async function getOneCard(req, res) {
       }
 
       return res.json({
-        data: cardd,
+        data: card,
+      });
+    } else {
+      return res.status(403).json({
+        message: "You're not allowed",
       });
     }
   } catch (error) {

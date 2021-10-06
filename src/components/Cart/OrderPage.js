@@ -252,7 +252,7 @@ const OrderPage = () => {
       //Primero sale después bill después payment después el tipo de pag
       try {
         const dataSale = await createSale(
-          new Sale(documentId, products),
+          new Sale(documentId, products, address),
           token
         );
         const dataPayment = await createPayment(

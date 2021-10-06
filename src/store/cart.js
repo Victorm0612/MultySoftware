@@ -10,9 +10,14 @@ const initialState = JSON.parse(localStorage.getItem("cart")) || {
 
 const getMaxValue = (arr) =>
   Math.max(
-    ...arr.map((product) =>
-      Math.max(...product.discounts.map((discount) => discount.discount_value))
-    )
+    ...arr.map((product) => {
+      if (product.discounts.length === 0) {
+        return 0;
+      }
+      return Math.max(
+        ...product.discounts.map((discount) => discount.discount_value)
+      );
+    })
   ) / 100;
 
 const cartSlice = createSlice({

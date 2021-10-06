@@ -25,9 +25,8 @@ export const getAllSales = async (
                 final < init
                   ? new Date().getFullYear() + 1
                   : new Date().getFullYear()
-              }${final + 1 < 10 ? "-0" : "-"}${
-                final + 1
-              }-${new Date().getDate()}`
+              }${final + 1 < 10 ? "-0" : "-"}${final +
+                1}-${new Date().getDate()}`
             : finalDate,
       },
       {
@@ -105,7 +104,6 @@ export const getMostSeller = async (token) => {
         },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     return error.response.data.message;
