@@ -4,6 +4,9 @@ import { ThemeProvider } from "styled-components";
 import { Fragment, useEffect, useState } from "react";
 import { axiosInstance as axios } from "../config/axiosConfig";
 import ReactDOM from "react-dom";
+import RestaurantsResponse from "./ChatBotResponse/RestaurantsResponse";
+import PromosResponse from "./ChatBotResponse/PromosResponse";
+import ProductResponse from "./ChatBotResponse/ProductResponse";
 
 const theme = {
   background: "#f5f8fb",
@@ -20,14 +23,34 @@ const theme = {
 const CheckComponent = (props) => {
   const [request, setRequest] = useState(props.steps.action);
   const [isLoading, setIsLoading] = useState(true);
-  const [dataReq, setDataReq] = useState(null);
+  const [isMessage, setIsMessage] = useState(false);
+  const [dataReq, setDataReq] = useState("");
+
+  const transformData = (data) => {
+    if (data.pro_name) {
+      return <ProductResponse product={data} />;
+    }
+    if (data[0].restaurant_name) {
+      return <RestaurantsResponse data={data} />;
+    }
+    if (data[0].pro_name) {
+      return <PromosResponse data={data} />;
+    }
+  };
+
   useEffect(() => {
     const getData = async () => {
       try {
         const { data: response } = await axios.post("bot/", {
           message: request.value.trim().toLowerCase(),
         });
-        setDataReq(response.data);
+        if (response.data) {
+          setDataReq(response.data);
+          console.log(response.data);
+        } else {
+          setDataReq(response.message);
+          setIsMessage(true);
+        }
       } catch (error) {
         setDataReq("Ups! ha habido un error...");
       } finally {
@@ -38,9 +61,14 @@ const CheckComponent = (props) => {
     if (!isLoading) return;
     getData();
   });
-
   return (
-    <div>{isLoading ? <Loading /> : <div>{JSON.stringify(dataReq)}</div>}</div>
+    <div>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div>{isMessage ? dataReq : transformData(dataReq)}</div>
+      )}
+    </div>
   );
 };
 
@@ -51,6 +79,7 @@ const ChatBotComponent = () => {
         <div className={classes.chat}>
           <ThemeProvider theme={theme}>
             <ChatBot
+              bubbleStyle={{ maxWidth: "70%" }}
               floating={true}
               recognitionLang="es"
               placeholder="Escribe un mensaje..."

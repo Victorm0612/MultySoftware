@@ -26,6 +26,10 @@ export async function processMessage(req, res) {
     message.split(" ").includes("dia")
   ) {
     todaysProduct(res);
+  } else {
+    res.json({
+      message: "No entendí tu consulta.",
+    });
   }
 }
 
@@ -63,7 +67,7 @@ export async function getRestaurantSchedule(res) {
     }
 
     res.json({
-      message: "No restaurants are open now",
+      message: "No hay restaurantes abiertos en este momento.",
     });
   } catch (error) {
     res.status(404).json({
@@ -108,7 +112,7 @@ export async function getProductsPromotions(res) {
       }
 
       res.json({
-        message: "No promotions found for today",
+        message: "No se encontraron promociones vigentes el día de hoy.",
       });
     }
   } catch (error) {
